@@ -1,16 +1,17 @@
 import { DeltaTime } from '../utils/index.js'
 import { KeyboardSystem } from '../systems/index.js'
+import { GameObjectRepository } from '../repositories/index.js'
 import { IGameObject, IGameSystem } from '../interfaces/index.js'
 
 export class Game {
 
   private _animationFrame: number
-  private _isRunning = false
+  private _isRunning: boolean
+  private _deltaTime: DeltaTime
+  private _gameSystems: IGameSystem[]
+  private _gameObjectRepository: GameObjectRepository
 
-  protected readonly deltaTime = new DeltaTime()
-
-  private _gameObjects: IGameObject[] = []
-  private _gameSystems: IGameSystem[] = []
+  get deltaTime() { return this._deltaTime }
 
   constructor() {
     this.initComponents()
@@ -23,12 +24,18 @@ export class Game {
 
     this._isRunning = true
     this.startGameSystems()
-    this.startGameObjects()
-    this.deltaTime.start()
+    this._gameObjectRepository.startGameObjects()
+    this._deltaTime.start()
     this.updateFrame()
   }
 
   initComponents() {
+    this._animationFrame = 0
+    this._isRunning = false
+    this._gameSystems = []
+    this._gameObjectRepository = new GameObjectRepository()
+    this._deltaTime = new DeltaTime()
+
     this.addGameSystem(
       new KeyboardSystem()
     )
@@ -64,21 +71,11 @@ export class Game {
     }
   }
 
-  private startGameObjects() {
-    const length = this._gameObjects.length
-
-    let i = 0
-    while (i < length) {
-      this._gameObjects[i].start?.()
-      i++
-    }
-  }
-
   private updateFrame() {
-    this.deltaTime.calculate()
+    this._deltaTime.calculate()
     this.internalUpdate()
     this.update()
-    this.removeGameObjectsDestroyed()
+    this._gameObjectRepository.removeGameObjectsDestroyed()
     this.updateAfterGameSystems()
     this.draw()
 
@@ -89,17 +86,7 @@ export class Game {
 
   private internalUpdate() {
     this.updateGameSystems()
-    this.updateGameObjects()
-  }
-
-  private updateGameObjects() {
-    const length = this._gameObjects.length
-
-    let i = 0
-    while (i < length) {
-      this._gameObjects[i].update(this.deltaTime)
-      i++
-    }
+    this._gameObjectRepository.updateGameObjects(this._deltaTime)
   }
 
   private updateGameSystems() {
@@ -107,7 +94,7 @@ export class Game {
 
     let i = 0
     while (i < length) {
-      this._gameSystems[i].update(this.deltaTime)
+      this._gameSystems[i].update(this._deltaTime)
       i++
     }
   }
@@ -117,7 +104,7 @@ export class Game {
 
     let i = 0
     while (i < length) {
-      this._gameSystems[i].updateAfter?.(this.deltaTime)
+      this._gameSystems[i].updateAfter?.(this._deltaTime)
       i++
     }
   }
@@ -126,14 +113,10 @@ export class Game {
   draw() { }
 
   addGameObject(...gameObjects: IGameObject[]) {
-    this._gameObjects.push(...gameObjects)
+    this._gameObjectRepository.addGameObject(...gameObjects)
   }
 
   addGameSystem(...gameSystems: IGameSystem[]) {
     this._gameSystems.push(...gameSystems)
-  }
-
-  private removeGameObjectsDestroyed() {
-    this._gameObjects = this._gameObjects.filter(gameObject => !gameObject.isDestroyed())
   }
 }
