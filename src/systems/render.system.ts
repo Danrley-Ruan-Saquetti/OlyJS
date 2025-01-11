@@ -1,11 +1,12 @@
 import { ContextRender2D, IRenderable } from '../interfaces/index.js'
 import { GameObjectRepository } from '../repositories/index.js'
-import { DeltaTime } from '../utils/delta-time.js'
+import { CanvasRenderer, DeltaTime } from '../utils/index.js'
 import { GameSystem } from './system.js'
 
 export class RenderSystem2D extends GameSystem {
 
   private ctx: ContextRender2D
+  private canvasRenderer: CanvasRenderer
 
   get canvas() { return this._canvas }
 
@@ -15,6 +16,7 @@ export class RenderSystem2D extends GameSystem {
   ) {
     super()
     this.ctx = _canvas.getContext('2d')!
+    this.canvasRenderer = new CanvasRenderer(this.ctx)
   }
 
   updateAfter(deltaTime: DeltaTime): void {
@@ -27,7 +29,7 @@ export class RenderSystem2D extends GameSystem {
 
     let i = 0
     while (i < length) {
-      renderable[i].render(this.ctx)
+      renderable[i].render(this.canvasRenderer)
       i++
     }
   }

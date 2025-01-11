@@ -1,5 +1,5 @@
-import { ContextRender2D } from './context-render-2d.interface.js'
+import { CanvasRenderer } from '../utils/index.js'
 
 export interface IRenderable {
-  render(ctx: ContextRender2D): void
+  render(canvasRenderer: CanvasRenderer): void
 }
