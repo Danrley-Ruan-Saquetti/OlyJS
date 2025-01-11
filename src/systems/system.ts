@@ -1,7 +1,10 @@
 import { DeltaTime } from '../utils/delta-time'
-import { ISystem } from './../interfaces/index'
+import { IGameSystem } from './../interfaces/index'
 
-export class GameSystem implements ISystem {
+export class GameSystem implements IGameSystem {
 
+  start() { }
+  stop() { }
   update(deltaTime: DeltaTime) { }
+  updateAfter(deltaTime: DeltaTime) { }
 }

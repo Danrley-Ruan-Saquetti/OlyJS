@@ -1,12 +1,20 @@
-import { IGameObject } from '../interfaces/index.js'
 import { DeltaTime } from '../utils/index.js'
+import { KeyboardSystem } from '../systems/index.js'
+import { IGameObject, IGameSystem } from '../interfaces/index.js'
 
 export class Game {
 
   private _animationFrame: number
   private _isRunning = false
-  private _gameObjects: IGameObject[] = []
+
   protected readonly deltaTime = new DeltaTime()
+
+  private _gameObjects: IGameObject[] = []
+  private _gameSystems: IGameSystem[] = []
+
+  constructor() {
+    this.initComponents()
+  }
 
   start() {
     if (this._isRunning) {
@@ -14,13 +22,16 @@ export class Game {
     }
 
     this._isRunning = true
-    this.initComponents()
+    this.startGameSystems()
     this.startGameObjects()
+    this.deltaTime.start()
     this.updateFrame()
   }
 
   initComponents() {
-    this.deltaTime.start()
+    this.addGameSystem(
+      new KeyboardSystem()
+    )
   }
 
   stop() {
@@ -29,7 +40,28 @@ export class Game {
     }
 
     this._isRunning = false
+    this.stopGameSystems()
     cancelAnimationFrame(this._animationFrame)
+  }
+
+  private startGameSystems() {
+    const length = this._gameSystems.length
+
+    let i = 0
+    while (i < length) {
+      this._gameSystems[i].start?.()
+      i++
+    }
+  }
+
+  private stopGameSystems() {
+    const length = this._gameSystems.length
+
+    let i = 0
+    while (i < length) {
+      this._gameSystems[i].stop?.()
+      i++
+    }
   }
 
   private startGameObjects() {
@@ -47,6 +79,7 @@ export class Game {
     this.internalUpdate()
     this.update()
     this.removeGameObjectsDestroyed()
+    this.updateAfterGameSystems()
     this.draw()
 
     if (this._isRunning) {
@@ -55,6 +88,11 @@ export class Game {
   }
 
   private internalUpdate() {
+    this.updateGameSystems()
+    this.updateGameObjects()
+  }
+
+  private updateGameObjects() {
     const length = this._gameObjects.length
 
     let i = 0
@@ -64,11 +102,35 @@ export class Game {
     }
   }
 
+  private updateGameSystems() {
+    const length = this._gameSystems.length
+
+    let i = 0
+    while (i < length) {
+      this._gameSystems[i].update(this.deltaTime)
+      i++
+    }
+  }
+
+  private updateAfterGameSystems() {
+    const length = this._gameSystems.length
+
+    let i = 0
+    while (i < length) {
+      this._gameSystems[i].updateAfter?.(this.deltaTime)
+      i++
+    }
+  }
+
   update() { }
   draw() { }
 
   addGameObject(gameObject: IGameObject) {
     this._gameObjects.push(gameObject)
+  }
+
+  addGameSystem(gameSystem: IGameSystem) {
+    this._gameSystems.push(gameSystem)
   }
 
   private removeGameObjectsDestroyed() {
