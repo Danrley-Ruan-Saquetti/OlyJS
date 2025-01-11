@@ -39,6 +39,7 @@ export class Game {
   private updateFrame() {
     this.internalUpdate()
     this.update()
+    this.removeGameObjectsDestroyed()
     this.draw()
 
     if (this._isRunning) {
@@ -62,5 +63,9 @@ export class Game {
 
   addGameObject(gameObject: IGameObject) {
     this._gameObjects.push(gameObject)
+  }
+
+  private removeGameObjectsDestroyed() {
+    this._gameObjects = this._gameObjects.filter(gameObject => !gameObject.isDestroyed())
   }
 }
