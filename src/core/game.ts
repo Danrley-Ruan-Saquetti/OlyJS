@@ -125,12 +125,12 @@ export class Game {
   update() { }
   draw() { }
 
-  addGameObject(gameObject: IGameObject) {
-    this._gameObjects.push(gameObject)
+  addGameObject(...gameObjects: IGameObject[]) {
+    this._gameObjects.push(...gameObjects)
   }
 
-  addGameSystem(gameSystem: IGameSystem) {
-    this._gameSystems.push(gameSystem)
+  addGameSystem(...gameSystems: IGameSystem[]) {
+    this._gameSystems.push(...gameSystems)
   }
 
   private removeGameObjectsDestroyed() {
