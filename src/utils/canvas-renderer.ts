@@ -29,5 +29,6 @@ export class CanvasRenderer {
       this.cameraGameObject.transform.position.x,
       this.cameraGameObject.transform.position.y
     )
+    this.ctx.scale(this.cameraGameObject.scale, this.cameraGameObject.scale)
   }
 }
