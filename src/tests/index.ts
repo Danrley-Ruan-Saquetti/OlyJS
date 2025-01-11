@@ -1,13 +1,8 @@
+import { GameObject } from '../components/game-object.js'
 import { Game } from '../core/game.js'
-import { IGameObject } from '../interfaces/game-object.interface.js'
 
-class Play implements IGameObject {
+class Play extends GameObject {
 
-  start() {
-  }
-
-  update() {
-  }
 }
 
 export class OlyGame extends Game {
