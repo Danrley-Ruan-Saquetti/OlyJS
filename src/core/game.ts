@@ -65,6 +65,12 @@ export class Game {
   protected initializeObjects() {
     this._gameObjectRepository.startGameObjects()
     this._gameSystemRepository.startGameSystems()
+
+    this._cameraGameObject.transform.moveTo({
+      x: this.canvas.width / 2,
+      y: this.canvas.height / 2,
+      z: 0
+    })
   }
 
   stop() {
