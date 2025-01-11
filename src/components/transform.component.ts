@@ -1,7 +1,8 @@
 import { IVector3 } from '../interfaces/index.js'
 import { Quaternion, Vector3 } from '../utils/index.js'
+import { GameComponent } from './component.js'
 
-export class TransformComponent {
+export class TransformComponent extends GameComponent {
 
   readonly position = new Vector3()
   readonly rotation = new Quaternion()
