@@ -1,9 +1,9 @@
 import { CanvasRenderer, DeltaTime } from '../utils/index.js'
-import { IContainerComponent, IGameObject } from '../interfaces/index.js'
+import { IGameObject } from '../interfaces/index.js'
 import { GameComponent, TransformComponent } from '../components/index.js'
 import { ContainerComponentRepository } from '../repositories/index.js'
 
-export class GameObject implements IGameObject, IContainerComponent {
+export class GameObject implements IGameObject {
 
   private _isDestroyed = false
   private containerComponent = new ContainerComponentRepository()
@@ -17,6 +17,7 @@ export class GameObject implements IGameObject, IContainerComponent {
 
   start() {
     this._isDestroyed = false
+    this.containerComponent.clear()
   }
 
   destroy() {

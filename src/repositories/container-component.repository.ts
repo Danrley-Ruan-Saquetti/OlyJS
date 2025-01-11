@@ -35,4 +35,8 @@ export class ContainerComponentRepository implements IContainerComponent {
   getComponents() {
     return this.components
   }
+
+  clear() {
+    this.components = []
+  }
 }
