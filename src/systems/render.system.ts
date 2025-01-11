@@ -1,22 +1,22 @@
-import { ContextRender2D, IRenderable } from '../interfaces/index.js'
+import { CameraGameObject } from '../entities/index.js'
+import { IRenderable } from '../interfaces/index.js'
 import { GameObjectRepository } from '../repositories/index.js'
 import { CanvasRenderer, DeltaTime } from '../utils/index.js'
 import { GameSystem } from './system.js'
 
 export class RenderSystem2D extends GameSystem {
 
-  private ctx: ContextRender2D
   private canvasRenderer: CanvasRenderer
 
   get canvas() { return this._canvas }
 
   constructor(
     private _canvas: HTMLCanvasElement,
-    private gameObjectRepository: GameObjectRepository
+    private gameObjectRepository: GameObjectRepository,
+    private cameraGameObject: CameraGameObject
   ) {
     super()
-    this.ctx = _canvas.getContext('2d')!
-    this.canvasRenderer = new CanvasRenderer(this.ctx)
+    this.canvasRenderer = new CanvasRenderer(_canvas.getContext('2d')!, this.cameraGameObject)
   }
 
   updateAfter(deltaTime: DeltaTime): void {
@@ -35,6 +35,6 @@ export class RenderSystem2D extends GameSystem {
   }
 
   clear() {
-    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
+    this.canvasRenderer.clear()
   }
 }
