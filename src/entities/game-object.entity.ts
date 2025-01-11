@@ -1,6 +1,6 @@
 import { DeltaTime } from '../utils/index.js'
 import { IGameObject } from '../interfaces/index.js'
-import { TransformComponent } from './transform.component.js'
+import { TransformComponent } from '../components/transform.component.js'
 
 export class GameObject implements IGameObject {
 

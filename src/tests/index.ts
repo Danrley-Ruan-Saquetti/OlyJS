@@ -1,4 +1,4 @@
-import { GameObject } from '../components/index.js'
+import { GameObject } from '../entities/index.js'
 import { Game } from '../core/game.js'
 
 class Player extends GameObject {
