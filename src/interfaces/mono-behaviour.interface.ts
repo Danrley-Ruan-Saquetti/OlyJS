@@ -1,4 +1,4 @@
-import { DeltaTime } from '../utils/delta-time'
+import { DeltaTime } from '../utils/index.js'
 
 export interface IMonoBehaviour {
   wakeUp?(): void
