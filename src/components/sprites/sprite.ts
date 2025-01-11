@@ -5,6 +5,8 @@ import { GameComponent } from '../component.js'
 
 export class SpriteComponent extends GameComponent implements IRenderable {
 
+  color?: string
+
   constructor(
     protected gameObject: GameObject
   ) {

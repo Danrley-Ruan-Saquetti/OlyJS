@@ -1,6 +1,6 @@
 import { GameObject } from '../../entities/index.js'
-import { CanvasRenderer } from '../../utils/canvas-renderer.js'
-import { RectangleShapeComponent } from '../shapes/rectangle.shape.js'
+import { CanvasRenderer } from '../../utils/index.js'
+import { RectangleShapeComponent } from '../shapes/index.js'
 import { SpriteComponent } from './sprite.js'
 
 export class RectangleSpriteComponent extends SpriteComponent {
@@ -13,13 +13,12 @@ export class RectangleSpriteComponent extends SpriteComponent {
   }
 
   render(canvasRenderer: CanvasRenderer) {
-    canvasRenderer.ctx.beginPath()
-    canvasRenderer.ctx.rect(
-      this.gameObject.transform.position.x,
-      this.gameObject.transform.position.y,
-      this._shape.width,
-      this._shape.height
-    )
-    canvasRenderer.ctx.fill()
+    canvasRenderer.drawRectangle({
+      x: this.gameObject.transform.position.x,
+      y: this.gameObject.transform.position.y,
+      width: this._shape.width,
+      height: this._shape.height,
+      color: this.color
+    })
   }
 }
