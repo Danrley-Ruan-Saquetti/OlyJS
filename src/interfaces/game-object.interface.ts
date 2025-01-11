@@ -3,6 +3,7 @@ import { IRenderable } from './renderable.interface.js'
 
 export interface IGameObject extends IMonoBehaviour, IRenderable {
   destroy(): void
+  startComponents?(): void
   onDestroy?(): void
   isDestroyed(): boolean
 }

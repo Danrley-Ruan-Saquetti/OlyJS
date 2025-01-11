@@ -11,7 +11,11 @@ export class GameObjectRepository {
 
     let i = 0
     while (i < length) {
-      this._gameObjects[i].start?.()
+      const gameObject = this._gameObjects[i]
+
+      gameObject.start?.()
+      gameObject.startComponents?.()
+
       i++
     }
   }

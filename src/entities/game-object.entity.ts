@@ -5,19 +5,24 @@ import { ContainerComponentRepository } from '../repositories/index.js'
 
 export class GameObject implements IGameObject {
 
-  private _isDestroyed = false
-  private containerComponent = new ContainerComponentRepository()
+  private _isDestroyed: boolean
 
-  readonly transform = new TransformComponent()
+  private _containerComponent: ContainerComponentRepository
+  private _transform: TransformComponent
 
-  wakeUp() { }
+  get transform() { return this._transform }
+
   update(deltaTime: DeltaTime) { }
   render(canvasRenderer: CanvasRenderer) { }
   onDestroy() { }
 
   start() {
     this._isDestroyed = false
-    this.containerComponent.clear()
+
+    this._containerComponent = new ContainerComponentRepository()
+    this._transform = new TransformComponent()
+
+    this._containerComponent.addComponent(this._transform)
   }
 
   destroy() {
@@ -25,27 +30,38 @@ export class GameObject implements IGameObject {
     this._isDestroyed = true
   }
 
+  startComponents() {
+    const gameComponents = this._containerComponent.getComponents()
+    const length = gameComponents.length
+
+    let i = 0
+    while (i < length) {
+      gameComponents[i].start()
+      i++
+    }
+  }
+
   isDestroyed() {
     return this._isDestroyed
   }
 
   addComponent(...components: GameComponent[]) {
-    return this.containerComponent.addComponent(...components)
+    return this._containerComponent.addComponent(...components)
   }
 
   hasComponent(classComponent: new (...args: any) => GameComponent) {
-    return this.containerComponent.hasComponent(classComponent)
+    return this._containerComponent.hasComponent(classComponent)
   }
 
   getComponentsFrom<T extends GameComponent>(classComponent: new (...args: any) => T) {
-    return this.containerComponent.getComponentsFrom(classComponent)
+    return this._containerComponent.getComponentsFrom(classComponent)
   }
 
   getComponent<T extends GameComponent>(classComponent: new (...args: any) => T) {
-    return this.containerComponent.getComponent(classComponent)
+    return this._containerComponent.getComponent(classComponent)
   }
 
   getComponents() {
-    return this.containerComponent.getComponents()
+    return this._containerComponent.getComponents()
   }
 }
