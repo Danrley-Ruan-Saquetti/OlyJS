@@ -1,5 +1,5 @@
 import { Keys } from '../enums/index.js'
-import { Input } from '../states/input.state.js'
+import { Input } from '../utils/index.js'
 import { GameSystem } from './system.js'
 
 export class KeyboardSystem extends GameSystem {

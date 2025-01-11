@@ -2,7 +2,7 @@ import { Keys } from '../enums/index.js'
 
 export type KeyPressed = { [x in Keys]?: boolean }
 
-export class KeyboardState {
+export class KeyboardRepository {
 
   private keysPressed: KeyPressed = {}
 
