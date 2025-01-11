@@ -28,6 +28,10 @@ export class ContainerComponentRepository implements IContainerComponent {
     return null
   }
 
+  getComponentsFrom<T extends GameComponent>(classComponent: new (...args: any) => T) {
+    return this.components.filter(gameComponent => gameComponent instanceof classComponent) as T[]
+  }
+
   getComponents() {
     return this.components
   }

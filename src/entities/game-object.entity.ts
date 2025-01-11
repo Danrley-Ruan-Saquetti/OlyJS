@@ -36,6 +36,10 @@ export class GameObject implements IGameObject, IContainerComponent {
     return this.containerComponent.hasComponent(classComponent)
   }
 
+  getComponentsFrom<T extends GameComponent>(classComponent: new (...args: any) => T) {
+    return this.containerComponent.getComponentsFrom(classComponent)
+  }
+
   getComponent<T extends GameComponent>(classComponent: new (...args: any) => T) {
     return this.containerComponent.getComponent(classComponent)
   }
