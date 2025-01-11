@@ -8,6 +8,8 @@ class Play extends GameObject {
 export class OlyGame extends Game {
 
   initComponents() {
+    super.initComponents()
+
     this.addGameObject(new Play())
   }
 }

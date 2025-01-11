@@ -6,7 +6,7 @@ export class Game {
   private _animationFrame: number
   private _isRunning = false
   private _gameObjects: IGameObject[] = []
-  private deltaTime = new DeltaTime()
+  protected readonly deltaTime = new DeltaTime()
 
   start() {
     if (this._isRunning) {
@@ -17,6 +17,10 @@ export class Game {
     this.initComponents()
     this.startGameObjects()
     this.updateFrame()
+  }
+
+  initComponents() {
+    this.deltaTime.start()
   }
 
   stop() {
@@ -39,6 +43,7 @@ export class Game {
   }
 
   private updateFrame() {
+    this.deltaTime.calculate()
     this.internalUpdate()
     this.update()
     this.removeGameObjectsDestroyed()
@@ -59,7 +64,6 @@ export class Game {
     }
   }
 
-  initComponents() { }
   update() { }
   draw() { }
 
