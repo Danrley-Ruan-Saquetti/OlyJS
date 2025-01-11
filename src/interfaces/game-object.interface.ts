@@ -1,3 +1,6 @@
 import { IMonoBehaviour } from './mono-behaviour.interface.js'
 
-export type IGameObject = IMonoBehaviour
+export interface IGameObject extends IMonoBehaviour {
+  destroy(): void
+  isDestroyed(): boolean
+}
