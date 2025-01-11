@@ -17,4 +17,8 @@ export class KeyboardState {
   isKeyDown(...keys: Keys[]) {
     return !keys.find(key => !this.keysPressed?.[key])
   }
+
+  clear() {
+    this.keysPressed = {}
+  }
 }
