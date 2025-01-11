@@ -1,16 +1,18 @@
-import { GameObject } from '../components/game-object.js'
+import { GameObject } from '../components/index.js'
 import { Game } from '../core/game.js'
 
-class Play extends GameObject {
+class Player extends GameObject {
 
 }
 
 export class OlyGame extends Game {
 
+  private player = new Player()
+
   initComponents() {
     super.initComponents()
 
-    this.addGameObject(new Play())
+    this.addGameObject(this.player)
   }
 }
 

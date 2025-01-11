@@ -1,4 +1,4 @@
-import { IGameObject } from '../interfaces/game-object.interface.js'
+import { IGameObject } from '../interfaces/index.js'
 import { DeltaTime } from '../utils/index.js'
 
 export class Game {
