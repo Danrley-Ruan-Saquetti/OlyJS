@@ -1,4 +1,5 @@
 import { IGameObject } from '../interfaces/game-object.interface.js'
+import { DeltaTime } from '../utils/delta-time.js'
 
 export class GameObject implements IGameObject {
 
@@ -6,7 +7,7 @@ export class GameObject implements IGameObject {
 
   wakeUp() { }
   start() { }
-  update() { }
+  update(deltaTime: DeltaTime) { }
 
   destroy() {
     this._isDestroyed = true

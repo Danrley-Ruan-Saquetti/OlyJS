@@ -1,10 +1,12 @@
 import { IGameObject } from '../interfaces/game-object.interface.js'
+import { DeltaTime } from '../utils/delta-time.js'
 
 export class Game {
 
   private _animationFrame: number
   private _isRunning = false
   private _gameObjects: IGameObject[] = []
+  private deltaTime = new DeltaTime()
 
   start() {
     if (this._isRunning) {
@@ -52,7 +54,7 @@ export class Game {
 
     let i = 0
     while (i < length) {
-      this._gameObjects[i].update()
+      this._gameObjects[i].update(this.deltaTime)
       i++
     }
   }
