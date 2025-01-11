@@ -1,5 +1,5 @@
 import { DeltaTime } from '../utils/index.js'
-import { IGameObject } from '../interfaces/index.js'
+import { ContextRender2D, IGameObject } from '../interfaces/index.js'
 import { TransformComponent } from '../components/transform.component.js'
 
 export class GameObject implements IGameObject {
@@ -10,6 +10,7 @@ export class GameObject implements IGameObject {
 
   wakeUp() { }
   update(deltaTime: DeltaTime) { }
+  render(ctx: ContextRender2D) { }
   onDestroy() { }
 
   start() {

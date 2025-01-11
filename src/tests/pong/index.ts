@@ -17,4 +17,4 @@ export class OlyGame extends Game {
   }
 }
 
-new OlyGame().start()
+new OlyGame(document.querySelector<HTMLCanvasElement>('canvas#canvas-game')!).start()

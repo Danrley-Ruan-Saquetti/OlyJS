@@ -2,6 +2,7 @@ import { DeltaTime } from '../utils/index.js'
 import { KeyboardSystem } from '../systems/index.js'
 import { GameObjectRepository, GameSystemRepository } from '../repositories/index.js'
 import { IGameObject, IGameSystem } from '../interfaces/index.js'
+import { RenderSystem2D } from '../systems/render.system.js'
 
 export class Game {
 
@@ -13,7 +14,9 @@ export class Game {
 
   get deltaTime() { return this._deltaTime }
 
-  constructor() {
+  constructor(
+    protected canvas: HTMLCanvasElement
+  ) {
     this.initComponents()
   }
 
@@ -25,7 +28,8 @@ export class Game {
     this._deltaTime = new DeltaTime()
 
     this.addGameSystem(
-      new KeyboardSystem()
+      new KeyboardSystem(),
+      new RenderSystem2D(this.canvas, this._gameObjectRepository)
     )
   }
 
@@ -55,8 +59,8 @@ export class Game {
     this._deltaTime.calculate()
     this.internalUpdate()
     this.update()
-    this._gameObjectRepository.removeGameObjectsDestroyed()
     this._gameSystemRepository.updateAfterGameSystems(this._deltaTime)
+    this._gameObjectRepository.removeGameObjectsDestroyed()
     this.draw()
 
     if (this._isRunning) {
