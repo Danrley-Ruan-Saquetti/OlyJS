@@ -1,6 +1,7 @@
+import { ICircle } from '../../interfaces/circle.interface'
 import { ShapeComponent } from './shape'
 
-export class CircleShape extends ShapeComponent {
+export class CircleShapeComponent extends ShapeComponent implements ICircle {
 
   get radius() { return this._radius }
 
