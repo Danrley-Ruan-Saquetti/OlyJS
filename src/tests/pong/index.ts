@@ -1,23 +1,47 @@
-import { Game } from '../../index.js'
+import { Game, Input, Keys } from '../../index.js'
 import { Player } from './entities/player.entity.js'
+import { IAPlayer } from './entities/ia-player.js'
+import { RacketPlayer } from './entities/player-racket.entity.js'
 
-export class OlyGame extends Game {
+export class PongGame extends Game {
 
-  private players: Player[]
+  private players: RacketPlayer[]
 
-  initComponents() {
-    super.initComponents()
+  protected prepareObjects() {
+    super.prepareObjects()
 
-    this.players = []
+    this.players = [
+      new Player(),
+      new IAPlayer()
+    ]
 
-    this.players.push(new Player())
-    this.players.push(new Player())
+    this.addGameObject(
+      ...this.players
+    )
+  }
 
-    this.addGameObject(...this.players)
+  protected initializeObjects() {
+    super.initializeObjects()
+
+    this.players[0].transform.moveTo({
+      x: -(this.canvas.width / 2) + 10,
+      y: -10,
+      z: 0
+    })
+    this.players[1].transform.moveTo({
+      x: (this.canvas.width / 2) - 20,
+      y: -10,
+      z: 0
+    })
+  }
+
+  update(): void {
+    if (Input.keyboard.isKeyDown(Keys.Escape)) {
+      console.log(this)
+    }
   }
 }
-
-const game = new OlyGame(
+const game = new PongGame(
   document.querySelector<HTMLCanvasElement>('canvas#canvas-game')!
 )
 
