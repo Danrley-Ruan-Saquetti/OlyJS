@@ -7,12 +7,21 @@ export class CircleSpriteComponent extends SpriteComponent {
 
   constructor(
     gameObject: GameObject,
-    private _shape: CircleShapeComponent
+    private _shape: CircleShapeComponent,
+    public stroke?: string,
+    public strokeWidth?: number
   ) {
     super(gameObject)
   }
 
   render(canvasRenderer: CanvasRenderer) {
-
+    canvasRenderer.drawCircle({
+      radius: this._shape.radius,
+      x: this.gameObject.transform.position.x,
+      y: this.gameObject.transform.position.y,
+      color: this.color,
+      stroke: this.stroke,
+      strokeWidth: this.strokeWidth,
+    })
   }
 }

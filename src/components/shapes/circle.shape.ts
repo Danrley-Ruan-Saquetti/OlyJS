@@ -1,5 +1,5 @@
-import { ICircle } from '../../interfaces/circle.interface'
-import { ShapeComponent } from './shape'
+import { ICircle } from '../../interfaces/index.js'
+import { ShapeComponent } from './shape.js'
 
 export class CircleShapeComponent extends ShapeComponent implements ICircle {
 
