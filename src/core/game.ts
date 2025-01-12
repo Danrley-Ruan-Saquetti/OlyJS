@@ -89,7 +89,6 @@ export class Game {
     this.update()
     this._gameSystemRepository.updateAfterGameSystems(this._deltaTime)
     this._gameObjectRepository.removeGameObjectsDestroyed()
-    this.draw()
 
     if (this._isRunning) {
       this._animationFrame = requestAnimationFrame(() => this.updateFrame())
@@ -102,7 +101,6 @@ export class Game {
   }
 
   update() { }
-  draw() { }
 
   addGameObject(...gameObjects: IGameObject[]) {
     this._gameObjectRepository.addGameObject(...gameObjects)
