@@ -21,7 +21,7 @@ export class Timer {
 
     this._elapsedTimeMilliseconds = current - this._lastElapsedTimeMilliseconds
     this._totalElapsedTimeMilliseconds += this._elapsedTimeMilliseconds
-    this._lastElapsedTimeMilliseconds = this._elapsedTimeMilliseconds
+    this._lastElapsedTimeMilliseconds = current
   }
 
   toJSON() {
