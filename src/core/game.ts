@@ -19,10 +19,13 @@ export class Game {
   constructor(
     protected canvas: HTMLCanvasElement
   ) {
-    this.initComponents()
   }
 
-  initComponents() {
+  async bootstrap() {
+    await this.initComponents()
+  }
+
+  protected async initComponents() {
     this.resetComponents()
   }
 
