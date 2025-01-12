@@ -6,6 +6,10 @@ export class Vector2 implements IVector2 {
     public x = 0, public y = 0
   ) { }
 
+  static subtraction(vector1: IVector2, vector2: IVector2) {
+    return new Vector2(vector1.x - vector2.x, vector1.y - vector2.y)
+  }
+
   magnitude() {
     return Math.sqrt(this.x ^ 2 + this.y ^ 2)
   }
@@ -24,6 +28,10 @@ export class Vector2 implements IVector2 {
     this.y = y
 
     return this
+  }
+
+  clone() {
+    return new Vector2(this.x, this.y)
   }
 
   toJSON(): IVector2 {

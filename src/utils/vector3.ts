@@ -9,6 +9,10 @@ export class Vector3 extends Vector2 implements IVector3 {
     super(x, y)
   }
 
+  static subtraction(vector1: IVector3, vector2: IVector3) {
+    return new Vector3(vector1.x - vector2.x, vector1.y - vector2.y, vector1.z - vector2.z)
+  }
+
   magnitude() {
     return Math.sqrt(this.x ^ 2 + this.y ^ 2 + this.z ^ 2)
   }
@@ -29,6 +33,10 @@ export class Vector3 extends Vector2 implements IVector3 {
     this.z = z
 
     return this
+  }
+
+  clone() {
+    return new Vector3(this.x, this.y, this.z)
   }
 
   toJSON(): IVector3 {
