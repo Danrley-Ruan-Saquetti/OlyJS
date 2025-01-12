@@ -27,6 +27,8 @@ export class Vector3 extends Vector2 implements IVector3 {
     this.x = x
     this.y = y
     this.z = z
+
+    return this
   }
 
   toJSON(): IVector3 {
