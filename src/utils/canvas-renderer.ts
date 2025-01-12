@@ -3,13 +3,19 @@ import { ContextRender2D, ICircle, IRectangle, IVector2 } from '../interfaces/in
 
 export type DrawOptions = IVector2 & {
   color?: string
+  fixed?: boolean
 }
+
 export type DrawStrokeOptions = {
   stroke?: string
   strokeWidth?: number
 } | {
   stroke: string
   strokeWidth: number
+}
+
+export type DrawImageOptions = {
+  image: HTMLImageElement
 }
 
 export class CanvasRenderer {
@@ -19,11 +25,11 @@ export class CanvasRenderer {
     private readonly cameraGameObject: CameraGameObject
   ) { }
 
-  drawRectangle({ x, y, height, width, color }: IRectangle & DrawOptions) {
+  drawRectangle({ x, y, height, width, color, fixed }: IRectangle & DrawOptions) {
     this.ctx.save()
     this.ctx.beginPath()
 
-    this.applyViewCamera()
+    if (!fixed) this.applyViewCamera()
 
     this.ctx.rect(x, y, width, height)
     if (color) this.ctx.fillStyle = color
@@ -31,11 +37,11 @@ export class CanvasRenderer {
     this.ctx.restore()
   }
 
-  drawCircle({ radius, x, y, color, stroke, strokeWidth }: ICircle & DrawOptions & DrawStrokeOptions) {
+  drawCircle({ radius, x, y, color, stroke, strokeWidth, fixed }: ICircle & DrawOptions & DrawStrokeOptions) {
     this.ctx.save()
     this.ctx.beginPath()
 
-    this.applyViewCamera()
+    if (!fixed) this.applyViewCamera()
 
     this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
 
@@ -50,6 +56,13 @@ export class CanvasRenderer {
       this.ctx.stroke()
     }
 
+    this.ctx.restore()
+  }
+
+  drawImage({ image, x, y, width, height, fixed }: Omit<DrawOptions, 'color'> & DrawImageOptions & IRectangle) {
+    this.ctx.save()
+    if (!fixed) this.applyViewCamera()
+    this.ctx.drawImage(image, x, y, width, height)
     this.ctx.restore()
   }
 
