@@ -16,7 +16,12 @@ export class RenderSystem2D extends GameSystem {
     private cameraGameObject: CameraGameObject
   ) {
     super()
-    this.canvasRenderer = new CanvasRenderer(_canvas.getContext('2d')!, this.cameraGameObject)
+
+    const ctx = _canvas.getContext('2d')!
+
+    if (ctx == null) throw 'Canvas element cannot have a context to drawing graphics 2D'
+
+    this.canvasRenderer = new CanvasRenderer(ctx, this.cameraGameObject)
   }
 
   updateAfter(deltaTime: DeltaTime): void {
