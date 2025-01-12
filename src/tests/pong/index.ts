@@ -18,8 +18,8 @@ export class PongGame extends Game {
       new Player(),
       new IAPlayer()
     ]
-    this.ball = new Ball()
     this.table = new Table()
+    this.ball = new Ball(this.table)
 
     this.addGameObject(
       this.table,
@@ -50,7 +50,7 @@ export class PongGame extends Game {
 
   update() {
     if (Input.keyboard.isKeyDown(Keys.Escape)) {
-      console.log(this)
+      console.clear()
     }
   }
 }

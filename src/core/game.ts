@@ -44,7 +44,7 @@ export class Game {
     this.prepareObjects()
     this.initializeObjects()
     this._isRunning = true
-    this._deltaTime.start()
+    this._deltaTime.reset()
     this.updateFrame()
   }
 
@@ -84,7 +84,7 @@ export class Game {
   }
 
   private updateFrame() {
-    this._deltaTime.calculate()
+    this._deltaTime.next()
     this.internalUpdate()
     this.update()
     this._gameSystemRepository.updateAfterGameSystems(this._deltaTime)
