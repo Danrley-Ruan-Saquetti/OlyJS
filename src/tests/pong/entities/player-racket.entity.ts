@@ -9,7 +9,7 @@ export class RacketPlayer extends GameObject {
 
     this.bodySprite = new RectangleSpriteComponent(
       this,
-      new RectangleShapeComponent(5, 20)
+      new RectangleShapeComponent(15, 80)
     )
     this.bodySprite.color = '#FFF'
 

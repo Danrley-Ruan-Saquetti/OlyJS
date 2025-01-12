@@ -3,7 +3,7 @@ import { RacketPlayer } from './player-racket.entity.js'
 
 export class Player extends RacketPlayer {
 
-  speed = 50
+  speed = 150
 
   update(deltaTime: DeltaTime): void {
     if (Input.keyboard.isKeyDown(Keys.KeyW)) {
