@@ -1,7 +1,7 @@
 import { DeltaTime } from '../utils/index.js'
 import { CameraGameObject } from '../entities/index.js'
 import { IGameObject, IGameSystem } from '../interfaces/index.js'
-import { KeyboardSystem, RenderSystem2D } from '../systems/index.js'
+import { KeyboardSystem, RenderSystem2D, MouseSystem } from '../systems/index.js'
 import { GameObjectRepository, GameSystemRepository } from '../repositories/index.js'
 
 export class Game {
@@ -51,6 +51,7 @@ export class Game {
   protected prepareObjects() {
     this.addGameSystem(
       new KeyboardSystem(),
+      new MouseSystem(this.canvas),
       new RenderSystem2D(
         this.canvas,
         this._gameObjectRepository,

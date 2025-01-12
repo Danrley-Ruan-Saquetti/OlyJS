@@ -4,10 +4,6 @@ import { GameSystem } from './system.js'
 
 export class KeyboardSystem extends GameSystem {
 
-  constructor() {
-    super()
-  }
-
   start() {
     document.addEventListener('keydown', this.onKeyDown)
     document.addEventListener('keyup', this.onKeyUp)
