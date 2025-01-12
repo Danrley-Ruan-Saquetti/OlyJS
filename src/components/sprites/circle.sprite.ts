@@ -5,6 +5,8 @@ import { SpriteComponent } from './sprite.js'
 
 export class CircleSpriteComponent extends SpriteComponent {
 
+  get shape() { return this._shape }
+
   constructor(
     gameObject: GameObject,
     private _shape: CircleShapeComponent,
