@@ -1,4 +1,4 @@
-import { Buttons } from '../enums/index.js'
+import { Buttons, WheelType } from '../enums/index.js'
 import { Input } from '../utils/input.js'
 import { GameSystem } from './system.js'
 
@@ -22,6 +22,7 @@ export class MouseSystem extends GameSystem {
     this.canvas.addEventListener('mousemove', this.onMouseMove)
     this.canvas.addEventListener('mousedown', this.onMouseDown)
     this.canvas.addEventListener('mouseup', this.onMouseUp)
+    this.canvas.addEventListener('wheel', this.onWheel)
     this.canvas.addEventListener('dblclick', this.onDoubleClick)
   }
 
@@ -29,6 +30,7 @@ export class MouseSystem extends GameSystem {
     this.canvas.removeEventListener('mousemove', this.onMouseMove)
     this.canvas.removeEventListener('mousedown', this.onMouseDown)
     this.canvas.removeEventListener('mouseup', this.onMouseUp)
+    this.canvas.removeEventListener('wheel', this.onWheel)
     this.canvas.removeEventListener('dblclick', this.onDoubleClick)
   }
 
@@ -51,6 +53,10 @@ export class MouseSystem extends GameSystem {
     this.timerMoveStop = setTimeout(() => {
       this.onMouseStop()
     }, 110)
+  }
+
+  private onWheel = (event: WheelEvent) => {
+    Input.mouse.wheel(event.deltaY < 0 ? WheelType.UP : WheelType.DOWN)
   }
 
   private onMouseStop = () => {
