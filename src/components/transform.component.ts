@@ -25,16 +25,9 @@ export class TransformComponent extends GameComponent {
   }
 
   private normalize({ x, y, z }: IVector3) {
-    const length = Math.sqrt(x ** 2 + y ** 2 + z ** 2)
+    const vector = new Vector3(x, y, z)
+    vector.normalize()
 
-    if (length === 0) {
-      return { x: 0, y: 0, z: 0 }
-    }
-
-    return {
-      x: x / length,
-      y: y / length,
-      z: z / length,
-    }
+    return vector
   }
 }
