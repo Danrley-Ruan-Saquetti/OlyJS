@@ -14,8 +14,14 @@ export type DrawStrokeOptions = {
   strokeWidth: number
 }
 
-export type DrawImageOptions = {
+export type DrawImageOptions = Omit<DrawOptions, 'color'> & IRectangle & {
   image: HTMLImageElement
+}
+
+export type DrawImageFrameOptions = Omit<DrawOptions, 'color'> & IRectangle & {
+  image: HTMLImageElement
+  imageX: number
+  imageY: number
 }
 
 export class CanvasRenderer {
@@ -59,10 +65,17 @@ export class CanvasRenderer {
     this.ctx.restore()
   }
 
-  drawImage({ image, x, y, width, height, fixed }: Omit<DrawOptions, 'color'> & DrawImageOptions & IRectangle) {
+  drawImage({ image, x, y, width, height, fixed }: DrawImageOptions) {
     this.ctx.save()
     if (!fixed) this.applyViewCamera()
     this.ctx.drawImage(image, x, y, width, height)
+    this.ctx.restore()
+  }
+
+  drawImageFrame({ image, x, y, imageX, imageY, width, height, fixed }: DrawImageFrameOptions) {
+    this.ctx.save()
+    if (!fixed) this.applyViewCamera()
+    this.ctx.drawImage(image, imageX, imageY, width, height, x, y, width, height)
     this.ctx.restore()
   }
 
