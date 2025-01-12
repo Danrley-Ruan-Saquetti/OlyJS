@@ -20,7 +20,8 @@ export class RectangleSpriteComponent extends SpriteComponent {
       y: this.gameObject.transform.position.y,
       width: this._shape.width,
       height: this._shape.height,
-      color: this.color
+      color: this.color,
+      fixed: this.fixed,
     })
   }
 }

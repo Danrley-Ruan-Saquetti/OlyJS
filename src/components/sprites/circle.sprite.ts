@@ -24,6 +24,7 @@ export class CircleSpriteComponent extends SpriteComponent {
       color: this.color,
       stroke: this.stroke,
       strokeWidth: this.strokeWidth,
+      fixed: this.fixed,
     })
   }
 }
