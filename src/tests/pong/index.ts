@@ -66,6 +66,11 @@ canvas.style.height = displayHeight + 'px'
 canvas.width = displayWidth * scale
 canvas.height = displayHeight * scale
 
-const game = new PongGame(canvas)
+async function app() {
+  const game = new PongGame(canvas)
 
-game.start()
+  await game.bootstrap()
+  game.start()
+}
+
+app()
