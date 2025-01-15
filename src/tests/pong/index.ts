@@ -11,8 +11,8 @@ export class PongGame extends Game {
   private ball: Ball
   private table: Table
 
-  protected prepareObjects() {
-    super.prepareObjects()
+  protected initializeScene() {
+    super.initializeScene()
 
     this.players = [
       new Player(),
@@ -67,10 +67,7 @@ canvas.width = displayWidth * scale
 canvas.height = displayHeight * scale
 
 async function app() {
-  const game = new PongGame(canvas)
-
-  await game.bootstrap()
+  const game = await PongGame.Bootstrap(canvas)
   game.start()
 }
-
 app()
