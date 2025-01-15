@@ -7,17 +7,17 @@ export class TransformComponent extends GameComponent {
   readonly position = new Vector3()
   readonly rotation = new Quaternion()
 
-  moveTo({ x, y, z }: IVector3) {
+  moveTo({ x = this.position.x, y = this.position.y, z = this.position.z }: Partial<IVector3>) {
     this.position.x = x
     this.position.y = y
     this.position.z = z
   }
 
-  moveNormalized({ x, y, z }: IVector3) {
+  moveNormalized({ x, y, z }: Partial<IVector3>) {
     this.translate(new Vector3(x, y, z).normalize())
   }
 
-  translate({ x, y, z }: IVector3) {
+  translate({ x = 0, y = 0, z = 0 }: Partial<IVector3>) {
     this.position.x += x
     this.position.y += y
     this.position.z += z
