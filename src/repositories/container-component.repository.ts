@@ -5,6 +5,16 @@ export class ContainerComponentRepository implements IContainerComponent {
 
   private components: GameComponent[] = []
 
+  start() {
+    const length = this.components.length
+
+    let i = 0
+    while (i < length) {
+      this.components[i].start()
+      i++
+    }
+  }
+
   addComponent(...components: GameComponent[]) {
     this.components.push(...components)
   }
