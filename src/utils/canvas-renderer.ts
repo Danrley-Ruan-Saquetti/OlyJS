@@ -18,10 +18,12 @@ export type DrawImageOptions = Omit<DrawOptions, 'color'> & IRectangle & {
   image: HTMLImageElement
 }
 
-export type DrawImageFrameOptions = Omit<DrawOptions, 'color'> & IRectangle & {
+export type DrawImageFrameOptions = Omit<DrawOptions, 'color'> & Partial<IRectangle> & {
   image: HTMLImageElement
   imageX: number
   imageY: number
+  imageWidth: number
+  imageHeight: number
 }
 
 export class CanvasRenderer {
@@ -72,10 +74,10 @@ export class CanvasRenderer {
     this.ctx.restore()
   }
 
-  drawImageFrame({ image, x, y, imageX, imageY, width, height, fixed }: DrawImageFrameOptions) {
+  drawImageFrame({ image, x, y, imageX, imageY, imageWidth, imageHeight, width = imageWidth, height = imageHeight, fixed }: DrawImageFrameOptions) {
     this.ctx.save()
     if (!fixed) this.applyViewCamera()
-    this.ctx.drawImage(image, imageX, imageY, width, height, x, y, width, height)
+    this.ctx.drawImage(image, imageX, imageY, imageWidth, imageHeight, x, y, width, height)
     this.ctx.restore()
   }
 

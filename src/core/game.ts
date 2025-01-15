@@ -12,6 +12,8 @@ export class Game extends GameLoop {
   private renderSystem = new RenderSystem2D(this._canvas, this._gameObjectRepository)
   private _cameraGameObject: CameraGameObject
 
+  get cameraGameObject() { return this._cameraGameObject }
+
   get canvas() { return this._canvas }
 
   constructor(

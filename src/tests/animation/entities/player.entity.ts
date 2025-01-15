@@ -1,6 +1,6 @@
 import { ImageSprite } from '../../../components/index.js'
 import { GameObject } from '../../../entities/index.js'
-import { CanvasRenderer } from '../../../utils/canvas-renderer.js'
+import { CanvasRenderer } from '../../../utils/index.js'
 
 export class Player extends GameObject {
 
@@ -20,10 +20,16 @@ export class Player extends GameObject {
       this.spriteImage
     )
 
+    this.body.origin.x = 196.5
+    this.body.origin.y = 110
+
+    this.body.dimension.width = 50
+    this.body.dimension.height = 100
+
     this.addComponent(this.body)
   }
 
   render(canvasRenderer: CanvasRenderer) {
-    this.body.render(canvasRenderer)
+    this.body.renderFrame(canvasRenderer)
   }
 }
