@@ -6,7 +6,7 @@ export class GameSystemRepository {
 
   get size() { return this._gameSystems.length }
 
-  startGameSystems() {
+  start() {
     const length = this._gameSystems.length
 
     let i = 0
@@ -16,7 +16,7 @@ export class GameSystemRepository {
     }
   }
 
-  stopGameSystems() {
+  stop() {
     const length = this._gameSystems.length
 
     let i = 0
@@ -26,7 +26,7 @@ export class GameSystemRepository {
     }
   }
 
-  updateGameSystems(deltaTime: DeltaTime) {
+  update(deltaTime: DeltaTime) {
     const length = this._gameSystems.length
 
     let i = 0
@@ -36,7 +36,7 @@ export class GameSystemRepository {
     }
   }
 
-  updateAfterGameSystems(deltaTime: DeltaTime) {
+  updateAfter(deltaTime: DeltaTime) {
     const length = this._gameSystems.length
 
     let i = 0

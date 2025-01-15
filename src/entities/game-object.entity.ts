@@ -15,6 +15,7 @@ export class GameObject implements IGameObject {
   update(deltaTime: DeltaTime) { }
   render(canvasRenderer: CanvasRenderer) { }
   onDestroy() { }
+  stop() { }
 
   start() {
     this._isDestroyed = false
@@ -31,14 +32,7 @@ export class GameObject implements IGameObject {
   }
 
   startComponents() {
-    const gameComponents = this._containerComponent.getComponents()
-    const length = gameComponents.length
-
-    let i = 0
-    while (i < length) {
-      gameComponents[i].start()
-      i++
-    }
+    this._containerComponent.start()
   }
 
   isDestroyed() {

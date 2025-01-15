@@ -6,21 +6,30 @@ export class GameObjectRepository {
 
   get size() { return this._gameObjects.length }
 
-  startGameObjects() {
+  start() {
+    const length = this._gameObjects.length
+
+    let i = 0; while (i < length) {
+      this._gameObjects[i].start?.(); i++
+    }
+
+    i = 0; while (i < length) {
+      this._gameObjects[i].startComponents?.(); i++
+    }
+  }
+
+  stop() {
     const length = this._gameObjects.length
 
     let i = 0
     while (i < length) {
-      const gameObject = this._gameObjects[i]
-
-      gameObject.start?.()
-      gameObject.startComponents?.()
+      this._gameObjects[i].stop?.()
 
       i++
     }
   }
 
-  updateGameObjects(deltaTime: DeltaTime) {
+  update(deltaTime: DeltaTime) {
     const length = this._gameObjects.length
 
     let i = 0
@@ -34,7 +43,7 @@ export class GameObjectRepository {
     this._gameObjects.push(...gameObjects)
   }
 
-  removeGameObjectsDestroyed() {
+  removeDestroyed() {
     this._gameObjects = this._gameObjects.filter(gameObject => !gameObject.isDestroyed())
   }
 
