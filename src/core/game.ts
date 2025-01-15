@@ -3,73 +3,62 @@ import { CameraGameObject } from '../entities/index.js'
 import { IGameObject, IGameSystem } from '../interfaces/index.js'
 import { KeyboardSystem, RenderSystem2D, MouseSystem } from '../systems/index.js'
 import { GameObjectRepository, GameSystemRepository } from '../repositories/index.js'
+import { GameLoop } from './game-loop.js'
 
-export class Game {
+export class Game extends GameLoop {
 
-  private _animationFrame: number
-  private _isRunning: boolean
-  private _deltaTime: DeltaTime
-  private _gameObjectRepository: GameObjectRepository
-  private _gameSystemRepository: GameSystemRepository
+  private _gameObjectRepository = new GameObjectRepository()
+  private _gameSystemRepository = new GameSystemRepository()
+  private renderSystem = new RenderSystem2D(this._canvas, this._gameObjectRepository)
   private _cameraGameObject: CameraGameObject
 
-  get deltaTime() { return this._deltaTime }
-  get camera() { return this._cameraGameObject }
+  get canvas() { return this._canvas }
 
   constructor(
-    protected canvas: HTMLCanvasElement
+    private _canvas: HTMLCanvasElement
   ) {
+    super()
+  }
+
+  static async Bootstrap(canvas: HTMLCanvasElement) {
+    const game = new this(canvas)
+    await game.bootstrap()
+
+    return game
   }
 
   async bootstrap() {
-    await this.initComponents()
-  }
-
-  protected async initComponents() {
-    this.resetComponents()
-  }
-
-  resetComponents() {
-    this._animationFrame = 0
-    this._isRunning = false
-    this._gameObjectRepository = new GameObjectRepository()
-    this._gameSystemRepository = new GameSystemRepository()
-    this._deltaTime = new DeltaTime()
-    this._cameraGameObject = new CameraGameObject()
+    this.initializeEngine()
+    this.loadAssets()
   }
 
   start() {
-    if (this._isRunning) {
-      throw 'Game already running'
-    }
-
-    this.resetComponents()
-    this.prepareObjects()
+    this.initializeScene()
+    this.startGameObjects()
     this.initializeObjects()
-    this._isRunning = true
-    this._deltaTime.reset()
-    this.updateFrame()
+    this.startSystemObjects()
+
+    super.start()
   }
 
-  protected prepareObjects() {
+  protected initializeEngine() {
     this.addGameSystem(
       new KeyboardSystem(),
-      new MouseSystem(this.canvas),
-      new RenderSystem2D(
-        this.canvas,
-        this._gameObjectRepository,
-        this._cameraGameObject
-      )
+      new MouseSystem(this._canvas),
+      this.renderSystem,
     )
-    this.addGameObject(
-      this._cameraGameObject
-    )
+  }
+
+  protected initializeScene() {
+    this._gameObjectRepository.clear()
+
+    this._cameraGameObject = new CameraGameObject()
+
+    this.addGameObject(this._cameraGameObject)
+    this.renderSystem.setCameraGameObject(this._cameraGameObject)
   }
 
   protected initializeObjects() {
-    this._gameObjectRepository.startGameObjects()
-    this._gameSystemRepository.startGameSystems()
-
     this._cameraGameObject.transform.moveTo({
       x: this.canvas.width / 2,
       y: this.canvas.height / 2,
@@ -77,34 +66,36 @@ export class Game {
     })
   }
 
-  stop() {
-    if (!this._isRunning) {
-      throw 'Game already stopped'
-    }
-
-    this._isRunning = false
-    this._gameSystemRepository.stopGameSystems()
-    cancelAnimationFrame(this._animationFrame)
+  protected startGameObjects() {
+    this._gameObjectRepository.start()
   }
 
-  private updateFrame() {
-    this._deltaTime.next()
-    this.internalUpdate()
-    this.update()
-    this._gameSystemRepository.updateAfterGameSystems(this._deltaTime)
-    this._gameObjectRepository.removeGameObjectsDestroyed()
-
-    if (this._isRunning) {
-      this._animationFrame = requestAnimationFrame(() => this.updateFrame())
-    }
+  protected startSystemObjects() {
+    this._gameSystemRepository.start()
   }
 
-  private internalUpdate() {
-    this._gameSystemRepository.updateGameSystems(this._deltaTime)
-    this._gameObjectRepository.updateGameObjects(this._deltaTime)
+  protected stopObjects() {
+    this._gameObjectRepository.stop()
+    this._gameSystemRepository.stop()
   }
 
-  update() { }
+  protected nextFrame() {
+    this.deltaTime.next()
+    this.updateObjects()
+    this.update(this.deltaTime)
+    this.updateAfter()
+    this.endFrame()
+  }
+
+  protected updateObjects() {
+    this._gameSystemRepository.update(this.deltaTime)
+    this._gameObjectRepository.update(this.deltaTime)
+  }
+
+  protected updateAfter() {
+    this._gameSystemRepository.updateAfter(this.deltaTime)
+    this._gameObjectRepository.removeDestroyed()
+  }
 
   addGameObject(...gameObjects: IGameObject[]) {
     this._gameObjectRepository.addGameObject(...gameObjects)
@@ -113,4 +104,7 @@ export class Game {
   addGameSystem(...gameSystems: IGameSystem[]) {
     this._gameSystemRepository.addGameSystem(...gameSystems)
   }
+
+  update(deltaTime: DeltaTime) { }
+  protected loadAssets() { }
 }
