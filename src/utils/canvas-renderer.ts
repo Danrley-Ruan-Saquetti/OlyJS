@@ -28,7 +28,7 @@ export class CanvasRenderer {
 
   constructor(
     public readonly ctx: ContextRender2D,
-    private readonly cameraGameObject: CameraGameObject
+    private readonly cameraGameObject?: CameraGameObject
   ) { }
 
   drawRectangle({ x, y, height, width, color, fixed }: IRectangle & DrawOptions) {
@@ -84,6 +84,8 @@ export class CanvasRenderer {
   }
 
   applyViewCamera() {
+    if (!this.cameraGameObject) { throw 'Camera Object not provider' }
+
     this.ctx.translate(
       this.cameraGameObject.transform.position.x,
       this.cameraGameObject.transform.position.y
