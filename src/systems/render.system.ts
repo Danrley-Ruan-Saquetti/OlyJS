@@ -1,5 +1,5 @@
 import { CameraGameObject } from '../entities/index.js'
-import { IRenderable } from '../interfaces/index.js'
+import { ContextRender2D, IRenderable } from '../interfaces/index.js'
 import { GameObjectRepository } from '../repositories/index.js'
 import { CanvasRenderer, DeltaTime } from '../utils/index.js'
 import { GameSystem } from './system.js'
@@ -7,13 +7,14 @@ import { GameSystem } from './system.js'
 export class RenderSystem2D extends GameSystem {
 
   private canvasRenderer: CanvasRenderer
+  private _ctx: ContextRender2D
 
   get canvas() { return this._canvas }
 
   constructor(
     private _canvas: HTMLCanvasElement,
     private gameObjectRepository: GameObjectRepository,
-    private cameraGameObject: CameraGameObject
+    private cameraGameObject?: CameraGameObject
   ) {
     super()
 
@@ -21,7 +22,12 @@ export class RenderSystem2D extends GameSystem {
 
     if (ctx == null) throw 'Canvas element cannot have a context to drawing graphics 2D'
 
-    this.canvasRenderer = new CanvasRenderer(ctx, this.cameraGameObject)
+    this._ctx = ctx
+    this.canvasRenderer = new CanvasRenderer(ctx)
+
+    if (this.cameraGameObject) {
+      this.setCameraGameObject(this.cameraGameObject)
+    }
   }
 
   updateAfter(deltaTime: DeltaTime): void {
@@ -37,6 +43,11 @@ export class RenderSystem2D extends GameSystem {
       renderable[i].render(this.canvasRenderer)
       i++
     }
+  }
+
+  setCameraGameObject(cameraGameObject: CameraGameObject) {
+    this.cameraGameObject = cameraGameObject
+    this.canvasRenderer = new CanvasRenderer(this._ctx, cameraGameObject)
   }
 
   clear() {
