@@ -6,8 +6,8 @@ export class AnimationGame extends Game {
   player: Player
   playerSpriteImage: HTMLImageElement
 
-  protected async initComponents() {
-    super.initComponents()
+  async bootstrap() {
+    await super.bootstrap()
 
     const playerSpriteImage = new Image()
     playerSpriteImage.src = '../../../assets/player-sprite.png'
@@ -17,8 +17,8 @@ export class AnimationGame extends Game {
     this.playerSpriteImage = playerSpriteImage
   }
 
-  protected prepareObjects() {
-    super.prepareObjects()
+  protected initializeScene() {
+    super.initializeScene()
 
     this.player = new Player(this.playerSpriteImage)
 
@@ -38,9 +38,7 @@ canvas.width = displayWidth * scale
 canvas.height = displayHeight * scale
 
 async function app() {
-  const game = new AnimationGame(canvas)
-
-  await game.bootstrap()
+  const game = await AnimationGame.Bootstrap(canvas)
   game.start()
 }
 
