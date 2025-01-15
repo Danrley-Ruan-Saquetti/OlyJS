@@ -1,8 +1,8 @@
 export class Timer {
 
-  protected _lastElapsedTimeMilliseconds = 0
-  protected _elapsedTimeMilliseconds = 0
-  protected _totalElapsedTimeMilliseconds = 0
+  protected _lastElapsedTimeMilliseconds: number
+  protected _elapsedTimeMilliseconds: number
+  protected _totalElapsedTimeMilliseconds: number
 
   get lastElapsedTimeMilliseconds() { return this._lastElapsedTimeMilliseconds }
   get elapsedTimeMilliseconds() { return this._elapsedTimeMilliseconds }
@@ -10,18 +10,26 @@ export class Timer {
   get totalElapsedTimeMilliseconds() { return this._totalElapsedTimeMilliseconds }
   get totalElapsedTimeSeconds() { return this._totalElapsedTimeMilliseconds / 1_000 }
 
+  constructor() {
+    this.reset()
+  }
+
   reset() {
-    this._lastElapsedTimeMilliseconds = 0
+    this._lastElapsedTimeMilliseconds = this.performanceNow()
     this._elapsedTimeMilliseconds = 0
     this._totalElapsedTimeMilliseconds = 0
   }
 
   next() {
-    const current = performance.now()
+    const current = this.performanceNow()
 
     this._elapsedTimeMilliseconds = current - this._lastElapsedTimeMilliseconds
     this._totalElapsedTimeMilliseconds += this._elapsedTimeMilliseconds
     this._lastElapsedTimeMilliseconds = current
+  }
+
+  performanceNow() {
+    return performance.now()
   }
 
   toJSON() {
