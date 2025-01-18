@@ -6,9 +6,7 @@ export class AnimationGame extends Game {
   player: Player
   playerSpriteImage: HTMLImageElement
 
-  async bootstrap() {
-    await super.bootstrap()
-
+  protected async loadAssets() {
     const playerSpriteImage = new Image()
     playerSpriteImage.src = '../../../assets/player-sprite.png'
 
