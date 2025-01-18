@@ -15,6 +15,11 @@ export class CycleExecutor {
     this._deltaTime.reset()
   }
 
+  runOneFrame() {
+    this.start()
+    this.stop()
+  }
+
   start() {
     this.triggerStart()
   }
