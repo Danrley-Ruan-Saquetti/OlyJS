@@ -47,5 +47,5 @@ export class CycleExecutor {
     }
   }
 
-  protected update(deltaTime: DeltaTime) { }
+  update(deltaTime: DeltaTime) { }
 }
