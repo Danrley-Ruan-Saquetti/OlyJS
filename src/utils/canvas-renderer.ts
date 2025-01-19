@@ -26,6 +26,12 @@ export type DrawImageFrameOptions = Omit<DrawOptions, 'color'> & Partial<IRectan
   imageHeight: number
 }
 
+export type DrawTextOptions = DrawOptions & {
+  text: string
+  font?: string
+  maxWidth?: number
+}
+
 export class CanvasRenderer {
 
   constructor(
@@ -78,6 +84,15 @@ export class CanvasRenderer {
     this.ctx.save()
     if (!fixed) this.applyViewCamera()
     this.ctx.drawImage(image, imageX, imageY, imageWidth, imageHeight, x, y, width, height)
+    this.ctx.restore()
+  }
+
+  drawText({ text, x, y, maxWidth, font, color, fixed }: DrawTextOptions) {
+    this.ctx.save()
+    if (!fixed) this.applyViewCamera()
+    if (font) this.ctx.font = font
+    if (color) this.ctx.fillStyle = color
+    this.ctx.fillText(text, x, y, maxWidth)
     this.ctx.restore()
   }
 
