@@ -1,6 +1,6 @@
 import { CameraGameObject } from '../entities/index.js'
 import { IGameObject, IGameSystem } from '../interfaces/index.js'
-import { KeyboardSystem, RenderSystem2D, MouseSystem } from '../systems/index.js'
+import { KeyboardSystem, RenderSystem2D, MouseSystem, TimeoutSystem } from '../systems/index.js'
 import { GameObjectRepository, GameSystemRepository } from '../repositories/index.js'
 import { GameEngine } from './game-engine.js'
 
@@ -47,6 +47,7 @@ export class Game extends GameEngine {
       new KeyboardSystem(),
       new MouseSystem(this._canvas),
       this.renderSystem,
+      new TimeoutSystem()
     )
   }
 

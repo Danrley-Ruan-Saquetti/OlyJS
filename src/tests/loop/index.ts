@@ -1,32 +1,36 @@
-import { CycleExecutor, DeltaTime, Input, KeyboardSystem, Keys, TimeoutManager } from '../../index.js'
+import { DeltaTime, Game, Input, Keys, Timeout } from '../../index.js'
 
-const cycleExecutor = new CycleExecutor()
+class TimeoutGame extends Game {
 
-const timeout = new TimeoutManager()
+  id: string | null = null
+  isActive = false
 
-let isActive = false
+  update(deltaTime: DeltaTime): void {
+    if (Input.keyboard.isKeyDown(Keys.Space)) {
+      if (!this.isActive) {
+        this.isActive = true
 
-new KeyboardSystem().start()
+        console.log('start setInterval')
 
-let id
+        this.id = Timeout.setInterval(() => {
+          console.log('trigger setInterval')
+        }, 500)
+      }
+    } else {
+      if (this.isActive) {
+        console.log('clear setInterval')
 
-cycleExecutor.update = (deltaTime: DeltaTime) => {
-  timeout.update(deltaTime)
-
-  if (Input.keyboard.isKeyDown(Keys.Space)) {
-    if (!isActive) {
-      isActive = true
-
-      id = timeout.setInterval(() => {
-        console.log('!')
-      }, 1_000)
+        Timeout.clearTimeout(this.id!)
+      }
+      this.isActive = false
     }
-  } else {
-    if (isActive) {
-      timeout.clearTimeout(id)
-    }
-    isActive = false
   }
 }
 
-cycleExecutor.start()
+async function app() {
+  const game = await TimeoutGame.Bootstrap(document.querySelector<HTMLCanvasElement>('canvas#canvas-game')!)
+
+  game.start()
+}
+
+app()
