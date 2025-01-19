@@ -1,6 +1,6 @@
-import { RectangleSpriteComponent, GameObject, CanvasRenderer, RectangleShapeComponent, DeltaTime } from '../../../index.js'
+import { RectangleSpriteComponent, RectangleGameObject, CanvasRenderer, DeltaTime } from '../../../index.js'
 
-export class RacketPlayer extends GameObject {
+export class RacketPlayer extends RectangleGameObject {
 
   bodySprite: RectangleSpriteComponent
   speed = 150
@@ -8,13 +8,11 @@ export class RacketPlayer extends GameObject {
   start() {
     super.start()
 
-    this.bodySprite = new RectangleSpriteComponent(
-      this,
-      new RectangleShapeComponent(15, 80)
-    )
-    this.bodySprite.color = '#FFF'
+    this.bodySprite = this.getComponent(RectangleSpriteComponent)!
 
-    this.addComponent(this.bodySprite)
+    this.bodySprite.shape.width = 15
+    this.bodySprite.shape.height = 80
+    this.bodySprite.color = '#FFF'
   }
 
   update(deltaTime: DeltaTime): void {
