@@ -29,11 +29,15 @@ export class Game extends GameEngine {
   }
 
   start() {
-    this.initializeScene()
-    this.startGameObjects()
-    this.initializeObjects()
-    this.startSystemObjects()
-    super.triggerStart()
+    try {
+      this.initializeScene()
+      this.startGameObjects()
+      this.initializeObjects()
+      this.startSystemObjects()
+      super.triggerStart()
+    } catch (error: any) {
+      this.onError(error)
+    }
   }
 
   stop() {

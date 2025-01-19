@@ -3,15 +3,23 @@ import { DeltaTime, CycleExecutor } from '../utils/index.js'
 export abstract class GameEngine extends CycleExecutor {
 
   async bootstrap() {
-    this.initializeEngine()
-    await this.loadAssets()
+    try {
+      this.initializeEngine()
+      await this.loadAssets()
+    } catch (error) {
+      this.onError(error)
+    }
   }
 
   start() {
-    this.initializeScene()
-    this.initializeObjects()
+    try {
+      this.initializeScene()
+      this.initializeObjects()
 
-    super.start()
+      super.start()
+    } catch (error) {
+      this.onError(error)
+    }
   }
 
   stop() {
@@ -21,11 +29,19 @@ export abstract class GameEngine extends CycleExecutor {
   }
 
   protected nextFrame() {
-    this.deltaTime.next()
-    this.updateObjects()
-    this.update(this.deltaTime)
-    this.updateAfter()
-    this.endFrame()
+    try {
+      this.deltaTime.next()
+      this.updateObjects()
+      this.update(this.deltaTime)
+      this.updateAfter()
+      this.endFrame()
+    } catch (error) {
+      this.onError(error)
+    }
+  }
+
+  onError(error: unknown) {
+    console.error(error)
   }
 
   protected initializeEngine() { }
