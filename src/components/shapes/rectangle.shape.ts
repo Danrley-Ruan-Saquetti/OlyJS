@@ -10,8 +10,8 @@ export class RectangleShapeComponent extends ShapeComponent implements IRectangl
   set height(value) { this._height = value }
 
   constructor(
-    private _width = 0,
-    private _height = 0
+    private _width = 50,
+    private _height = 50
   ) {
     super()
   }

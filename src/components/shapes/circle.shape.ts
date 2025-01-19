@@ -8,7 +8,7 @@ export class CircleShapeComponent extends ShapeComponent implements ICircle {
   set radius(value) { this._radius = value }
 
   constructor(
-    public _radius: number
+    public _radius = 1
   ) {
     super()
   }

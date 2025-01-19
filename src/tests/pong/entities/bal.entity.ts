@@ -1,7 +1,7 @@
-import { GameObject, CircleSpriteComponent, CircleShapeComponent, CanvasRenderer, DeltaTime, Vector2, Input, Keys } from '../../../index.js'
+import { CircleGameObject, CircleSpriteComponent, CircleShapeComponent, CanvasRenderer, DeltaTime, Vector2, Input, Keys } from '../../../index.js'
 import { Table } from './table.entity.js'
 
-export class Ball extends GameObject {
+export class Ball extends CircleGameObject {
 
   body: CircleSpriteComponent
   direction: Vector2
@@ -18,13 +18,10 @@ export class Ball extends GameObject {
 
     this.direction = new Vector2(1, 1)
 
-    this.body = new CircleSpriteComponent(
-      this,
-      new CircleShapeComponent(15)
-    )
-    this.body.color = 'yellow'
+    this.body = this.getComponent(CircleSpriteComponent)!
 
-    this.addComponent(this.body)
+    this.body.shape.radius = 15
+    this.body.color = 'yellow'
   }
 
   update(deltaTime: DeltaTime) {
