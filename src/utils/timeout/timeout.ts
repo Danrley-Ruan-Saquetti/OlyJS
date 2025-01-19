@@ -1,36 +1,35 @@
-import { DeltaTime } from '../delta-time.js'
-import { Random } from '../random.js'
-
-export type TimeoutHandler = () => void
+import { TimeoutRepository } from '../../repositories/index.js'
+import { TimeoutHandler, TimeoutCallback } from './timeout-handler.js'
 
 export class Timeout {
 
-  readonly id = Random.uuidTime()
+  private static readonly timeoutRepository = new TimeoutRepository()
 
-  private _isFinish = false
-  private elapsed = 0
+  static setTimeout(callback: TimeoutCallback, delay: number) {
+    const timeout = new TimeoutHandler(callback, delay)
 
-  get isFinish() { return this._isFinish }
+    Timeout.timeoutRepository.add(timeout)
 
-  constructor(
-    public readonly callback: TimeoutHandler,
-    public readonly delay: number,
-    public readonly isRepeat = false
-  ) { }
+    return timeout.id
+  }
 
-  update(deltaTime: DeltaTime) {
-    this.elapsed += deltaTime.elapsedTimeMilliseconds
+  static setInterval(callback: TimeoutCallback, delay: number) {
+    const timeout = new TimeoutHandler(callback, delay, true)
 
-    if (this.elapsed < this.delay) {
-      return
-    }
+    Timeout.timeoutRepository.add(timeout)
 
-    this.callback()
+    return timeout.id
+  }
 
-    if (this.isRepeat) {
-      this.elapsed -= this.delay
-    } else {
-      this._isFinish = true
-    }
+  static clearTimeout(id: string) {
+    return Timeout.timeoutRepository.remove(id)
+  }
+
+  static clearTimeouts() {
+    Timeout.timeoutRepository.clear()
+  }
+
+  static getTimeouts() {
+    return Timeout.timeoutRepository.getTimeouts()
   }
 }
