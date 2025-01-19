@@ -4,6 +4,7 @@ import { IAPlayer } from './entities/ia-player.entity.js'
 import { RacketPlayer } from './entities/player-racket.entity.js'
 import { Ball } from './entities/bal.entity.js'
 import { Table } from './entities/table.entity.js'
+import { FPSView } from './entities/fps.entity.js'
 
 export class PongGame extends Game {
 
@@ -25,6 +26,7 @@ export class PongGame extends Game {
       this.table,
       ...this.players,
       this.ball,
+      new FPSView()
     )
   }
 
@@ -34,12 +36,12 @@ export class PongGame extends Game {
     this.players[0].transform.moveTo({
       x: -(this.canvas.width / 2) + 15,
       y: -40,
-      z: 0
+      z: 0,
     })
     this.players[1].transform.moveTo({
       x: (this.canvas.width / 2) - 30,
       y: -40,
-      z: 0
+      z: 0,
     })
     this.table.transform.moveTo({
       x: -(this.canvas.width / 2),
