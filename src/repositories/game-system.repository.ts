@@ -11,7 +11,7 @@ export class GameSystemRepository {
 
     let i = 0
     while (i < length) {
-      this._gameSystems[i].start?.()
+      this._gameSystems[i].start()
       i++
     }
   }
@@ -21,7 +21,7 @@ export class GameSystemRepository {
 
     let i = 0
     while (i < length) {
-      this._gameSystems[i].stop?.()
+      this._gameSystems[i].stop()
       i++
     }
   }
@@ -41,7 +41,7 @@ export class GameSystemRepository {
 
     let i = 0
     while (i < length) {
-      this._gameSystems[i].updateAfter?.(deltaTime)
+      this._gameSystems[i].updateAfter(deltaTime)
       i++
     }
   }

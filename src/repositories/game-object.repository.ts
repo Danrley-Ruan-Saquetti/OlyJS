@@ -10,11 +10,11 @@ export class GameObjectRepository {
     const length = this._gameObjects.length
 
     let i = 0; while (i < length) {
-      this._gameObjects[i].start?.(); i++
+      this._gameObjects[i].start(); i++
     }
 
     i = 0; while (i < length) {
-      this._gameObjects[i].startComponents?.(); i++
+      this._gameObjects[i].startComponents(); i++
     }
   }
 
@@ -23,7 +23,7 @@ export class GameObjectRepository {
 
     let i = 0
     while (i < length) {
-      this._gameObjects[i].stop?.()
+      this._gameObjects[i].stop()
 
       i++
     }

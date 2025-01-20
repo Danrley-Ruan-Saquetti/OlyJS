@@ -1,9 +1,9 @@
 import { CanvasRenderer, DeltaTime } from '../utils/index.js'
-import { IContainerComponent, IGameObject, ITaggable, Tag } from '../interfaces/index.js'
+import { IGameObject, Tag } from '../interfaces/index.js'
 import { GameComponent, TransformComponent } from '../components/index.js'
 import { ContainerComponentRepository, ContainerTagRepository } from '../repositories/index.js'
 
-export class GameObject implements IGameObject, IContainerComponent, ITaggable {
+export class GameObject implements IGameObject {
 
   private _isDestroyed: boolean
 
