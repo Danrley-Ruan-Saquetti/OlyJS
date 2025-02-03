@@ -15,7 +15,6 @@ export abstract class GameEngine extends CycleExecutor {
     try {
       this.initializeScene()
       this.initializeObjects()
-
       super.start()
     } catch (error) {
       this.onError(error)
@@ -24,20 +23,15 @@ export abstract class GameEngine extends CycleExecutor {
 
   stop() {
     this.stopObjects()
-
     super.stop()
   }
 
   protected nextFrame() {
-    try {
-      this.deltaTime.next()
-      this.updateObjects()
-      this.update(this.deltaTime)
-      this.updateAfter()
-      this.endFrame()
-    } catch (error) {
-      this.onError(error)
-    }
+    this.deltaTime.next()
+    this.updateObjects()
+    this.update(this.deltaTime)
+    this.updateAfter()
+    this.endFrame()
   }
 
   onError(error: unknown) {
