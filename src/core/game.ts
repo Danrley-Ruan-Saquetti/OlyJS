@@ -8,7 +8,7 @@ export class Game extends GameEngine {
 
   private _gameObjectRepository = new GameObjectRepository()
   private _gameSystemRepository = new GameSystemRepository()
-  private renderSystem = new RenderSystem2D(this._canvas, this._gameObjectRepository)
+  protected renderSystem = new RenderSystem2D(this._canvas, this._gameObjectRepository)
   private _cameraGameObject: CameraGameObject
 
   get cameraGameObject() { return this._cameraGameObject }
@@ -38,12 +38,6 @@ export class Game extends GameEngine {
     } catch (error: any) {
       this.onError(error)
     }
-  }
-
-  stop() {
-    this.stopObjects()
-
-    super.stop()
   }
 
   protected initializeEngine() {
