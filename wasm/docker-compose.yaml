@@ -1,7 +1,10 @@
+name: oly
+
 services:
   web:
-    build: .
-    ports:
-      - "8080:80"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: builder
     volumes:
-      - ./src:/app
+      - .:/app

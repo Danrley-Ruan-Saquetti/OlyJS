@@ -43,6 +43,13 @@
 <body>
   <canvas id="canvas-game"></canvas>
 
+  <script src="../../../dist/wasm/wasm_app.js"></script>
+  <script>
+    Module().then(instance => {
+      console.log(instance)
+      console.log(instance._add(3, 5))
+    });
+  </script>
   <script type="module" src="../../../dist/tests/pong/index.js"></script>
   <script type="module" src="../../../dist/index.js"></script>
 </body>
