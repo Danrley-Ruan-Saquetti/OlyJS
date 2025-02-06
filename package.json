@@ -2,7 +2,7 @@
   "name": "olyjs",
   "scripts": {
     "start:dev": "live-server",
-    "build:dev": "tsc --watch"
+    "build:dev": "tsc --watch --preserveWatchOutput"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.0.0",
