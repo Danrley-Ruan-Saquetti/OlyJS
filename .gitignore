@@ -39,7 +39,7 @@ bower_components
 build/Release
 
 # WASM compiled binary
-*/**/build_wasm/
+*/**/*_wasm/
 
 # Dependency directories
 node_modules/
