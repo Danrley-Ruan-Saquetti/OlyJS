@@ -16,5 +16,5 @@ set_target_properties(engine PROPERTIES OUTPUT_NAME "engine")
 set_target_properties(engine PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR} 
   LIBRARY_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR}
-  LINK_FLAGS "-s EXPORTED_FUNCTIONS='[_add]' -s MODULARIZE=1 -o ${BIN_OUTPUT_DIR}/engine.js"
+  LINK_FLAGS "-s EXPORTED_FUNCTIONS='[_add, _fatorial]' -s MODULARIZE=1 -o ${BIN_OUTPUT_DIR}/engine.js"
 )
