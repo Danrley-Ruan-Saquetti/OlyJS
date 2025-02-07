@@ -31,9 +31,9 @@ export class Game extends GameEngine {
   start() {
     try {
       this.initializeScene()
+      this.startSystemObjects()
       this.startGameObjects()
       this.initializeObjects()
-      this.startSystemObjects()
       super.triggerStart()
     } catch (error: any) {
       this.onError(error)

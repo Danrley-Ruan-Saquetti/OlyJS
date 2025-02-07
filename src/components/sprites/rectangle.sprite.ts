@@ -16,8 +16,8 @@ export class RectangleSpriteComponent extends SpriteComponent {
 
   render(canvasRenderer: CanvasRenderer) {
     canvasRenderer.drawRectangle({
-      x: this.gameObject.transform.position.x,
-      y: this.gameObject.transform.position.y,
+      x: this.gameObject.transform.position.x - (this._shape.width / 2),
+      y: this.gameObject.transform.position.y - (this._shape.height / 2),
       width: this._shape.width,
       height: this._shape.height,
       color: this.color,
