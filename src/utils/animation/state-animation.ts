@@ -13,6 +13,7 @@ export type StateAnimationArgs = {
   sprite: ImageSprite
   delay: number
   isRepeat?: boolean
+  runOnStart?: boolean
 }
 
 export class StateAnimation {
@@ -20,24 +21,40 @@ export class StateAnimation {
   readonly key: string
   private frames: IFrameState[]
   private sprite: ImageSprite
-  private delay: number
+  private _delay: number
   private isRepeat: boolean
+  private runOnStart: boolean
 
   private currentFrameIndex = 0
   private currentFrame: IFrameState
 
   private idTimeout: string
 
-  constructor({ key, frames, sprite, delay, isRepeat = false }: StateAnimationArgs) {
+  set delay(value: number) {
+    this._delay = value
+
+    const timeoutHandler = Timeout.getTimeout(this.idTimeout)
+
+    if (timeoutHandler) {
+      timeoutHandler.delay = value
+    }
+  }
+
+  constructor({ key, frames, sprite, delay, isRepeat = false, runOnStart = false }: StateAnimationArgs) {
     this.key = key
     this.frames = frames
     this.sprite = sprite
-    this.delay = delay
+    this._delay = delay
     this.isRepeat = isRepeat
+    this.runOnStart = runOnStart
   }
 
   start() {
-    this.idTimeout = Timeout.setInterval(() => this.nextFrame(), this.delay)
+    this.idTimeout = Timeout.setInterval(() => this.nextFrame(), this._delay)
+
+    if (this.runOnStart) {
+      this.nextFrame()
+    }
   }
 
   stop() {
