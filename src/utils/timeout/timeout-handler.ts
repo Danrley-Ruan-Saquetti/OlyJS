@@ -14,7 +14,7 @@ export class TimeoutHandler {
 
   constructor(
     public readonly callback: TimeoutCallback,
-    public readonly delay: number,
+    public delay: number,
     public readonly isRepeat = false
   ) { }
 

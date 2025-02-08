@@ -1,4 +1,4 @@
-import { TimeoutHandler, TimeoutCallback } from '../utils/index.js'
+import { TimeoutHandler } from '../utils/index.js'
 
 export class TimeoutRepository {
 
@@ -14,6 +14,10 @@ export class TimeoutRepository {
 
   clear() {
     this.timeouts.clear()
+  }
+
+  getTimeout(id: string) {
+    return this.timeouts.get(id)
   }
 
   getTimeouts() {

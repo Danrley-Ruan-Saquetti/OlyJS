@@ -32,4 +32,8 @@ export class Timeout {
   static getTimeouts() {
     return Timeout.timeoutRepository.getTimeouts()
   }
+
+  static getTimeout(id: string) {
+    return Timeout.timeoutRepository.getTimeout(id)
+  }
 }
