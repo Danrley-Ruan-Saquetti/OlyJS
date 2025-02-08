@@ -19,11 +19,17 @@ export class Animator {
     }
   }
 
-  activeState(key: string) {
+  activeState(key: string, { ignoreIfAlreadyActive = false }: { ignoreIfAlreadyActive?: boolean } = {}) {
+    if (this.currentState && this.currentState.key == key) {
+      if (ignoreIfAlreadyActive) {
+        return false
+      }
+    }
+
     const state = this.states.get(key)
 
     if (!state) {
-      throw new Error(`Animation state "${key}" not defined`)
+      return false
     }
 
     if (this.currentState) {
@@ -33,6 +39,12 @@ export class Animator {
     this.currentState = state
 
     this.currentState.start()
+
+    return true
+  }
+
+  getCurrentState() {
+    return this.currentState
   }
 
   removeState(key: string) {
