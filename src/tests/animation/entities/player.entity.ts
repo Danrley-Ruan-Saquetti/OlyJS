@@ -19,9 +19,13 @@ export class Player extends GameObject {
 
   private animator: Animator
 
-  private speed = 100
   private speedAnimation = 200
-  private speedAnimationBoosted = this.speedAnimation + 50
+  private speedAnimationSprint = this.speedAnimation + 10
+
+  private normalSpeed = 100
+  private sprintSpeed = this.normalSpeed * 1.75
+  private currentSpeed = this.normalSpeed
+
   private direction = 'down'
   private isBoostSpeed = false
 
@@ -41,144 +45,123 @@ export class Player extends GameObject {
 
     this.animator = new Animator()
 
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'idle-down',
-      frames: PLAYER_STATE_IDLE_DOWN_FRAMES,
-      delay: this.speedAnimation,
-      sprite: this.body,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'idle-up',
-      frames: PLAYER_STATE_IDLE_UP_FRAMES,
-      delay: this.speedAnimation,
-      sprite: this.body,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'idle-left',
-      frames: PLAYER_STATE_IDLE_LEFT_FRAMES,
-      delay: this.speedAnimation,
-      sprite: this.body,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'idle-right',
-      frames: PLAYER_STATE_IDLE_RIGHT_FRAMES,
-      delay: this.speedAnimation,
-      sprite: this.body,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'walk-down',
-      frames: PLAYER_STATE_WALK_DOWN_FRAMES,
-      delay: this.speedAnimation,
-      sprite: this.body,
-      isRepeat: true,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'walk-up',
-      frames: PLAYER_STATE_WALK_UP_FRAMES,
-      delay: this.speedAnimation,
-      sprite: this.body,
-      isRepeat: true,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'walk-left',
-      frames: PLAYER_STATE_WALK_LEFT_FRAMES,
-      delay: this.speedAnimation,
-      sprite: this.body,
-      isRepeat: true,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'walk-right',
-      frames: PLAYER_STATE_WALK_RIGHT_FRAMES,
-      delay: this.speedAnimation,
-      sprite: this.body,
-      isRepeat: true,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'walk-down-speed',
-      frames: PLAYER_STATE_WALK_DOWN_FRAMES,
-      delay: this.speedAnimationBoosted,
-      sprite: this.body,
-      isRepeat: true,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'walk-up-speed',
-      frames: PLAYER_STATE_WALK_UP_FRAMES,
-      delay: this.speedAnimationBoosted,
-      sprite: this.body,
-      isRepeat: true,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'walk-left-speed',
-      frames: PLAYER_STATE_WALK_LEFT_FRAMES,
-      delay: this.speedAnimationBoosted,
-      sprite: this.body,
-      isRepeat: true,
-      runOnStart: true,
-    }))
-    this.animator.addAnimationState(new StateAnimation({
-      key: 'walk-right-speed',
-      frames: PLAYER_STATE_WALK_RIGHT_FRAMES,
-      delay: this.speedAnimationBoosted,
-      sprite: this.body,
-      isRepeat: true,
-      runOnStart: true,
-    }))
+    const states = [
+      {
+        key: 'idle-down',
+        frames: PLAYER_STATE_IDLE_DOWN_FRAMES,
+        delay: this.speedAnimation,
+      },
+      {
+        key: 'idle-up',
+        frames: PLAYER_STATE_IDLE_UP_FRAMES,
+        delay: this.speedAnimation,
+      },
+      {
+        key: 'idle-left',
+        frames: PLAYER_STATE_IDLE_LEFT_FRAMES,
+        delay: this.speedAnimation,
+      },
+      {
+        key: 'idle-right',
+        frames: PLAYER_STATE_IDLE_RIGHT_FRAMES,
+        delay: this.speedAnimation,
+      },
+      {
+        key: 'walk-down',
+        frames: PLAYER_STATE_WALK_DOWN_FRAMES,
+        delay: this.speedAnimation,
+        isRepeat: true,
+      },
+      {
+        key: 'walk-up',
+        frames: PLAYER_STATE_WALK_UP_FRAMES,
+        delay: this.speedAnimation,
+        isRepeat: true,
+      },
+      {
+        key: 'walk-left',
+        frames: PLAYER_STATE_WALK_LEFT_FRAMES,
+        delay: this.speedAnimation,
+        isRepeat: true,
+      },
+      {
+        key: 'walk-right',
+        frames: PLAYER_STATE_WALK_RIGHT_FRAMES,
+        delay: this.speedAnimation,
+        isRepeat: true,
+      },
+      {
+        key: 'walk-down-speed',
+        frames: PLAYER_STATE_WALK_DOWN_FRAMES,
+        delay: this.speedAnimationSprint,
+        isRepeat: true,
+      },
+      {
+        key: 'walk-up-speed',
+        frames: PLAYER_STATE_WALK_UP_FRAMES,
+        delay: this.speedAnimationSprint,
+        isRepeat: true,
+      },
+      {
+        key: 'walk-left-speed',
+        frames: PLAYER_STATE_WALK_LEFT_FRAMES,
+        delay: this.speedAnimationSprint,
+        isRepeat: true,
+      },
+      {
+        key: 'walk-right-speed',
+        frames: PLAYER_STATE_WALK_RIGHT_FRAMES,
+        delay: this.speedAnimationSprint,
+        isRepeat: true,
+      }
+    ]
+
+    states.map(state => {
+      this.animator.addAnimationState(new StateAnimation({
+        ...state,
+        sprite: this.body,
+        delay: this.speedAnimation,
+        runOnStart: true,
+      }))
+    })
 
     this.addComponent(this.body)
   }
 
   update(deltaTime: DeltaTime) {
-    let directionMoved: string | null = null
 
-    let boostSpeed = 0
+    this.isBoostSpeed = Input.keyboard.isKeyDown(Keys.ShiftLeft)
 
-    if (Input.keyboard.isKeyDown(Keys.ShiftLeft)) {
-      if (!this.isBoostSpeed) {
-        this.animator.getCurrentState().delay = 100
-      }
-
-      this.isBoostSpeed = true
-      boostSpeed = 50
+    if (this.isBoostSpeed) {
+      this.currentSpeed = this.sprintSpeed
     } else {
-      if (this.isBoostSpeed) {
-        this.animator.getCurrentState().delay = 200
-      }
-
-      this.isBoostSpeed = false
+      this.currentSpeed = this.normalSpeed
     }
+
+    let directionMoved: string | null = null
 
     if (Input.keyboard.isKeyDown(Keys.KeyW)) {
       this.transform.translate({
-        y: -(this.speed + boostSpeed) * deltaTime.elapsedTimeSeconds
+        y: -this.currentSpeed * deltaTime.elapsedTimeSeconds
       })
 
       directionMoved = 'up'
     } else if (Input.keyboard.isKeyDown(Keys.KeyS)) {
       this.transform.translate({
-        y: (this.speed + boostSpeed) * deltaTime.elapsedTimeSeconds
+        y: this.currentSpeed * deltaTime.elapsedTimeSeconds
       })
 
       directionMoved = 'down'
     }
     if (Input.keyboard.isKeyDown(Keys.KeyA)) {
       this.transform.translate({
-        x: -(this.speed + boostSpeed) * deltaTime.elapsedTimeSeconds
+        x: -this.currentSpeed * deltaTime.elapsedTimeSeconds
       })
 
       directionMoved = 'left'
     } else if (Input.keyboard.isKeyDown(Keys.KeyD)) {
       this.transform.translate({
-        x: (this.speed + boostSpeed) * deltaTime.elapsedTimeSeconds
+        x: this.currentSpeed * deltaTime.elapsedTimeSeconds
       })
 
       directionMoved = 'right'
@@ -201,6 +184,7 @@ export class Player extends GameObject {
     if (this.animator.activeState(keyAnimation, { ignoreIfAlreadyActive: true })) {
       this.isBoostSpeed = false
     }
+
     this.direction = direction
   }
 
