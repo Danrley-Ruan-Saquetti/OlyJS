@@ -1,4 +1,5 @@
 import { DeltaTime, Game, Input, Keys } from '../../index.js'
+import { FloorEntity } from './entities/floor.entity.js'
 import { FPSView } from './entities/fps.entity.js'
 import { Player } from './entities/player.entity.js'
 
@@ -22,9 +23,16 @@ export class AnimationGame extends Game {
     this.player = new Player(this.playerSpriteImage)
 
     this.addGameObject(
+      new FPSView(),
+      new FloorEntity(),
       this.player,
-      new FPSView()
     )
+  }
+
+  protected initializeObjects() {
+    super.initializeObjects()
+
+    this.cameraGameObject.follow(this.player.transform.position)
   }
 
   update(deltaTime: DeltaTime): void {
