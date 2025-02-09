@@ -18,6 +18,10 @@ export class KeyboardRepository {
     return !keys.find(key => !this.keysPressed?.[key])
   }
 
+  getKeysPressed() {
+    return Object.keys(this.keysPressed) as Keys[]
+  }
+
   clear() {
     this.keysPressed = {}
   }
