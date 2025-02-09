@@ -6,4 +6,8 @@ export class Random {
 
     return `${timestamp}-${randomNumber}`
   }
+
+  static next(min: number, max: number) {
+    return Math.random() * (max - min) + min
+  }
 }
