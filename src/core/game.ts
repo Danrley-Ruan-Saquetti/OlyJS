@@ -56,20 +56,12 @@ export class Game extends GameEngine {
   protected initializeScene() {
     this._gameObjectRepository.clear()
 
-    this._cameraGameObject = new CameraGameObject()
+    this._cameraGameObject = new CameraGameObject(this._canvas)
 
     this.addGameObject(this._cameraGameObject)
 
     this.renderSystem.setCameraGameObject(this._cameraGameObject)
     this.cameraSystem.setCameraGameObject(this._cameraGameObject)
-  }
-
-  protected initializeObjects() {
-    this._cameraGameObject.transform.moveTo({
-      x: this.canvas.width / 2,
-      y: this.canvas.height / 2,
-      z: 0
-    })
   }
 
   protected startGameObjects() {
