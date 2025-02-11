@@ -1,0 +1,44 @@
+import { CameraGameObject, DeltaTime, GameObject, Input } from '../../../index.js'
+
+export class CameraFollowMouse extends GameObject {
+
+  maxRange = 100
+  transaction = 6
+
+  constructor(
+    private ref: GameObject,
+    private cameraGameObject: CameraGameObject,
+  ) {
+    super()
+  }
+
+  update(deltaTime: DeltaTime) {
+    this.moveCamera(deltaTime)
+  }
+
+  moveCamera(deltaTime: DeltaTime) {
+    const refPosition = this.ref.transform.position
+    const mousePosition = Input.mouse.position.clone()
+
+    const distance = Math.sqrt(mousePosition.x ** 2 + mousePosition.y ** 2)
+
+    if (distance > this.maxRange) {
+      const angle = Math.atan2(mousePosition.y, mousePosition.x)
+
+      mousePosition.x = Math.cos(angle) * this.maxRange
+      mousePosition.y = Math.sin(angle) * this.maxRange
+    }
+
+    const target = {
+      x: refPosition.x + mousePosition.x,
+      y: refPosition.y + mousePosition.y,
+    }
+
+    const offset = {
+      x: (target.x - this.cameraGameObject.transform.position.x) * deltaTime.elapsedTimeSeconds * this.transaction,
+      y: (target.y - this.cameraGameObject.transform.position.y) * deltaTime.elapsedTimeSeconds * this.transaction,
+    }
+
+    this.cameraGameObject.transform.translate(offset)
+  }
+}

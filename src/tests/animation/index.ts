@@ -1,4 +1,5 @@
 import { DeltaTime, Game, Input, Keys } from '../../index.js'
+import { CameraFollowMouse } from './entities/camera-follow-mouse.entity.js'
 import { FloorEntity } from './entities/floor.entity.js'
 import { FPSView } from './entities/fps.entity.js'
 import { Player } from './entities/player.entity.js'
@@ -26,13 +27,8 @@ export class AnimationGame extends Game {
       new FPSView(),
       new FloorEntity(),
       this.player,
+      new CameraFollowMouse(this.player, this.cameraGameObject)
     )
-  }
-
-  protected initializeObjects() {
-    super.initializeObjects()
-
-    this.cameraGameObject.follow(this.player.transform.position)
   }
 
   update(deltaTime: DeltaTime): void {

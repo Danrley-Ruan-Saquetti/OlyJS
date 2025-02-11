@@ -19,8 +19,8 @@ export class Player extends GameObject {
 
   private animator: Animator
 
-  private speedAnimation = 200
-  private speedAnimationSprint = this.speedAnimation + 10
+  private delayAnimation = 200
+  private delayAnimationSprint = 50
 
   private normalSpeed = 100
   private sprintSpeed = this.normalSpeed * 1.75
@@ -49,69 +49,69 @@ export class Player extends GameObject {
       {
         key: 'idle-down',
         frames: PLAYER_STATE_IDLE_DOWN_FRAMES,
-        delay: this.speedAnimation,
+        delay: this.delayAnimation,
       },
       {
         key: 'idle-up',
         frames: PLAYER_STATE_IDLE_UP_FRAMES,
-        delay: this.speedAnimation,
+        delay: this.delayAnimation,
       },
       {
         key: 'idle-left',
         frames: PLAYER_STATE_IDLE_LEFT_FRAMES,
-        delay: this.speedAnimation,
+        delay: this.delayAnimation,
       },
       {
         key: 'idle-right',
         frames: PLAYER_STATE_IDLE_RIGHT_FRAMES,
-        delay: this.speedAnimation,
+        delay: this.delayAnimation,
       },
       {
         key: 'walk-down',
         frames: PLAYER_STATE_WALK_DOWN_FRAMES,
-        delay: this.speedAnimation,
+        delay: this.delayAnimation,
         isRepeat: true,
       },
       {
         key: 'walk-up',
         frames: PLAYER_STATE_WALK_UP_FRAMES,
-        delay: this.speedAnimation,
+        delay: this.delayAnimation,
         isRepeat: true,
       },
       {
         key: 'walk-left',
         frames: PLAYER_STATE_WALK_LEFT_FRAMES,
-        delay: this.speedAnimation,
+        delay: this.delayAnimation,
         isRepeat: true,
       },
       {
         key: 'walk-right',
         frames: PLAYER_STATE_WALK_RIGHT_FRAMES,
-        delay: this.speedAnimation,
+        delay: this.delayAnimation,
         isRepeat: true,
       },
       {
         key: 'walk-down-speed',
         frames: PLAYER_STATE_WALK_DOWN_FRAMES,
-        delay: this.speedAnimationSprint,
+        delay: this.delayAnimationSprint,
         isRepeat: true,
       },
       {
         key: 'walk-up-speed',
         frames: PLAYER_STATE_WALK_UP_FRAMES,
-        delay: this.speedAnimationSprint,
+        delay: this.delayAnimationSprint,
         isRepeat: true,
       },
       {
         key: 'walk-left-speed',
         frames: PLAYER_STATE_WALK_LEFT_FRAMES,
-        delay: this.speedAnimationSprint,
+        delay: this.delayAnimationSprint,
         isRepeat: true,
       },
       {
         key: 'walk-right-speed',
         frames: PLAYER_STATE_WALK_RIGHT_FRAMES,
-        delay: this.speedAnimationSprint,
+        delay: this.delayAnimationSprint,
         isRepeat: true,
       }
     ]
@@ -120,7 +120,7 @@ export class Player extends GameObject {
       this.animator.addAnimationState(new StateAnimation({
         ...state,
         sprite: this.body,
-        delay: this.speedAnimation,
+        delay: this.delayAnimation,
         runOnStart: true,
       }))
     })
