@@ -1,5 +1,4 @@
-import { IVector2 } from '../interfaces/index.js'
-import { DeltaTime } from '../utils/delta-time.js'
+import { IRectangle, IVector2 } from '../interfaces/index.js'
 import { GameObject } from './game-object.entity.js'
 
 export class CameraGameObject extends GameObject {
@@ -9,6 +8,19 @@ export class CameraGameObject extends GameObject {
 
   get scale() { return this._scale }
   set scale(value) { this._scale = value }
+
+  get dimension(): IRectangle {
+    return {
+      width: this.canvas.width,
+      height: this.canvas.height,
+    }
+  }
+
+  constructor(
+    public readonly canvas: HTMLCanvasElement
+  ) {
+    super()
+  }
 
   start() {
     super.start()
