@@ -1,5 +1,5 @@
 import { CameraGameObject } from '../../entities/index.js'
-import { ContextRender2D, ICircle, IRectangle, IVector2 } from '../../interfaces/index.js'
+import { ContextRender2D, ICircle, IRectangle } from '../../interfaces/index.js'
 import { DrawImageFrameOptions, DrawImageOptions, DrawOptions, DrawStrokeOptions, DrawTextOptions } from './options.js'
 
 export class CanvasRenderer {
@@ -74,9 +74,13 @@ export class CanvasRenderer {
     if (!this.cameraGameObject) { throw 'Camera Object not provider' }
 
     this.ctx.translate(
-      this.cameraGameObject.transform.position.x,
-      this.cameraGameObject.transform.position.y
+      (this.cameraGameObject.dimension.width / 2) - this.cameraGameObject.transform.position.x,
+      (this.cameraGameObject.dimension.height / 2) - this.cameraGameObject.transform.position.y
     )
-    this.ctx.scale(this.cameraGameObject.scale, this.cameraGameObject.scale)
+    this.scale(this.cameraGameObject.scale, this.cameraGameObject.scale)
+  }
+
+  scale(x: number, y: number) {
+    this.ctx.scale(x, y)
   }
 }
