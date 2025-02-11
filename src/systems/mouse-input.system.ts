@@ -44,8 +44,8 @@ export class MouseSystem extends GameSystem {
     const rect = this.canvas.getBoundingClientRect()
 
     const position = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
+      x: event.clientX - rect.left - (rect.width / 2),
+      y: event.clientY - rect.top - (rect.height / 2),
     }
 
     Input.mouse.mouseMove(position)
