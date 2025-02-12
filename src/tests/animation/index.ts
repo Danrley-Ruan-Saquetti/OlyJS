@@ -45,12 +45,15 @@ async function app() {
   game.start()
 }
 
+window.addEventListener('resize', resizeCanvas)
+
 resizeCanvas()
 app()
 
 function resizeCanvas() {
   const displayWidth = window.innerWidth
   const displayHeight = window.innerHeight
+
   const scale = 1
 
   canvas.style.width = displayWidth + 'px'

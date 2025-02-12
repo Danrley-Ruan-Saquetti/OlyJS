@@ -17,4 +17,12 @@ export class MathHelper {
       Math.sin(angle) * distance
     )
   }
+
+  static degreesToRadians(degrees: number) {
+    return degrees * Math.PI / 180
+  }
+
+  static radiansToDegrees(radians: number) {
+    return radians * 180 / Math.PI
+  }
 }
