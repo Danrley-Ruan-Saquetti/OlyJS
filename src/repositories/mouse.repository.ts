@@ -10,6 +10,8 @@ export class MouseRepository {
 
   private _buttons = new Map<Buttons, boolean>()
   private _lastPosition = new Vector2()
+  private _lastPositionReal = new Vector2()
+  private _positionReal = new Vector2()
   private _position = new Vector2()
   private _isMouseMoving = false
   private _isDoubleClick = false
@@ -17,15 +19,20 @@ export class MouseRepository {
 
   get lastPosition() { return this._lastPosition }
   get offset() { return Vector2.subtraction(this._position, this._lastPosition) }
+  get offsetReal() { return Vector2.subtraction(this._positionReal, this._lastPositionReal) }
   get position() { return this._position }
+  get positionReal() { return this._positionReal }
   get isMouseMoving() { return this._isMouseMoving }
   get isDoubleClick() { return this._isDoubleClick }
 
-  mouseMove({ x, y }: IVector2) {
+  mouseMove(position: IVector2, positionReal: IVector2 = position) {
     this._isMouseMoving = true
     this._lastPosition = this._position.clone()
-    this._position.x = x
-    this._position.y = y
+    this._lastPositionReal = this._positionReal.clone()
+    this._position.x = position.x
+    this._position.y = position.y
+    this._positionReal.x = positionReal.x
+    this._positionReal.y = positionReal.y
   }
 
   dispose() {
