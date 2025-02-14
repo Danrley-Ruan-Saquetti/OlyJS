@@ -1,6 +1,7 @@
 import { Buttons, DeltaTime, Game, Input } from '../../index.js'
 import { Box } from './entities/box.js'
-import { FPSView } from './fps.entity.js'
+import { FPSView } from './entities/fps.entity.js'
+import { Light } from './entities/light.js'
 
 class LightingGame extends Game {
 
@@ -16,7 +17,8 @@ class LightingGame extends Game {
 
     this.addGameObject(
       new FPSView(),
-      ...this.boxes
+      ...this.boxes,
+      new Light()
     )
   }
 

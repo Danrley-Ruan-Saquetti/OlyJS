@@ -1,4 +1,4 @@
-import { TextSprite, GameObject, CanvasRenderer, DeltaTime } from '../../index.js'
+import { TextSprite, GameObject, CanvasRenderer, DeltaTime } from '../../../index.js'
 
 export class FPSView extends GameObject {
 
