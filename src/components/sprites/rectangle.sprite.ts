@@ -7,6 +7,9 @@ export class RectangleSpriteComponent extends SpriteComponent {
 
   get shape() { return this._shape }
 
+  stroke?: string
+  strokeWidth = 5
+
   constructor(
     gameObject: GameObject,
     private _shape: RectangleShapeComponent
@@ -22,6 +25,8 @@ export class RectangleSpriteComponent extends SpriteComponent {
       height: this._shape.height,
       color: this.color,
       fixed: this.fixed,
+      stroke: this.stroke,
+      strokeWidth: this.strokeWidth,
     })
   }
 }

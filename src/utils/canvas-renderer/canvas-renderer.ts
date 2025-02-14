@@ -9,14 +9,22 @@ export class CanvasRenderer {
     private readonly cameraGameObject?: CameraGameObject
   ) { }
 
-  drawRectangle({ x, y, height, width, color, fixed }: IRectangle & DrawOptions) {
+  drawRectangle({ x, y, height, width, color, stroke, strokeWidth, fixed }: IRectangle & DrawOptions & DrawStrokeOptions) {
     this.ctx.save()
     this.ctx.beginPath()
 
     if (!fixed) this.applyViewCamera()
 
     this.ctx.rect(x, y, width, height)
+
     if (color) this.ctx.fillStyle = color
+
+    if (stroke) {
+      this.ctx.lineWidth = strokeWidth!
+      this.ctx.strokeStyle = stroke
+      this.ctx.stroke()
+    }
+
     this.ctx.fill()
     this.ctx.restore()
   }
