@@ -11,6 +11,7 @@ export class Game extends GameEngine {
 
   protected renderSystem = new Render2DSystem(this._canvas, this._gameObjectRepository)
   protected cameraSystem = new CameraSystem(this._canvas)
+  protected mouseSystem = new MouseSystem(this._canvas)
 
   private _cameraGameObject: CameraGameObject
 
@@ -46,7 +47,7 @@ export class Game extends GameEngine {
   protected initializeEngine() {
     this.addGameSystem(
       new KeyboardSystem(),
-      new MouseSystem(this._canvas),
+      this.mouseSystem,
       this.cameraSystem,
       this.renderSystem,
       new TimeoutSystem(),
@@ -62,6 +63,7 @@ export class Game extends GameEngine {
 
     this.renderSystem.setCameraGameObject(this._cameraGameObject)
     this.cameraSystem.setCameraGameObject(this._cameraGameObject)
+    this.mouseSystem.setCameraGameObject(this._cameraGameObject)
   }
 
   protected startGameObjects() {

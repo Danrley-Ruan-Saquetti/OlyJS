@@ -1,3 +1,4 @@
+import { CameraGameObject } from '../entities/camera.entity.js'
 import { Buttons, WheelType } from '../enums/index.js'
 import { Input } from '../utils/input.js'
 import { GameSystem } from './system.js'
@@ -11,9 +12,10 @@ export class MouseSystem extends GameSystem {
   } as const
 
   private timerMoveStop: number
+  private cameraGameObject: CameraGameObject
 
   constructor(
-    private canvas: HTMLCanvasElement
+    private canvas: HTMLCanvasElement,
   ) {
     super()
   }
@@ -38,6 +40,10 @@ export class MouseSystem extends GameSystem {
     Input.mouse.dispose()
   }
 
+  setCameraGameObject(cameraGameObject: CameraGameObject) {
+    this.cameraGameObject = cameraGameObject
+  }
+
   private onMouseMove = (event: MouseEvent) => {
     clearTimeout(this.timerMoveStop)
 
@@ -48,7 +54,13 @@ export class MouseSystem extends GameSystem {
       y: event.clientY - rect.top - (rect.height / 2),
     }
 
-    Input.mouse.mouseMove(position)
+    Input.mouse.mouseMove(
+      position,
+      {
+        x: position.x + this.cameraGameObject.transform.position.x,
+        y: position.y + this.cameraGameObject.transform.position.y,
+      }
+    )
 
     this.timerMoveStop = setTimeout(() => {
       this.onMouseStop()
