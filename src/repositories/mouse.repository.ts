@@ -9,21 +9,21 @@ export type WheelEvent = {
 export class MouseRepository {
 
   private _buttons = new Map<Buttons, boolean>()
-  private _lastPosition: IVector2 = { x: 0, y: 0 }
+  private _lastPosition = new Vector2()
   private _position = new Vector2()
   private _isMouseMoving = false
   private _isDoubleClick = false
   private _wheel: WheelEvent | null = null
 
   get lastPosition() { return this._lastPosition }
-  get displacement() { return Vector2.subtraction(this._lastPosition, this._position) }
+  get offset() { return Vector2.subtraction(this._position, this._lastPosition) }
   get position() { return this._position }
   get isMouseMoving() { return this._isMouseMoving }
   get isDoubleClick() { return this._isDoubleClick }
 
   mouseMove({ x, y }: IVector2) {
     this._isMouseMoving = true
-    this._lastPosition = this._position.toJSON()
+    this._lastPosition = this._position.clone()
     this._position.x = x
     this._position.y = y
   }
@@ -35,6 +35,7 @@ export class MouseRepository {
 
   mouseStop() {
     this._isMouseMoving = false
+    this._lastPosition = this._position.clone()
   }
 
   doubleClick() {
