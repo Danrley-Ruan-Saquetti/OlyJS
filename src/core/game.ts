@@ -89,9 +89,25 @@ export class Game extends GameEngine {
 
   addGameObject(...gameObjects: IGameObject[]) {
     this._gameObjectRepository.addGameObject(...gameObjects)
+
+    const length = gameObjects.length
+
+    let i = 0
+    while (i < length) {
+      gameObjects[i].start()
+      i++
+    }
   }
 
   addGameSystem(...gameSystems: IGameSystem[]) {
     this._gameSystemRepository.addGameSystem(...gameSystems)
+
+    const length = gameSystems.length
+
+    let i = 0
+    while (i < length) {
+      gameSystems[i].start()
+      i++
+    }
   }
 }
