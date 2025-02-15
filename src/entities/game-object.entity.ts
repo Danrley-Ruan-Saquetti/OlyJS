@@ -29,6 +29,10 @@ export class GameObject implements IGameObject {
   }
 
   destroy() {
+    if (this._isDestroyed) {
+      return
+    }
+
     this.onDestroy()
     this._isDestroyed = true
   }
