@@ -2,7 +2,7 @@ import { CanvasRenderer, DeltaTime, GameObject, MathHelper, Random, RectangleGam
 
 export class Enemy extends RectangleGameObject {
 
-  private sprite: RectangleSpriteComponent
+  sprite: RectangleSpriteComponent
   private speed = 100
 
   constructor(

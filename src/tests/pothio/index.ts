@@ -1,16 +1,18 @@
 import { Buttons, DeltaTime, Game, Input, Timeout } from '../../index.js'
 import { Ball } from './entities/ball.js'
-import { CameraFollowMouse } from './entities/camera-follow-mouse.entity.js'
 import { Enemy } from './entities/enemy.js'
 import { Floor } from './entities/floor.js'
-import { FPSView } from './entities/fps.entity.js'
 import { Player } from './entities/player.js'
+import { FPSView } from './entities/fps.entity.js'
+import { CameraFollowMouse } from './entities/camera-follow-mouse.entity.js'
+import { UIGame } from './entities/ui.js'
 
 class PothioGame extends Game {
 
   private player: Player
-  private cooldown = 500
-  private isCooldown = false
+
+  private enemies: Enemy[] = []
+  private balls: Ball[] = []
 
   protected initializeScene() {
     super.initializeScene()
@@ -22,7 +24,7 @@ class PothioGame extends Game {
       new FPSView(),
       this.player,
       new CameraFollowMouse(this.player, this.cameraGameObject),
-      ...Array.from({ length: 5 }).map(() => new Enemy(this.player))
+      new UIGame(this.player, this.canvas)
     )
   }
 
@@ -30,25 +32,58 @@ class PothioGame extends Game {
     super.start()
 
     Timeout.setInterval(() => {
-      this.addGameObject(
-        new Enemy(this.player)
-      )
+      this.addEnemy()
     }, 1_000)
   }
 
   update(deltaTime: DeltaTime) {
     if (Input.mouse.isButtonDown(Buttons.LEFT)) {
-      if (!this.isCooldown) {
-        this.addGameObject(
-          new Ball(this.player.transform.position.clone(), Input.mouse.positionReal.clone())
-        )
-
-        this.isCooldown = true
-        Timeout.setTimeout(() => {
-          this.isCooldown = false
-        }, this.cooldown)
+      if (this.player.canShoot()) {
+        this.player.shoot()
+        this.addBall()
       }
     }
+
+    this.checkCollisionBallEnemy()
+  }
+
+  checkCollisionBallEnemy() {
+    for (let i = 0; i < this.balls.length; i++) {
+      const ball = this.balls[i]
+
+      for (let j = 0; j < this.enemies.length; j++) {
+        const enemy = this.enemies[j]
+
+        const enemyBounds = enemy.getBounds()
+
+        if (ball.isIntersecting({
+          ...enemyBounds,
+          x: enemyBounds.left,
+          y: enemyBounds.top
+        })) {
+          ball.destroy()
+          enemy.destroy()
+
+          this.balls.splice(i, 1)
+          this.enemies.splice(j, 1)
+          break
+        }
+      }
+    }
+  }
+
+  private addEnemy() {
+    const enemy = new Enemy(this.player)
+    this.addGameObject(enemy)
+
+    this.enemies.push(enemy)
+  }
+
+  private addBall() {
+    const ball = new Ball(this.player.transform.position.clone(), Input.mouse.positionReal.clone())
+    this.addGameObject(ball)
+
+    this.balls.push(ball)
   }
 }
 

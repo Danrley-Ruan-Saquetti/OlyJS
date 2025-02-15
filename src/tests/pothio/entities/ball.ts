@@ -1,11 +1,14 @@
-import { CanvasRenderer, CircleGameObject, CircleSpriteComponent, DeltaTime, IVector2, MathHelper, Timeout } from '../../../index.js'
+import { CanvasRenderer, RectangleGameObject, RectangleSpriteComponent, DeltaTime, IVector2, MathHelper, Timeout } from '../../../index.js'
 
-export class Ball extends CircleGameObject {
+export class Ball extends RectangleGameObject {
 
-  private sprite: CircleSpriteComponent
-  private timeLive = 1_000
-  private speed = 400
+  get sprite() { return this.rectangleSpriteComponent }
+
+  private timeLive = 1_200
+  private speed = 700
   private angle: number
+
+  private idTimeout: string
 
   constructor(
     private startPosition: IVector2,
@@ -17,16 +20,15 @@ export class Ball extends CircleGameObject {
   start() {
     super.start()
 
-    this.sprite = this.getComponent(CircleSpriteComponent)!
-
-    this.sprite.color = 'yellow'
-    this.sprite.shape.radius = 10
+    this.rectangleSpriteComponent.color = 'yellow'
+    this.rectangleSpriteComponent.shape.width = 25
+    this.rectangleSpriteComponent.shape.height = 25
 
     this.transform.moveTo(this.startPosition)
 
     this.angle = MathHelper.angle(this.positionReference, this.startPosition)
 
-    Timeout.setTimeout(() => {
+    this.idTimeout = Timeout.setTimeout(() => {
       this.destroy()
     }, this.timeLive)
   }
@@ -38,6 +40,10 @@ export class Ball extends CircleGameObject {
   }
 
   render(canvasRenderer: CanvasRenderer) {
-    this.sprite.render(canvasRenderer)
+    this.rectangleSpriteComponent.render(canvasRenderer)
+  }
+
+  onDestroy() {
+    Timeout.clearTimeout(this.idTimeout)
   }
 }
