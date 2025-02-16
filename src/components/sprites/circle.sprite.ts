@@ -19,8 +19,8 @@ export class CircleSpriteComponent extends SpriteComponent {
   render(canvasRenderer: CanvasRenderer) {
     canvasRenderer.drawCircle({
       radius: this._shape.radius,
-      x: this.gameObject.transform.position.x,
-      y: this.gameObject.transform.position.y,
+      x: this.gameObject.transform.position.x + this.offset.x,
+      y: this.gameObject.transform.position.y + this.offset.y,
       color: this.color,
       stroke: this.stroke,
       strokeWidth: this.strokeWidth,
