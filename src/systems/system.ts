@@ -5,6 +5,7 @@ export class GameSystem implements IGameSystem {
 
   start() { }
   stop() { }
+  updateBefore(deltaTime: DeltaTime) { }
   update(deltaTime: DeltaTime) { }
   updateAfter(deltaTime: DeltaTime) { }
 }

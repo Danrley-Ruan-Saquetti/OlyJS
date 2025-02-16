@@ -29,6 +29,7 @@ export abstract class GameEngine extends CycleExecutor {
   protected nextFrame() {
     this.deltaTime.next()
     this.updateObjects()
+    this.updateBefore()
     this.update(this.deltaTime)
     this.updateAfter()
     this.endFrame()
@@ -48,5 +49,6 @@ export abstract class GameEngine extends CycleExecutor {
 
   protected updateObjects() { }
   update(deltaTime: DeltaTime) { }
+  protected updateBefore() { }
   protected updateAfter() { }
 }

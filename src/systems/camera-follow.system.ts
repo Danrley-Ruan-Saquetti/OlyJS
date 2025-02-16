@@ -22,7 +22,7 @@ export class CameraFollowSystem extends GameSystem {
 
   private methodFollowHandler = this.METHOD_HANDLER[this.followType]
 
-  update(deltaTime: DeltaTime) {
+  updateBefore(deltaTime: DeltaTime) {
     this.methodFollowHandler(deltaTime)
   }
 

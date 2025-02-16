@@ -36,6 +36,16 @@ export class GameSystemRepository {
     }
   }
 
+  updateBefore(deltaTime: DeltaTime) {
+    const length = this._gameSystems.length
+
+    let i = 0
+    while (i < length) {
+      this._gameSystems[i].updateBefore(deltaTime)
+      i++
+    }
+  }
+
   updateAfter(deltaTime: DeltaTime) {
     const length = this._gameSystems.length
 

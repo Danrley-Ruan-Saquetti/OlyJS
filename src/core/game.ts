@@ -76,6 +76,10 @@ export class Game extends GameEngine {
     this._gameSystemRepository.stop()
   }
 
+  protected updateBefore() {
+    this._gameSystemRepository.updateBefore(this.deltaTime)
+  }
+
   protected updateObjects() {
     this._gameSystemRepository.update(this.deltaTime)
     this._gameObjectRepository.update(this.deltaTime)
