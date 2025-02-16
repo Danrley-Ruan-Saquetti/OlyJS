@@ -6,6 +6,7 @@ import { Player } from './entities/player.js'
 import { FPSView } from './entities/fps.entity.js'
 import { CameraFollowMouse } from './entities/camera-follow-mouse.entity.js'
 import { UIGame } from './entities/ui.js'
+import { Coin } from './entities/coin.js'
 
 class PothioGame extends Game {
 
@@ -13,6 +14,7 @@ class PothioGame extends Game {
 
   private enemies: Enemy[] = []
   private balls: Ball[] = []
+  private coins: Coin[] = []
 
   protected initializeScene() {
     super.initializeScene()
@@ -34,6 +36,10 @@ class PothioGame extends Game {
     Timeout.setInterval(() => {
       this.addEnemy()
     }, 1_000)
+
+    Timeout.setInterval(() => {
+      this.addCoin()
+    }, 1_000)
   }
 
   update(deltaTime: DeltaTime) {
@@ -45,6 +51,7 @@ class PothioGame extends Game {
     }
 
     this.checkCollisionBallEnemy()
+    this.checkCollisionPlayerCoin()
   }
 
   checkCollisionBallEnemy() {
@@ -72,7 +79,30 @@ class PothioGame extends Game {
     }
   }
 
+  checkCollisionPlayerCoin() {
+    for (let j = 0; j < this.coins.length; j++) {
+      const coin = this.coins[j]
+
+      const bounds = coin.getBounds()
+
+      if (this.player.isIntersecting({
+        ...bounds,
+        x: bounds.left,
+        y: bounds.top
+      })) {
+        coin.destroy()
+
+        this.coins.splice(j, 1)
+        break
+      }
+    }
+  }
+
   private addEnemy() {
+    if (this.enemies.length > 15) {
+      return
+    }
+
     const enemy = new Enemy(this.player)
     this.addGameObject(enemy)
 
@@ -85,9 +115,22 @@ class PothioGame extends Game {
 
     this.balls.push(ball)
   }
+
+  private addCoin() {
+    if (this.coins.length > 15) {
+      return
+    }
+
+    const coin = new Coin()
+    this.addGameObject(coin)
+
+    this.coins.push(coin)
+  }
 }
 
 const canvas = document.querySelector<HTMLCanvasElement>('canvas#canvas-game')!
+
+canvas.style.cursor = 'none'
 
 window.addEventListener('resize', resizeCanvas)
 

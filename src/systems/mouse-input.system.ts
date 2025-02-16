@@ -1,6 +1,6 @@
-import { CameraGameObject } from '../entities/camera.entity.js'
+import { CameraGameObject } from '../entities/index.js'
 import { Buttons, WheelType } from '../enums/index.js'
-import { Input } from '../utils/input.js'
+import { Input, DeltaTime } from '../utils/index.js'
 import { GameSystem } from './system.js'
 
 export class MouseSystem extends GameSystem {
@@ -34,6 +34,10 @@ export class MouseSystem extends GameSystem {
     this.canvas.removeEventListener('mouseup', this.onMouseUp)
     this.canvas.removeEventListener('wheel', this.onWheel)
     this.canvas.removeEventListener('dblclick', this.onDoubleClick)
+  }
+
+  update(deltaTime: DeltaTime) {
+
   }
 
   updateAfter() {

@@ -4,25 +4,35 @@ export class Player extends RectangleGameObject {
 
   sprite: RectangleSpriteComponent
 
-  readonly MAX_AMMUNITION = 6
+  readonly NORMAL_SPEED = 200
+  readonly DASH_SPEED = this.NORMAL_SPEED * 3
 
-  private normalSpeed = 200
-  private dashSpeed = this.normalSpeed * 2
+  readonly DASH_COOLDOWN = 1_500
+  readonly TIME_DASH = 300
+
+  readonly SHOOT_COOLDOWN = 200
+
+  readonly MAX_AMMO = 1_000
+
+  readonly RELOAD_COOLDOWN = 2_000
+
   private speed = 200
 
-  ammunition = this.MAX_AMMUNITION
-
   private isDashActive = false
-  private dashCooldown = 1_500
-  private timeInDash = 300
 
-  private shootCooldown = 500
   private isShootCooldown = false
 
-  private reloadCooldown = 2_000
-  isReloadCooldown = false
+  private _ammo = this.MAX_AMMO
 
-  private countCooldown = 0
+  private _isReloadCooldown = false
+
+  private countDashCooldown = 0
+
+  private _points = 0
+
+  get ammo() { return this._ammo }
+  get isReloadCooldown() { return this._isReloadCooldown }
+  get points() { return this._points }
 
   start() {
     super.start()
@@ -33,11 +43,11 @@ export class Player extends RectangleGameObject {
   }
 
   update(deltaTime: DeltaTime) {
-    this.dash()
-    this.move(deltaTime)
+    this.resolveDash()
+    this.resolveMove(deltaTime)
 
     if (this.isDashActive) {
-      this.countCooldown += deltaTime.elapsedTimeSeconds
+      this.countDashCooldown += deltaTime.elapsedTimeSeconds
     }
 
     if (Input.keyboard.isKeyDown(Keys.KeyR)) {
@@ -45,26 +55,26 @@ export class Player extends RectangleGameObject {
     }
   }
 
-  dash() {
+  resolveDash() {
     if (Input.keyboard.isKeyDown(Keys.ShiftLeft)) {
       if (!this.isDashActive) {
-        this.speed = this.dashSpeed
-
         this.isDashActive = true
 
+        this.speed = this.DASH_SPEED
+
         Timeout.setTimeout(() => {
-          this.speed = this.normalSpeed
+          this.speed = this.NORMAL_SPEED
 
           Timeout.setTimeout(() => {
             this.isDashActive = false
-            this.countCooldown = 0
-          }, this.dashCooldown)
-        }, this.timeInDash)
+            this.countDashCooldown = 0
+          }, this.DASH_COOLDOWN)
+        }, this.TIME_DASH)
       }
     }
   }
 
-  move(deltaTime: DeltaTime) {
+  resolveMove(deltaTime: DeltaTime) {
     if (Input.keyboard.isKeyDown(Keys.KeyW)) {
       this.transform.translate({
         y: -this.speed * deltaTime.elapsedTimeSeconds,
@@ -95,39 +105,39 @@ export class Player extends RectangleGameObject {
     }
 
     this.isShootCooldown = true
-    this.ammunition--
+    this._ammo--
 
     Timeout.setTimeout(() => {
       this.isShootCooldown = false
-    }, this.shootCooldown)
-
-    if (this.ammunition <= 0) {
-      this.reload()
-    }
+    }, this.SHOOT_COOLDOWN)
   }
 
   reload() {
-    if (this.isReloadCooldown || this.ammunition == this.MAX_AMMUNITION) {
+    if (this._isReloadCooldown || this._ammo == this.MAX_AMMO) {
       return
     }
 
-    this.isReloadCooldown = true
+    this._isReloadCooldown = true
 
     Timeout.setTimeout(() => {
-      this.isReloadCooldown = false
-      this.ammunition = this.MAX_AMMUNITION
-    }, this.reloadCooldown)
+      this._isReloadCooldown = false
+      this._ammo = this.MAX_AMMO
+    }, this.RELOAD_COOLDOWN)
   }
 
   canShoot() {
-    return !this.isShootCooldown && !this.isReloadCooldown
+    return this._ammo > 0 && !this.isShootCooldown && !this._isReloadCooldown
+  }
+
+  collectCoin() {
+    this._points += 5
   }
 
   render(canvasRenderer: CanvasRenderer) {
     this.sprite.render(canvasRenderer)
 
     if (this.isDashActive) {
-      const widthCooldownCount = (this.countCooldown * this.rectangleSpriteComponent.shape.width) / (this.dashCooldown + this.timeInDash)
+      const widthCooldownCount = (this.countDashCooldown * this.rectangleSpriteComponent.shape.width) / (this.DASH_COOLDOWN + this.TIME_DASH)
 
       canvasRenderer.drawRectangle({
         x: this.transform.position.x - (this.rectangleSpriteComponent.shape.width / 2),
@@ -137,5 +147,57 @@ export class Player extends RectangleGameObject {
         color: '#fff'
       })
     }
+
+    const mousePosition = Input.mouse.positionReal
+
+    canvasRenderer.drawRectangle({
+      x: mousePosition.x - 2,
+      y: mousePosition.y + 4,
+      width: 4,
+      height: 10,
+      stroke: 'black',
+      strokeWidth: 2,
+      color: '#FFF',
+    })
+
+    canvasRenderer.drawRectangle({
+      x: mousePosition.x - 2,
+      y: mousePosition.y - 14,
+      width: 4,
+      height: 10,
+      stroke: 'black',
+      strokeWidth: 2,
+      color: '#FFF',
+    })
+
+    canvasRenderer.drawRectangle({
+      x: mousePosition.x - 2,
+      y: mousePosition.y + 4,
+      width: 4,
+      height: 10,
+      stroke: 'black',
+      strokeWidth: 2,
+      color: '#FFF',
+    })
+
+    canvasRenderer.drawRectangle({
+      x: mousePosition.x - 14,
+      y: mousePosition.y - 2,
+      width: 10,
+      height: 4,
+      stroke: 'black',
+      strokeWidth: 2,
+      color: '#FFF',
+    })
+
+    canvasRenderer.drawRectangle({
+      x: mousePosition.x + 4,
+      y: mousePosition.y - 2,
+      width: 10,
+      height: 4,
+      stroke: 'black',
+      strokeWidth: 2,
+      color: '#FFF',
+    })
   }
 }

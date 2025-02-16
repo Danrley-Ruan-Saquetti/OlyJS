@@ -3,7 +3,7 @@ import { Player } from './player.js'
 
 export class UIGame extends GameObject {
 
-  private ammunition = 0
+  private ammo = 0
 
   constructor(
     private player: Player,
@@ -13,27 +13,27 @@ export class UIGame extends GameObject {
   }
 
   update(deltaTime: DeltaTime) {
-    this.ammunition = this.player.ammunition
+    this.ammo = this.player.ammo
   }
 
   render(canvasRenderer: CanvasRenderer) {
-    const widthAmmunition = 200
-    const heightAmmunition = 100
+    const widthAmmo = 200
+    const heightAmmo = 100
 
     canvasRenderer.drawRectangle({
-      x: this.window.width - widthAmmunition - 10,
-      y: this.window.height - heightAmmunition - 10,
-      width: widthAmmunition,
-      height: heightAmmunition,
+      x: this.window.width - widthAmmo - 10,
+      y: this.window.height - heightAmmo - 10,
+      width: widthAmmo,
+      height: heightAmmo,
       color: 'transparent',
       stroke: 'grey',
       fixed: true,
     })
 
     canvasRenderer.drawText({
-      x: this.window.width - widthAmmunition + 20,
+      x: this.window.width - widthAmmo + 20,
       y: this.window.height - 30,
-      text: `${!this.player.isReloadCooldown ? this.ammunition : '-'}/${this.player.MAX_AMMUNITION}`,
+      text: `${!this.player.isReloadCooldown ? this.ammo : '-'}/${this.player.MAX_AMMO}`,
       color: 'gray',
       font: '80px Roboto Mono',
       fixed: true,
