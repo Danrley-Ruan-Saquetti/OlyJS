@@ -110,7 +110,7 @@ class PothioGame extends Game {
   }
 
   private addBall() {
-    const ball = new Ball(this.player.transform.position.clone(), InputState.positionReal.clone())
+    const ball = new Ball(this.player.transform.position.clone(), InputState.position.clone())
     this.addGameObject(ball)
 
     this.balls.push(ball)

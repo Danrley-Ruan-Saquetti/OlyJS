@@ -39,6 +39,10 @@ export class Vector3 extends Vector2 implements IVector3 {
     return new Vector3(this.x, this.y, this.z)
   }
 
+  equals({ x, y, z }: IVector3) {
+    return this.x == x && this.y == y && this.z == z
+  }
+
   toJSON(): IVector3 {
     return {
       x: this.x,

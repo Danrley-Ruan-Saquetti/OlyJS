@@ -29,19 +29,10 @@ export class Box extends RectangleGameObject {
   checkCollision(target: IVector2) {
     const bounds = this.getBounds()
 
-    return target.x >= bounds.x
-      && target.x <= bounds.endX
-      && target.y >= bounds.y
-      && target.y <= bounds.endY
-  }
-
-  getBounds() {
-    return {
-      x: this.transform.position.x - (this.sprite.shape.width / 2),
-      y: this.transform.position.y - (this.sprite.shape.height / 2),
-      endX: this.transform.position.x + (this.sprite.shape.width / 2),
-      endY: this.transform.position.y + (this.sprite.shape.height / 2),
-    }
+    return target.x >= bounds.left
+      && target.x <= bounds.right
+      && target.y >= bounds.top
+      && target.y <= bounds.down
   }
 
   render(canvasRenderer: CanvasRenderer) {

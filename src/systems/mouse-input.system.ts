@@ -3,6 +3,7 @@ import { Buttons, WheelType } from '../enums/index.js'
 import { DeltaTime } from '../utils/index.js'
 import { InputManager } from '../managers/index.js'
 import { GameSystem } from './system.js'
+import { IVector2 } from '../interfaces/index.js'
 
 export class MouseSystem extends GameSystem {
 
@@ -49,18 +50,25 @@ export class MouseSystem extends GameSystem {
   }
 
   private onMouseMove = (event: MouseEvent) => {
+    this.mouseMove({
+      x: event.clientX,
+      y: event.clientY,
+    })
+  }
+
+  private mouseMove(position: IVector2) {
     const rect = this.canvas.getBoundingClientRect()
 
-    const position = {
-      x: event.clientX - rect.left - (rect.width / 2),
-      y: event.clientY - rect.top - (rect.height / 2),
+    const positionRelative = {
+      x: position.x - rect.left - (rect.width / 2),
+      y: position.y - rect.top - (rect.height / 2),
     }
 
     InputManager.mouse.mouseMove(
-      position,
+      positionRelative,
       {
-        x: position.x + this.cameraGameObject.transform.position.x,
-        y: position.y + this.cameraGameObject.transform.position.y,
+        x: positionRelative.x + this.cameraGameObject.transform.position.x,
+        y: positionRelative.y + this.cameraGameObject.transform.position.y,
       }
     )
   }

@@ -34,6 +34,10 @@ export class Vector2 implements IVector2 {
     return new Vector2(this.x, this.y)
   }
 
+  equals({ x, y }: IVector2) {
+    return this.x == x && this.y == y
+  }
+
   toJSON(): IVector2 {
     return {
       x: this.x,

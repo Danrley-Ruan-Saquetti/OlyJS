@@ -148,7 +148,7 @@ export class Player extends RectangleGameObject {
       })
     }
 
-    const mousePosition = InputState.positionReal
+    const mousePosition = InputState.position
 
     canvasRenderer.drawRectangle({
       x: mousePosition.x - 2,

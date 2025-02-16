@@ -10,31 +10,31 @@ export class MouseRepository {
 
   private _buttons = new Map<Buttons, boolean>()
   private _lastPosition = new Vector2()
-  private _lastPositionReal = new Vector2()
-  private _positionReal = new Vector2()
+  private _lastPositionWindow = new Vector2()
   private _position = new Vector2()
+  private _positionWindow = new Vector2()
   private _isMouseMoving = false
   private _isDoubleClick = false
   private _wheel: WheelEvent | null = null
 
-  get lastPosition() { return this._lastPosition }
+  get lastPositionWindow() { return this._lastPositionWindow }
+  get offsetWindow() { return Vector2.subtraction(this._positionWindow, this._lastPositionWindow) }
   get offset() { return Vector2.subtraction(this._position, this._lastPosition) }
-  get offsetReal() { return Vector2.subtraction(this._positionReal, this._lastPositionReal) }
+  get positionWindow() { return this._positionWindow }
   get position() { return this._position }
-  get positionReal() { return this._positionReal }
   get isMouseMoving() { return this._isMouseMoving }
   get isDoubleClick() { return this._isDoubleClick }
   get isWheelUp() { return this._wheel?.type == 'UP' }
   get isWheelDown() { return this._wheel?.type == 'DOWN' }
 
-  mouseMove(position: IVector2, positionReal: IVector2 = position) {
+  mouseMove(positionWindow: IVector2, position: IVector2 = positionWindow) {
     this._isMouseMoving = true
+    this._lastPositionWindow = this._positionWindow.clone()
     this._lastPosition = this._position.clone()
-    this._lastPositionReal = this._positionReal.clone()
+    this._positionWindow.x = positionWindow.x
+    this._positionWindow.y = positionWindow.y
     this._position.x = position.x
     this._position.y = position.y
-    this._positionReal.x = positionReal.x
-    this._positionReal.y = positionReal.y
   }
 
   dispose() {
@@ -45,7 +45,7 @@ export class MouseRepository {
 
   mouseStop() {
     this._isMouseMoving = false
-    this._lastPosition = this._position.clone()
+    this._lastPositionWindow = this._positionWindow.clone()
   }
 
   doubleClick() {

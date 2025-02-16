@@ -18,7 +18,7 @@ export class CameraFollowMouse extends GameObject {
 
   moveCamera(deltaTime: DeltaTime) {
     const refPosition = this.ref.transform.position
-    const mousePosition = InputState.position.clone()
+    const mousePosition = InputState.positionWindow.clone()
 
     const distance = Math.sqrt(mousePosition.x ** 2 + mousePosition.y ** 2)
 
