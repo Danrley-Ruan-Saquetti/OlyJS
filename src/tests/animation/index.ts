@@ -1,4 +1,4 @@
-import { DeltaTime, Game, Input, Keys } from '../../index.js'
+import { DeltaTime, Game, InputState, Keys } from '../../index.js'
 import { CameraFollowMouse } from './entities/camera-follow-mouse.entity.js'
 import { FloorEntity } from './entities/floor.entity.js'
 import { FPSView } from './entities/fps.entity.js'
@@ -32,7 +32,7 @@ export class AnimationGame extends Game {
   }
 
   update(deltaTime: DeltaTime): void {
-    if (Input.keyboard.isKeyDown(Keys.Escape)) {
+    if (InputState.isKeyDown(Keys.Escape)) {
       console.clear()
     }
   }

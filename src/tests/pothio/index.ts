@@ -1,4 +1,4 @@
-import { Buttons, DeltaTime, Game, Input, Timeout } from '../../index.js'
+import { Buttons, DeltaTime, Game, InputState, Timeout } from '../../index.js'
 import { Ball } from './entities/ball.js'
 import { Enemy } from './entities/enemy.js'
 import { Floor } from './entities/floor.js'
@@ -43,7 +43,7 @@ class PothioGame extends Game {
   }
 
   update(deltaTime: DeltaTime) {
-    if (Input.mouse.isButtonDown(Buttons.LEFT)) {
+    if (InputState.isButtonDown(Buttons.LEFT)) {
       if (this.player.canShoot()) {
         this.player.shoot()
         this.addBall()
@@ -110,14 +110,14 @@ class PothioGame extends Game {
   }
 
   private addBall() {
-    const ball = new Ball(this.player.transform.position.clone(), Input.mouse.positionReal.clone())
+    const ball = new Ball(this.player.transform.position.clone(), InputState.positionReal.clone())
     this.addGameObject(ball)
 
     this.balls.push(ball)
   }
 
   private addCoin() {
-    if (this.coins.length > 15) {
+    if (this.coins.length > 25) {
       return
     }
 

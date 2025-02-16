@@ -1,4 +1,4 @@
-import { Game, Input, Keys, Timer } from '../../index.js'
+import { Game, InputState, Keys, Timer } from '../../index.js'
 import { Player } from './entities/player.entity.js'
 import { IAPlayer } from './entities/ia-player.entity.js'
 import { RacketPlayer } from './entities/player-racket.entity.js'
@@ -51,7 +51,7 @@ export class PongGame extends Game {
   }
 
   update() {
-    if (Input.keyboard.isKeyDown(Keys.Escape)) {
+    if (InputState.isKeyDown(Keys.Escape)) {
       console.clear()
     }
   }

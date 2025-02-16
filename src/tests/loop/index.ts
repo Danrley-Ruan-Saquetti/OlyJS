@@ -1,4 +1,4 @@
-import { DeltaTime, Game, Input, Keys, Timeout } from '../../index.js'
+import { DeltaTime, Game, InputState, Keys, Timeout } from '../../index.js'
 
 class TimeoutGame extends Game {
 
@@ -6,7 +6,7 @@ class TimeoutGame extends Game {
   isActive = false
 
   update(deltaTime: DeltaTime): void {
-    if (Input.keyboard.isKeyDown(Keys.Space)) {
+    if (InputState.isKeyDown(Keys.Space)) {
       if (!this.isActive) {
         this.isActive = true
 

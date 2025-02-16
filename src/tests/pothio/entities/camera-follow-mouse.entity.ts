@@ -1,4 +1,4 @@
-import { CameraGameObject, DeltaTime, GameObject, Input } from '../../../index.js'
+import { CameraGameObject, DeltaTime, GameObject, InputState } from '../../../index.js'
 
 export class CameraFollowMouse extends GameObject {
 
@@ -18,7 +18,7 @@ export class CameraFollowMouse extends GameObject {
 
   moveCamera(deltaTime: DeltaTime) {
     const refPosition = this.ref.transform.position
-    const mousePosition = Input.mouse.position.clone()
+    const mousePosition = InputState.position.clone()
 
     const distance = Math.sqrt(mousePosition.x ** 2 + mousePosition.y ** 2)
 

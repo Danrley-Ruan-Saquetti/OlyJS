@@ -1,7 +1,7 @@
 import { ImageSprite } from '../../../components/index.js'
 import { GameObject } from '../../../entities/index.js'
 import { Keys } from '../../../enums/key.enum.js'
-import { Animator, CanvasRenderer, DeltaTime, Input, StateAnimation } from '../../../utils/index.js'
+import { Animator, CanvasRenderer, DeltaTime, InputState, StateAnimation } from '../../../utils/index.js'
 import {
   PLAYER_STATE_WALK_DOWN_FRAMES,
   PLAYER_STATE_WALK_LEFT_FRAMES,
@@ -130,7 +130,7 @@ export class Player extends GameObject {
 
   update(deltaTime: DeltaTime) {
 
-    this.isBoostSpeed = Input.keyboard.isKeyDown(Keys.ShiftLeft)
+    this.isBoostSpeed = InputState.isKeyDown(Keys.ShiftLeft)
 
     if (this.isBoostSpeed) {
       this.currentSpeed = this.sprintSpeed
@@ -140,26 +140,26 @@ export class Player extends GameObject {
 
     let directionMoved: string | null = null
 
-    if (Input.keyboard.isKeyDown(Keys.KeyW)) {
+    if (InputState.isKeyDown(Keys.KeyW)) {
       this.transform.translate({
         y: -this.currentSpeed * deltaTime.elapsedTimeSeconds
       })
 
       directionMoved = 'up'
-    } else if (Input.keyboard.isKeyDown(Keys.KeyS)) {
+    } else if (InputState.isKeyDown(Keys.KeyS)) {
       this.transform.translate({
         y: this.currentSpeed * deltaTime.elapsedTimeSeconds
       })
 
       directionMoved = 'down'
     }
-    if (Input.keyboard.isKeyDown(Keys.KeyA)) {
+    if (InputState.isKeyDown(Keys.KeyA)) {
       this.transform.translate({
         x: -this.currentSpeed * deltaTime.elapsedTimeSeconds
       })
 
       directionMoved = 'left'
-    } else if (Input.keyboard.isKeyDown(Keys.KeyD)) {
+    } else if (InputState.isKeyDown(Keys.KeyD)) {
       this.transform.translate({
         x: this.currentSpeed * deltaTime.elapsedTimeSeconds
       })

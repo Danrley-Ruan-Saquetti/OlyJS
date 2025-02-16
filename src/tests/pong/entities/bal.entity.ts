@@ -1,4 +1,4 @@
-import { CircleGameObject, CircleSpriteComponent, CircleShapeComponent, CanvasRenderer, DeltaTime, Vector2, Input, Keys } from '../../../index.js'
+import { CircleGameObject, CircleSpriteComponent, CircleShapeComponent, CanvasRenderer, DeltaTime, Vector2, InputState, Keys } from '../../../index.js'
 import { Table } from './table.entity.js'
 
 export class Ball extends CircleGameObject {

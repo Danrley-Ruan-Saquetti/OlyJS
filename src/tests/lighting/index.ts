@@ -1,4 +1,4 @@
-import { Buttons, DeltaTime, Game, Input } from '../../index.js'
+import { Buttons, DeltaTime, Game, InputState } from '../../index.js'
 import { Box } from './entities/box.js'
 import { FPSView } from './entities/fps.entity.js'
 import { Light } from './entities/light.js'
@@ -23,7 +23,7 @@ class LightingGame extends Game {
   }
 
   update(deltaTime: DeltaTime) {
-    if (Input.mouse.isButtonDown(Buttons.LEFT)) {
+    if (InputState.isButtonDown(Buttons.LEFT)) {
       if (!this.boxSelected) {
         this.boxSelected = this.getBoxSelected()
       }
@@ -36,7 +36,7 @@ class LightingGame extends Game {
 
   getBoxSelected() {
     for (let i = 0; i < this.boxes.length; i++) {
-      if (this.boxes[i].checkCollision(Input.mouse.position)) {
+      if (this.boxes[i].checkCollision(InputState.position)) {
         return this.boxes[i]
       }
     }

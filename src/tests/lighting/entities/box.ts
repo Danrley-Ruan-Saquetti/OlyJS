@@ -1,4 +1,4 @@
-import { CanvasRenderer, DeltaTime, Input, IVector2, Random, RectangleGameObject, RectangleSpriteComponent } from '../../../index.js'
+import { CanvasRenderer, DeltaTime, InputState, IVector2, Random, RectangleGameObject, RectangleSpriteComponent } from '../../../index.js'
 
 export class Box extends RectangleGameObject {
 
@@ -21,8 +21,8 @@ export class Box extends RectangleGameObject {
 
   dragging(deltaTime: DeltaTime) {
     this.transform.translate({
-      x: (Input.mouse.position.x - this.transform.position.x) * deltaTime.elapsedTimeSeconds * this.speed,
-      y: (Input.mouse.position.y - this.transform.position.y) * deltaTime.elapsedTimeSeconds * this.speed,
+      x: (InputState.position.x - this.transform.position.x) * deltaTime.elapsedTimeSeconds * this.speed,
+      y: (InputState.position.y - this.transform.position.y) * deltaTime.elapsedTimeSeconds * this.speed,
     })
   }
 

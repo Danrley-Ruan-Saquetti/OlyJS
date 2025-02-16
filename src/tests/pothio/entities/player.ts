@@ -1,4 +1,4 @@
-import { CanvasRenderer, DeltaTime, Input, Keys, RectangleGameObject, RectangleSpriteComponent, Timeout } from '../../../index.js'
+import { CanvasRenderer, DeltaTime, InputState, Keys, RectangleGameObject, RectangleSpriteComponent, Timeout } from '../../../index.js'
 
 export class Player extends RectangleGameObject {
 
@@ -50,13 +50,13 @@ export class Player extends RectangleGameObject {
       this.countDashCooldown += deltaTime.elapsedTimeSeconds
     }
 
-    if (Input.keyboard.isKeyDown(Keys.KeyR)) {
+    if (InputState.isKeyDown(Keys.KeyR)) {
       this.reload()
     }
   }
 
   resolveDash() {
-    if (Input.keyboard.isKeyDown(Keys.ShiftLeft)) {
+    if (InputState.isKeyDown(Keys.ShiftLeft)) {
       if (!this.isDashActive) {
         this.isDashActive = true
 
@@ -75,20 +75,20 @@ export class Player extends RectangleGameObject {
   }
 
   resolveMove(deltaTime: DeltaTime) {
-    if (Input.keyboard.isKeyDown(Keys.KeyW)) {
+    if (InputState.isKeyDown(Keys.KeyW)) {
       this.transform.translate({
         y: -this.speed * deltaTime.elapsedTimeSeconds,
       })
-    } else if (Input.keyboard.isKeyDown(Keys.KeyS)) {
+    } else if (InputState.isKeyDown(Keys.KeyS)) {
       this.transform.translate({
         y: this.speed * deltaTime.elapsedTimeSeconds,
       })
     }
-    if (Input.keyboard.isKeyDown(Keys.KeyA)) {
+    if (InputState.isKeyDown(Keys.KeyA)) {
       this.transform.translate({
         x: -this.speed * deltaTime.elapsedTimeSeconds,
       })
-    } else if (Input.keyboard.isKeyDown(Keys.KeyD)) {
+    } else if (InputState.isKeyDown(Keys.KeyD)) {
       this.transform.translate({
         x: this.speed * deltaTime.elapsedTimeSeconds,
       })
@@ -148,7 +148,7 @@ export class Player extends RectangleGameObject {
       })
     }
 
-    const mousePosition = Input.mouse.positionReal
+    const mousePosition = InputState.positionReal
 
     canvasRenderer.drawRectangle({
       x: mousePosition.x - 2,

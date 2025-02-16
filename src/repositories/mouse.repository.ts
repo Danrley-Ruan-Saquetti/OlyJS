@@ -24,6 +24,8 @@ export class MouseRepository {
   get positionReal() { return this._positionReal }
   get isMouseMoving() { return this._isMouseMoving }
   get isDoubleClick() { return this._isDoubleClick }
+  get isWheelUp() { return this._wheel?.type == 'UP' }
+  get isWheelDown() { return this._wheel?.type == 'DOWN' }
 
   mouseMove(position: IVector2, positionReal: IVector2 = position) {
     this._isMouseMoving = true
@@ -38,6 +40,7 @@ export class MouseRepository {
   dispose() {
     this._isDoubleClick = false
     this._wheel = null
+    this.mouseStop()
   }
 
   mouseStop() {
@@ -65,13 +68,5 @@ export class MouseRepository {
 
   isButtonDown(button: Buttons) {
     return this._buttons.get(button) || false
-  }
-
-  isWheelUp() {
-    return this._wheel?.type == 'UP'
-  }
-
-  isWheelDown() {
-    return this._wheel?.type == 'DOWN'
   }
 }

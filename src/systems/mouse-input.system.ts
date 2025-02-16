@@ -1,6 +1,7 @@
 import { CameraGameObject } from '../entities/index.js'
 import { Buttons, WheelType } from '../enums/index.js'
-import { Input, DeltaTime } from '../utils/index.js'
+import { DeltaTime } from '../utils/index.js'
+import { InputManager } from '../managers/index.js'
 import { GameSystem } from './system.js'
 
 export class MouseSystem extends GameSystem {
@@ -11,7 +12,6 @@ export class MouseSystem extends GameSystem {
     [Buttons.RIGHT]: 'RIGHT',
   } as const
 
-  private timerMoveStop: number
   private cameraGameObject: CameraGameObject
 
   constructor(
@@ -41,7 +41,7 @@ export class MouseSystem extends GameSystem {
   }
 
   updateAfter() {
-    Input.mouse.dispose()
+    InputManager.mouse.dispose()
   }
 
   setCameraGameObject(cameraGameObject: CameraGameObject) {
@@ -49,8 +49,6 @@ export class MouseSystem extends GameSystem {
   }
 
   private onMouseMove = (event: MouseEvent) => {
-    clearTimeout(this.timerMoveStop)
-
     const rect = this.canvas.getBoundingClientRect()
 
     const position = {
@@ -58,37 +56,29 @@ export class MouseSystem extends GameSystem {
       y: event.clientY - rect.top - (rect.height / 2),
     }
 
-    Input.mouse.mouseMove(
+    InputManager.mouse.mouseMove(
       position,
       {
         x: position.x + this.cameraGameObject.transform.position.x,
         y: position.y + this.cameraGameObject.transform.position.y,
       }
     )
-
-    this.timerMoveStop = setTimeout(() => {
-      this.onMouseStop()
-    }, 110)
   }
 
   private onWheel = (event: WheelEvent) => {
-    Input.mouse.wheel(event.deltaY < 0 ? WheelType.UP : WheelType.DOWN)
-  }
-
-  private onMouseStop = () => {
-    Input.mouse.mouseStop()
+    InputManager.mouse.wheel(event.deltaY < 0 ? WheelType.UP : WheelType.DOWN)
   }
 
   private onMouseDown = (event: MouseEvent) => {
-    Input.mouse.buttonPressed(this.parseButton(event.button))
+    InputManager.mouse.buttonPressed(this.parseButton(event.button))
   }
 
   private onMouseUp = (event: MouseEvent) => {
-    Input.mouse.buttonReleased(this.parseButton(event.button))
+    InputManager.mouse.buttonReleased(this.parseButton(event.button))
   }
 
   private onDoubleClick = (event: MouseEvent) => {
-    Input.mouse.doubleClick()
+    InputManager.mouse.doubleClick()
   }
 
   private parseButton(buttonIndex: number) {

@@ -1,5 +1,5 @@
 import { Keys } from '../enums/index.js'
-import { Input } from '../utils/index.js'
+import { InputManager } from '../managers/index.js'
 import { GameSystem } from './system.js'
 
 export class KeyboardSystem extends GameSystem {
@@ -17,14 +17,14 @@ export class KeyboardSystem extends GameSystem {
   }
 
   private onKeyDown = (event: KeyboardEvent) => {
-    Input.keyboard.press(Keys[event.code])
+    InputManager.keyboard.press(Keys[event.code])
   }
 
   private onKeyUp = (event: KeyboardEvent) => {
-    Input.keyboard.release(Keys[event.code])
+    InputManager.keyboard.release(Keys[event.code])
   }
 
   private onWindowFocusOut = () => {
-    Input.keyboard.clear()
+    InputManager.keyboard.clear()
   }
 }
