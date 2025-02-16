@@ -38,5 +38,14 @@ export class UIGame extends GameObject {
       font: '80px Roboto Mono',
       fixed: true,
     })
+
+    canvasRenderer.drawText({
+      x: this.window.width - widthAmmo + 10,
+      y: this.window.height - 130,
+      text: `${this.player.points} pts.`,
+      color: 'gray',
+      font: '50px Roboto Mono',
+      fixed: true,
+    })
   }
 }

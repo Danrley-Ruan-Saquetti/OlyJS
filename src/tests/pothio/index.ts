@@ -68,6 +68,8 @@ class PothioGame extends Game {
           x: enemyBounds.left,
           y: enemyBounds.top
         })) {
+          this.player.killEnemy()
+
           ball.destroy()
           enemy.destroy()
 
@@ -90,6 +92,7 @@ class PothioGame extends Game {
         x: bounds.left,
         y: bounds.top
       })) {
+        this.player.collectCoin()
         coin.destroy()
 
         this.coins.splice(j, 1)

@@ -1,6 +1,5 @@
 import { CameraGameObject } from '../entities/index.js'
 import { Buttons, WheelType } from '../enums/index.js'
-import { DeltaTime } from '../utils/index.js'
 import { InputManager } from '../managers/index.js'
 import { GameSystem } from './system.js'
 import { IVector2 } from '../interfaces/index.js'
@@ -35,10 +34,6 @@ export class MouseSystem extends GameSystem {
     this.canvas.removeEventListener('mouseup', this.onMouseUp)
     this.canvas.removeEventListener('wheel', this.onWheel)
     this.canvas.removeEventListener('dblclick', this.onDoubleClick)
-  }
-
-  update(deltaTime: DeltaTime) {
-
   }
 
   updateAfter() {

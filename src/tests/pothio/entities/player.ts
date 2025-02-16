@@ -129,6 +129,10 @@ export class Player extends RectangleGameObject {
     return this._ammo > 0 && !this.isShootCooldown && !this._isReloadCooldown
   }
 
+  killEnemy() {
+    this._points += 1
+  }
+
   collectCoin() {
     this._points += 5
   }
