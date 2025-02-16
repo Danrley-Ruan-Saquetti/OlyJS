@@ -4,7 +4,6 @@ import { GameObject } from './game-object.entity.js'
 export class CameraGameObject extends GameObject {
 
   private _scale: number
-  private followTarget?: IVector2
 
   get scale() { return this._scale }
   set scale(value) { this._scale = value }
@@ -26,13 +25,5 @@ export class CameraGameObject extends GameObject {
     super.start()
 
     this._scale = 1
-  }
-
-  follow(target: IVector2) {
-    this.followTarget = target
-  }
-
-  getFollowTarget() {
-    return this.followTarget
   }
 }

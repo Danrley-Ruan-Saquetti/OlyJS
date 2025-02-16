@@ -55,15 +55,15 @@ export class MouseSystem extends GameSystem {
     const rect = this.canvas.getBoundingClientRect()
 
     const positionRelative = {
-      x: position.x - rect.left - (rect.width / 2),
-      y: position.y - rect.top - (rect.height / 2),
+      x: position.x - rect.left,
+      y: position.y - rect.top,
     }
 
     InputManager.mouse.mouseMove(
       positionRelative,
       {
-        x: positionRelative.x + this.cameraGameObject.transform.position.x,
-        y: positionRelative.y + this.cameraGameObject.transform.position.y,
+        x: positionRelative.x + this.cameraGameObject.transform.position.x - (rect.width / 2),
+        y: positionRelative.y + this.cameraGameObject.transform.position.y - (rect.height / 2),
       }
     )
   }

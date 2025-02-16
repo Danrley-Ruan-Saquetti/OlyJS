@@ -1,4 +1,4 @@
-import { CameraGameObject, DeltaTime, GameObject, InputState } from '../../../index.js'
+import { CameraGameObject, DeltaTime, GameObject, InputState, MathHelper } from '../../../index.js'
 
 export class CameraFollowMouse extends GameObject {
 
@@ -18,9 +18,9 @@ export class CameraFollowMouse extends GameObject {
 
   moveCamera(deltaTime: DeltaTime) {
     const refPosition = this.ref.transform.position
-    const mousePosition = InputState.positionWindow.clone()
+    const mousePosition = InputState.position.clone()
 
-    const distance = Math.sqrt(mousePosition.x ** 2 + mousePosition.y ** 2)
+    const distance = MathHelper.distance(refPosition, mousePosition)
 
     if (distance > this.maxRange) {
       const angle = Math.atan2(mousePosition.y, mousePosition.x)

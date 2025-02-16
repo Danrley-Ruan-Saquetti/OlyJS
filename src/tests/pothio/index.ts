@@ -1,14 +1,15 @@
-import { Buttons, DeltaTime, Game, InputState, Timeout } from '../../index.js'
+import { Buttons, CameraFollowSystem, DeltaTime, Game, InputState, Timeout } from '../../index.js'
 import { Ball } from './entities/ball.js'
 import { Enemy } from './entities/enemy.js'
 import { Floor } from './entities/floor.js'
 import { Player } from './entities/player.js'
 import { FPSView } from './entities/fps.entity.js'
-import { CameraFollowMouse } from './entities/camera-follow-mouse.entity.js'
 import { UIGame } from './entities/ui.js'
 import { Coin } from './entities/coin.js'
 
 class PothioGame extends Game {
+
+  private cameraFollowSystem = new CameraFollowSystem()
 
   private player: Player
 
@@ -25,8 +26,18 @@ class PothioGame extends Game {
       new Floor(this.canvas),
       new FPSView(),
       this.player,
-      new CameraFollowMouse(this.player, this.cameraGameObject),
       new UIGame(this.player, this.canvas)
+    )
+
+    this.cameraFollowSystem.setCameraGameObject(this.cameraGameObject)
+    this.cameraFollowSystem.setTarget(this.player)
+  }
+
+  protected initializeEngine() {
+    super.initializeEngine()
+
+    this.addGameSystem(
+      this.cameraFollowSystem
     )
   }
 

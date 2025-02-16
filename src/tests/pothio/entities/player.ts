@@ -10,9 +10,9 @@ export class Player extends RectangleGameObject {
   readonly DASH_COOLDOWN = 1_500
   readonly TIME_DASH = 300
 
-  readonly SHOOT_COOLDOWN = 200
+  readonly SHOOT_COOLDOWN = 400
 
-  readonly MAX_AMMO = 1_000
+  readonly MAX_AMMO = 6
 
   readonly RELOAD_COOLDOWN = 2_000
 
@@ -152,7 +152,7 @@ export class Player extends RectangleGameObject {
       })
     }
 
-    const mousePosition = InputState.position
+    const mousePosition = InputState.positionWindow
 
     canvasRenderer.drawRectangle({
       x: mousePosition.x - 2,
@@ -162,6 +162,7 @@ export class Player extends RectangleGameObject {
       stroke: 'black',
       strokeWidth: 2,
       color: '#FFF',
+      fixed: true,
     })
 
     canvasRenderer.drawRectangle({
@@ -172,6 +173,7 @@ export class Player extends RectangleGameObject {
       stroke: 'black',
       strokeWidth: 2,
       color: '#FFF',
+      fixed: true,
     })
 
     canvasRenderer.drawRectangle({
@@ -182,6 +184,7 @@ export class Player extends RectangleGameObject {
       stroke: 'black',
       strokeWidth: 2,
       color: '#FFF',
+      fixed: true,
     })
 
     canvasRenderer.drawRectangle({
@@ -192,6 +195,7 @@ export class Player extends RectangleGameObject {
       stroke: 'black',
       strokeWidth: 2,
       color: '#FFF',
+      fixed: true,
     })
 
     canvasRenderer.drawRectangle({
@@ -202,6 +206,7 @@ export class Player extends RectangleGameObject {
       stroke: 'black',
       strokeWidth: 2,
       color: '#FFF',
+      fixed: true,
     })
   }
 }

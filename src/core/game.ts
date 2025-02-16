@@ -1,6 +1,6 @@
 import { CameraGameObject } from '../entities/index.js'
 import { IGameObject, IGameSystem } from '../interfaces/index.js'
-import { KeyboardSystem, Render2DSystem, MouseSystem, TimeoutSystem, CameraSystem } from '../systems/index.js'
+import { KeyboardSystem, Render2DSystem, MouseSystem, TimeoutSystem } from '../systems/index.js'
 import { GameObjectRepository, GameSystemRepository } from '../repositories/index.js'
 import { GameEngine } from './game-engine.js'
 
@@ -10,7 +10,6 @@ export class Game extends GameEngine {
   private _gameSystemRepository = new GameSystemRepository()
 
   protected renderSystem = new Render2DSystem(this._canvas, this._gameObjectRepository)
-  protected cameraSystem = new CameraSystem(this._canvas)
   protected mouseSystem = new MouseSystem(this._canvas)
 
   private _cameraGameObject: CameraGameObject
@@ -48,7 +47,6 @@ export class Game extends GameEngine {
     this.addGameSystem(
       new KeyboardSystem(),
       this.mouseSystem,
-      this.cameraSystem,
       this.renderSystem,
       new TimeoutSystem(),
     )
@@ -62,7 +60,6 @@ export class Game extends GameEngine {
     this.addGameObject(this._cameraGameObject)
 
     this.renderSystem.setCameraGameObject(this._cameraGameObject)
-    this.cameraSystem.setCameraGameObject(this._cameraGameObject)
     this.mouseSystem.setCameraGameObject(this._cameraGameObject)
   }
 
