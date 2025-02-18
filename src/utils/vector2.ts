@@ -11,7 +11,7 @@ export class Vector2 implements IVector2 {
   }
 
   magnitude() {
-    return Math.sqrt(this.x ^ 2 + this.y ^ 2)
+    return Math.sqrt(this.x * this.x + this.y * this.y)
   }
 
   normalize() {
