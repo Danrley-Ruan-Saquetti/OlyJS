@@ -3,7 +3,7 @@ import { CanvasRenderer, DeltaTime, GameObject, MathHelper, Random, RectangleGam
 export class Enemy extends RectangleGameObject {
 
   sprite: RectangleSpriteComponent
-  private speed = 100
+  private speed = 250
 
   constructor(
     private ref: GameObject
@@ -29,7 +29,7 @@ export class Enemy extends RectangleGameObject {
 
     const offset = MathHelper.angleToVector2(angle, deltaTime.elapsedTimeSeconds * this.speed)
 
-    this.transform.translate(offset)
+    this.transform.moveNormalized(offset)
   }
 
   render(canvasRenderer: CanvasRenderer) {

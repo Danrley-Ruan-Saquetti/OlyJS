@@ -1,8 +1,10 @@
 import { CanvasRenderer, DeltaTime, InputState, Keys, RectangleGameObject, RectangleSpriteComponent, Timeout } from '../../../index.js'
+import { HealthComponent } from '../components/health.js'
 
 export class Player extends RectangleGameObject {
 
   sprite: RectangleSpriteComponent
+  health: HealthComponent
 
   readonly NORMAL_SPEED = 200
   readonly DASH_SPEED = this.NORMAL_SPEED * 3
@@ -12,34 +14,27 @@ export class Player extends RectangleGameObject {
 
   readonly SHOOT_COOLDOWN = 400
 
-  readonly MAX_AMMO = 6
-
-  readonly RELOAD_COOLDOWN = 2_000
-
-  private speed = 200
+  private speed = this.NORMAL_SPEED
 
   private isDashActive = false
 
   private isShootCooldown = false
 
-  private _ammo = this.MAX_AMMO
-
-  private _isReloadCooldown = false
-
   private countDashCooldown = 0
 
   private _points = 0
 
-  get ammo() { return this._ammo }
-  get isReloadCooldown() { return this._isReloadCooldown }
   get points() { return this._points }
 
   start() {
     super.start()
 
+    this.health = new HealthComponent(5)
     this.sprite = this.getComponent(RectangleSpriteComponent)!
 
     this.sprite.color = '#FFF'
+
+    this.addComponent(this.health)
   }
 
   update(deltaTime: DeltaTime) {
@@ -48,10 +43,6 @@ export class Player extends RectangleGameObject {
 
     if (this.isDashActive) {
       this.countDashCooldown += deltaTime.elapsedTimeSeconds
-    }
-
-    if (InputState.isKeyDown(Keys.KeyR)) {
-      this.reload()
     }
   }
 
@@ -75,24 +66,23 @@ export class Player extends RectangleGameObject {
   }
 
   resolveMove(deltaTime: DeltaTime) {
+    const move = {
+      x: 0,
+      y: 0,
+    }
+
     if (InputState.isKeyDown(Keys.KeyW)) {
-      this.transform.translate({
-        y: -this.speed * deltaTime.elapsedTimeSeconds,
-      })
+      move.y = -this.speed * deltaTime.elapsedTimeSeconds
     } else if (InputState.isKeyDown(Keys.KeyS)) {
-      this.transform.translate({
-        y: this.speed * deltaTime.elapsedTimeSeconds,
-      })
+      move.y = this.speed * deltaTime.elapsedTimeSeconds
     }
     if (InputState.isKeyDown(Keys.KeyA)) {
-      this.transform.translate({
-        x: -this.speed * deltaTime.elapsedTimeSeconds,
-      })
+      move.x = -this.speed * deltaTime.elapsedTimeSeconds
     } else if (InputState.isKeyDown(Keys.KeyD)) {
-      this.transform.translate({
-        x: this.speed * deltaTime.elapsedTimeSeconds,
-      })
+      move.x = this.speed * deltaTime.elapsedTimeSeconds
     }
+
+    this.transform.moveNormalized(move)
   }
 
   shoot() {
@@ -105,28 +95,18 @@ export class Player extends RectangleGameObject {
     }
 
     this.isShootCooldown = true
-    this._ammo--
 
     Timeout.setTimeout(() => {
       this.isShootCooldown = false
     }, this.SHOOT_COOLDOWN)
   }
 
-  reload() {
-    if (this._isReloadCooldown || this._ammo == this.MAX_AMMO) {
-      return
-    }
-
-    this._isReloadCooldown = true
-
-    Timeout.setTimeout(() => {
-      this._isReloadCooldown = false
-      this._ammo = this.MAX_AMMO
-    }, this.RELOAD_COOLDOWN)
+  canShoot() {
+    return !this.isShootCooldown
   }
 
-  canShoot() {
-    return this._ammo > 0 && !this.isShootCooldown && !this._isReloadCooldown
+  takeDamageEnemy() {
+    this.health.decreaseHealth(1)
   }
 
   killEnemy() {
@@ -140,6 +120,18 @@ export class Player extends RectangleGameObject {
   render(canvasRenderer: CanvasRenderer) {
     this.sprite.render(canvasRenderer)
 
+    if (!this.health.isFullHealth) {
+      const widthHealth = (this.health.health * this.rectangleSpriteComponent.shape.width) / this.health.maxHealth
+
+      canvasRenderer.drawRectangle({
+        x: this.transform.position.x - (this.rectangleSpriteComponent.shape.width / 2),
+        y: this.transform.position.y - (this.rectangleSpriteComponent.shape.height / 2) - 18,
+        width: widthHealth,
+        height: 8,
+        color: '#FF0000'
+      })
+    }
+
     if (this.isDashActive) {
       const widthCooldownCount = (this.countDashCooldown * this.rectangleSpriteComponent.shape.width) / (this.DASH_COOLDOWN + this.TIME_DASH)
 
@@ -151,62 +143,5 @@ export class Player extends RectangleGameObject {
         color: '#fff'
       })
     }
-
-    const mousePosition = InputState.positionWindow
-
-    canvasRenderer.drawRectangle({
-      x: mousePosition.x - 2,
-      y: mousePosition.y + 4,
-      width: 4,
-      height: 10,
-      stroke: 'black',
-      strokeWidth: 2,
-      color: '#FFF',
-      fixed: true,
-    })
-
-    canvasRenderer.drawRectangle({
-      x: mousePosition.x - 2,
-      y: mousePosition.y - 14,
-      width: 4,
-      height: 10,
-      stroke: 'black',
-      strokeWidth: 2,
-      color: '#FFF',
-      fixed: true,
-    })
-
-    canvasRenderer.drawRectangle({
-      x: mousePosition.x - 2,
-      y: mousePosition.y + 4,
-      width: 4,
-      height: 10,
-      stroke: 'black',
-      strokeWidth: 2,
-      color: '#FFF',
-      fixed: true,
-    })
-
-    canvasRenderer.drawRectangle({
-      x: mousePosition.x - 14,
-      y: mousePosition.y - 2,
-      width: 10,
-      height: 4,
-      stroke: 'black',
-      strokeWidth: 2,
-      color: '#FFF',
-      fixed: true,
-    })
-
-    canvasRenderer.drawRectangle({
-      x: mousePosition.x + 4,
-      y: mousePosition.y - 2,
-      width: 10,
-      height: 4,
-      stroke: 'black',
-      strokeWidth: 2,
-      color: '#FFF',
-      fixed: true,
-    })
   }
 }

@@ -4,8 +4,8 @@ import { Enemy } from './entities/enemy.js'
 import { Floor } from './entities/floor.js'
 import { Player } from './entities/player.js'
 import { FPSView } from './entities/fps.entity.js'
-import { UIGame } from './entities/ui.js'
 import { Coin } from './entities/coin.js'
+import { MouseAim } from './entities/mouse-aim.js'
 
 class PothioGame extends Game {
 
@@ -17,6 +17,8 @@ class PothioGame extends Game {
   private balls: Ball[] = []
   private coins: Coin[] = []
 
+  get isPlayerAlive() { return this.player.health.isAlive }
+
   protected initializeScene() {
     super.initializeScene()
 
@@ -26,7 +28,7 @@ class PothioGame extends Game {
       new Floor(this.canvas),
       new FPSView(),
       this.player,
-      new UIGame(this.player, this.canvas)
+      new MouseAim(),
     )
 
     this.cameraFollowSystem.setCameraGameObject(this.cameraGameObject)
@@ -54,6 +56,15 @@ class PothioGame extends Game {
   }
 
   update(deltaTime: DeltaTime) {
+    if (this.isPlayerAlive) {
+      this.updateGame()
+    }
+    else {
+      this.updateGameOver()
+    }
+  }
+
+  updateGame() {
     if (InputState.isButtonDown(Buttons.LEFT)) {
       if (this.player.canShoot()) {
         this.player.shoot()
@@ -63,6 +74,10 @@ class PothioGame extends Game {
 
     this.checkCollisionBallEnemy()
     this.checkCollisionPlayerCoin()
+    this.checkCollisionPlayerEnemy()
+  }
+
+  updateGameOver() {
   }
 
   checkCollisionBallEnemy() {
@@ -107,6 +122,26 @@ class PothioGame extends Game {
         coin.destroy()
 
         this.coins.splice(j, 1)
+        break
+      }
+    }
+  }
+
+  checkCollisionPlayerEnemy() {
+    for (let j = 0; j < this.enemies.length; j++) {
+      const enemy = this.enemies[j]
+
+      const bounds = enemy.getBounds()
+
+      if (this.player.isIntersecting({
+        ...bounds,
+        x: bounds.left,
+        y: bounds.top
+      })) {
+        this.player.takeDamageEnemy()
+        enemy.destroy()
+
+        this.enemies.splice(j, 1)
         break
       }
     }
