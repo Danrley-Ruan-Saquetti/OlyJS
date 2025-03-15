@@ -1,7 +1,0 @@
-export * from './game-object.repository.js'
-export * from './game-system.repository.js'
-export * from './container-component.repository.js'
-export * from './keyboard.repository.js'
-export * from './mouse.repository.js'
-export * from './timeout.repository.js'
-export * from './container-tag.repository.js'
