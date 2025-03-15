@@ -26,8 +26,6 @@ export class Vector2 implements IVector2 {
 
     this.x = x
     this.y = y
-
-    return this
   }
 
   clone() {

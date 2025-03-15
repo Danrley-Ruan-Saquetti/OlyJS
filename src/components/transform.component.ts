@@ -13,10 +13,6 @@ export class TransformComponent extends GameComponent {
     this.position.z = z
   }
 
-  moveNormalized({ x, y, z }: Partial<IVector3>) {
-    this.translate(new Vector3(x, y, z).normalize())
-  }
-
   translate({ x = 0, y = 0, z = 0 }: Partial<IVector3>) {
     this.position.x += x
     this.position.y += y

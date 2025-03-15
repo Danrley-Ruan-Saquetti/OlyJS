@@ -29,7 +29,7 @@ export class Enemy extends RectangleGameObject {
 
     const offset = MathHelper.angleToVector2(angle, deltaTime.elapsedTimeSeconds * this.speed)
 
-    this.transform.moveNormalized(offset)
+    this.transform.translate(offset)
   }
 
   render(canvasRenderer: CanvasRenderer) {

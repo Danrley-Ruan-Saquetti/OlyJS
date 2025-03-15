@@ -25,7 +25,7 @@ export class Ball extends CircleGameObject {
   }
 
   update(deltaTime: DeltaTime) {
-    this.transform.moveNormalized({
+    this.transform.translate({
       x: this.direction.x * (this.speed * deltaTime.elapsedTimeSeconds),
       y: this.direction.y * (this.speed * deltaTime.elapsedTimeSeconds),
       z: 0,

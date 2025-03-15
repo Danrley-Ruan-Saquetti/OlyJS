@@ -1,4 +1,13 @@
-import { CanvasRenderer, DeltaTime, InputState, Keys, RectangleGameObject, RectangleSpriteComponent, Timeout } from '../../../index.js'
+import {
+  CanvasRenderer,
+  DeltaTime,
+  InputState,
+  Keys,
+  RectangleGameObject,
+  RectangleSpriteComponent,
+  Timeout,
+  Vector2,
+} from '../../../index.js'
 import { HealthComponent } from '../components/health.js'
 
 export class Player extends RectangleGameObject {
@@ -66,23 +75,22 @@ export class Player extends RectangleGameObject {
   }
 
   resolveMove(deltaTime: DeltaTime) {
-    const move = {
-      x: 0,
-      y: 0,
-    }
+    const offsetMove = new Vector2()
 
     if (InputState.isKeyDown(Keys.KeyW)) {
-      move.y = -this.speed * deltaTime.elapsedTimeSeconds
+      offsetMove.y = -this.speed * deltaTime.elapsedTimeSeconds
     } else if (InputState.isKeyDown(Keys.KeyS)) {
-      move.y = this.speed * deltaTime.elapsedTimeSeconds
+      offsetMove.y = this.speed * deltaTime.elapsedTimeSeconds
     }
     if (InputState.isKeyDown(Keys.KeyA)) {
-      move.x = -this.speed * deltaTime.elapsedTimeSeconds
+      offsetMove.x = -this.speed * deltaTime.elapsedTimeSeconds
     } else if (InputState.isKeyDown(Keys.KeyD)) {
-      move.x = this.speed * deltaTime.elapsedTimeSeconds
+      offsetMove.x = this.speed * deltaTime.elapsedTimeSeconds
     }
 
-    this.transform.moveNormalized(move)
+    offsetMove.normalize()
+
+    this.transform.translate(offsetMove)
   }
 
   shoot() {
