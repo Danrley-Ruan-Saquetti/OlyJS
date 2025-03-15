@@ -1,0 +1,1 @@
+export * from './game-object.repository.js'

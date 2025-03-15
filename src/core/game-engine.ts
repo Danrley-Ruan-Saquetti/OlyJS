@@ -10,6 +10,7 @@ export abstract class GameEngine extends LoopCore {
   run() {
     this.initializeScene()
     this.initializeObjects()
+    this.startObjects()
     this.start()
   }
 
@@ -18,6 +19,8 @@ export abstract class GameEngine extends LoopCore {
 
   protected initializeScene() { }
   protected initializeObjects() { }
+
+  protected startObjects() { }
 
   updateObjects() { }
   update() { }
