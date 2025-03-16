@@ -6,6 +6,7 @@ import { DeltaTime } from '../utils/delta-time.js'
 import { IQueue } from '../interfaces/queue.interface.js'
 import { Queue } from '../utils/queue.js'
 import { GameComponent } from '../components/game-component.js'
+import { Class } from '../types/index.js'
 
 export class GameObjectSystem extends GameSystem {
 
@@ -30,7 +31,7 @@ export class GameObjectSystem extends GameSystem {
     this.removeGameObjects()
   }
 
-  instantiate<T extends GameObject>(classGameObject: new (...args: ConstructorParameters<typeof GameObject>) => T) {
+  instantiate<T extends Class<typeof GameObject>>(classGameObject: T) {
     const gameObject = new classGameObject(this._game)
 
     gameObject.awake()

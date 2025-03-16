@@ -1,6 +1,14 @@
 import { GameEngine } from './game-engine.js'
-import { GameSystem, KeyboardSystem, GameObjectSystem, MouseSystem, RenderSystem } from '../systems/index.js'
+import {
+  GameSystem,
+  KeyboardSystem,
+  GameObjectSystem,
+  MouseSystem,
+  RenderSystem
+} from '../systems/index.js'
 import { GameObject } from '../entities/index.js'
+import { Listener, ListenerHandle } from '../utils/index.js'
+import { Class } from '../types/index.js'
 
 export class Game extends GameEngine {
 
@@ -15,7 +23,7 @@ export class Game extends GameEngine {
   protected initializeEngine() {
     this.gameSystems.push(
       this.gameObjectSystem,
-      new RenderSystem(this.canvas),
+      new RenderSystem(this, this.canvas),
       new KeyboardSystem(),
       new MouseSystem(this.canvas),
     )
@@ -71,8 +79,10 @@ export class Game extends GameEngine {
     }
   }
 
-  instantiate<T extends GameObject>(classGameObject: new (...args: ConstructorParameters<typeof GameObject>) => T) {
-    return this.gameObjectSystem.instantiate(classGameObject)
+  instantiate<T extends Class<typeof GameObject>>(classGameObject: T) {
+    const gameObject = this.gameObjectSystem.instantiate(classGameObject)
+
+    return gameObject
   }
 
   destroy(gameObject: GameObject) {

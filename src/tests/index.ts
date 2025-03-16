@@ -1,10 +1,16 @@
-import { Game, GameObject, Input, Keys } from '../index.js'
+import {
+  Game,
+  GameObject,
+  Input,
+  Keys,
+  RectangleComponent
+} from '../index.js'
 import { getCanvas } from './common.js'
 
 class Player extends GameObject {
 
   start() {
-    this.addTag('Player')
+    const rectangle = this.addComponent(RectangleComponent)
   }
 }
 

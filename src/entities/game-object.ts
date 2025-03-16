@@ -1,10 +1,11 @@
 import { Game } from '../core/index.js'
 import { GameComponent, Transform } from '../components/index.js'
 import { Container, DeltaTime, Listener, ListenerHandle, ObserverListener } from '../utils/index.js'
+import { Class } from '../types/index.js'
 
 export class GameObject {
 
-  readonly transform = new Transform()
+  readonly transform = new Transform(this)
 
   private gameContainer = new Container<GameComponent>()
   private tagContainer = new Container<string>()
@@ -29,11 +30,19 @@ export class GameObject {
     this._game.destroy(gameObject)
   }
 
-  instantiate<T extends GameObject>(classGameObject: new (...args: ConstructorParameters<typeof GameObject>) => T) {
+  instantiate<T extends Class<typeof GameObject>>(classGameObject: T) {
     return this._game.instantiate(classGameObject)
   }
 
-  addComponent(gameComponent: GameComponent) {
+  addComponent<T extends Class<typeof GameComponent>>(classGameComponent: T) {
+    const gameComponent = new classGameComponent(this)
+
+    this.addInstanceComponent(gameComponent)
+
+    return gameComponent as InstanceType<T>
+  }
+
+  addInstanceComponent(gameComponent: GameComponent) {
     this.gameContainer.add(gameComponent)
 
     this.emit('game-object/component/add', gameComponent)
