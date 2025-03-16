@@ -43,7 +43,7 @@ export class LinkedQueue<T = any> implements IQueue<T> {
 
   *iterator() {
     while (this.head) {
-      yield this.dequeue()
+      yield this.dequeue()!
     }
   }
 }

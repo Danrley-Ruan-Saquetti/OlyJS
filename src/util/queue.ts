@@ -18,7 +18,7 @@ export class Queue<T = any> implements IQueue<T> {
 
   *iterator() {
     while (this.items.length) {
-      yield this.dequeue()
+      yield this.dequeue()!
     }
   }
 }

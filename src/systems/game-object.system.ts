@@ -3,13 +3,15 @@ import { GameSystem } from './game-system.js'
 import { GameObject } from '../entities/index.js'
 import { GameObjectRepository } from '../repositories/index.js'
 import { DeltaTime } from '../util/delta-time.js'
+import { IQueue } from '../interfaces/queue.interface.js'
+import { Queue } from '../util/queue.js'
 
 export class GameObjectSystem extends GameSystem {
 
   private gameObjectRepository = new GameObjectRepository()
 
-  private gameObjectsInQueueToStart: GameObject[] = []
-  private gameObjectsInQueueToDestroy: GameObject[] = []
+  private gameObjectToStartQueue: IQueue<GameObject> = new Queue()
+  private gameObjectToDestroyQueue: IQueue<GameObject> = new Queue()
 
   constructor(private _game: Game) {
     super()
@@ -32,13 +34,13 @@ export class GameObjectSystem extends GameSystem {
 
     gameObject.awake()
 
-    this.gameObjectsInQueueToStart.push(gameObject)
+    this.gameObjectToStartQueue.enqueue(gameObject)
 
     return gameObject
   }
 
   destroy(gameObject: GameObject) {
-    this.gameObjectsInQueueToDestroy.push(gameObject)
+    this.gameObjectToDestroyQueue.enqueue(gameObject)
   }
 
   private updateGameObject(deltaTime: DeltaTime) {
@@ -54,9 +56,7 @@ export class GameObjectSystem extends GameSystem {
   }
 
   private startInQueueToStart() {
-    while (this.gameObjectsInQueueToStart.length > 0) {
-      const gameObject = this.gameObjectsInQueueToStart.shift()!
-
+    for (const gameObject of this.gameObjectToStartQueue.iterator()) {
       gameObject.start()
 
       this.gameObjectRepository.addGameObject(gameObject)
@@ -64,9 +64,7 @@ export class GameObjectSystem extends GameSystem {
   }
 
   private removeGameObjects() {
-    while (this.gameObjectsInQueueToDestroy.length > 0) {
-      const gameObject = this.gameObjectsInQueueToDestroy.shift()!
-
+    for (const gameObject of this.gameObjectToDestroyQueue.iterator()) {
       this.gameObjectRepository.removeGameObject(gameObject)
     }
   }
