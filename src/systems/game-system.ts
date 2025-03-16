@@ -1,4 +1,4 @@
-import { DeltaTime } from '../util/index.js'
+import { DeltaTime } from '../utils/index.js'
 
 export class GameSystem {
 

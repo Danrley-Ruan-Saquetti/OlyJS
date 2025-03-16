@@ -1,5 +1,5 @@
 import { Transform } from '../components/index.js'
-import { CanvasRenderer } from '../util/index.js'
+import { CanvasRenderer } from '../utils/index.js'
 import { GameSystem } from './game-system.js'
 
 export class RenderSystem extends GameSystem {

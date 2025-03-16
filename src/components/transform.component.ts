@@ -1,4 +1,4 @@
-import { Vector3 } from '../util/vector3.js'
+import { Vector3 } from '../utils/vector3.js'
 import { GameComponent } from './game-component.js'
 
 export class Transform extends GameComponent {

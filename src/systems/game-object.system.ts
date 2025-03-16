@@ -2,9 +2,9 @@ import { Game } from './../core/index.js'
 import { GameSystem } from './game-system.js'
 import { GameObject } from '../entities/index.js'
 import { GameObjectRepository } from '../repositories/index.js'
-import { DeltaTime } from '../util/delta-time.js'
+import { DeltaTime } from '../utils/delta-time.js'
 import { IQueue } from '../interfaces/queue.interface.js'
-import { Queue } from '../util/queue.js'
+import { Queue } from '../utils/queue.js'
 import { GameComponent } from '../components/game-component.js'
 
 export class GameObjectSystem extends GameSystem {

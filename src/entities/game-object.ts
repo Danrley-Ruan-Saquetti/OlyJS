@@ -1,6 +1,6 @@
 import { Game } from '../core/index.js'
 import { GameComponent, Transform } from '../components/index.js'
-import { Container, DeltaTime, Listener, ListenerHandle, ObserverListener } from '../util/index.js'
+import { Container, DeltaTime, Listener, ListenerHandle, ObserverListener } from '../utils/index.js'
 
 export class GameObject {
 
