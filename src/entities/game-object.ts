@@ -1,6 +1,6 @@
 import { Game } from '../core/index.js'
 import { GameComponent, Transform } from '../components/index.js'
-import { Container, DeltaTime } from '../util/index.js'
+import { Container, DeltaTime, Listener, ListenerHandle, ObserverListener } from '../util/index.js'
 
 export class GameObject {
 
@@ -8,6 +8,8 @@ export class GameObject {
 
   private gameContainer = new Container<GameComponent>()
   private tagContainer = new Container<string>()
+
+  private observerListener = new ObserverListener()
 
   get time() { return this._game.deltaTime }
 
@@ -53,5 +55,17 @@ export class GameObject {
 
   hasTag(tag: string) {
     return this.tagContainer.contains(tag)
+  }
+
+  on(event: string, handler: ListenerHandle) {
+    return this.observerListener.on(event, handler)
+  }
+
+  off(event: string, listener: Listener) {
+    return this.observerListener.off(event, listener)
+  }
+
+  emit(event: string, data: any) {
+    this.observerListener.emit(event, data)
   }
 }
