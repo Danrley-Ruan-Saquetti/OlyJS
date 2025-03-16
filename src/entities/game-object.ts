@@ -4,7 +4,7 @@ import { Container, DeltaTime } from '../util/index.js'
 
 export class GameObject {
 
-  transform = new Transform()
+  readonly transform = new Transform()
 
   private gameContainer = new Container<GameComponent>()
   private tagContainer = new Container<string>()
