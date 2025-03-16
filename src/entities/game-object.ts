@@ -1,7 +1,11 @@
 import { Game } from '../core/index.js'
-import { IMonoBehaviour } from '../interfaces/index.js'
+import { GameComponent, Transform } from '../components/index.js'
 
-export class GameObject implements IMonoBehaviour {
+export class GameObject {
+
+  transform = new Transform()
+
+  private gameComponents: GameComponent[] = []
 
   get time() { return this._game.deltaTime }
 
@@ -17,5 +21,27 @@ export class GameObject implements IMonoBehaviour {
 
   instantiate<T extends GameObject>(classGameObject: new (...args: ConstructorParameters<typeof GameObject>) => T) {
     return this._game.instantiate(classGameObject)
+  }
+
+  addComponent(gameComponent: GameComponent) {
+    this.gameComponents.push(gameComponent)
+  }
+
+  getComponent<T extends GameComponent>(classGameComponent: new (...args: any[]) => T) {
+    const gameComponent = this.gameComponents.find(gameComponent => gameComponent instanceof classGameComponent)
+
+    if (!gameComponent) {
+      throw new Error(`Component "${classGameComponent.name}" not found`)
+    }
+
+    return gameComponent as T
+  }
+
+  removeComponent(gameComponent: GameComponent) {
+    const index = this.gameComponents.indexOf(gameComponent)
+
+    if (index >= 0) {
+      this.gameComponents.splice(index, 1)
+    }
   }
 }
