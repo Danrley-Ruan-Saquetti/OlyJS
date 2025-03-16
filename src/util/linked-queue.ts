@@ -1,9 +1,11 @@
+import { IQueue } from '../interfaces/index.js'
+
 export class NodeLinkedQueue<T = any> {
 
   constructor(public value: T, public next: NodeLinkedQueue<T> = null!) { }
 }
 
-export class LinkedQueue<T = any> {
+export class LinkedQueue<T = any> implements IQueue<T> {
 
   private head: NodeLinkedQueue<T>
   private tail: NodeLinkedQueue<T>

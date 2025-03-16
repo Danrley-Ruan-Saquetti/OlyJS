@@ -1,4 +1,6 @@
-export class Queue<T = any> {
+import { IQueue } from '../interfaces/index.js'
+
+export class Queue<T = any> implements IQueue<T> {
 
   private items: T[] = []
 
@@ -7,7 +9,7 @@ export class Queue<T = any> {
   }
 
   dequeue() {
-    return this.items.shift()
+    return this.items.shift() || null
   }
 
   clear() {
