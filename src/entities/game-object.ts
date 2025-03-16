@@ -12,7 +12,11 @@ export class GameObject {
 
   private observerListener = new ObserverListener()
 
+  private _isActive = true
+
   get time() { return this._game.deltaTime }
+
+  get isActive() { return this._isActive }
 
   constructor(private _game: Game) { }
 
@@ -86,5 +90,19 @@ export class GameObject {
 
   protected emit(event: string, data: any) {
     this.observerListener.emit(event, data)
+  }
+
+  setActive(value: boolean) {
+    if (value == this._isActive) {
+      return
+    }
+
+    this._isActive = value
+
+    if (this._isActive) {
+      this.emit('game-object/active', this)
+    } else {
+      this.emit('game-object/inactive', this)
+    }
   }
 }

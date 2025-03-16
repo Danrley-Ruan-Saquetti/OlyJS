@@ -1,4 +1,6 @@
 import {
+  Buttons,
+  DeltaTime,
   Game,
   GameObject,
   Input,
@@ -12,6 +14,9 @@ class Player extends GameObject {
   start() {
     const rectangle = this.addComponent(RectangleComponent)
   }
+
+  update(deltaTime: DeltaTime) {
+  }
 }
 
 class OlyGame extends Game {
@@ -21,8 +26,13 @@ class OlyGame extends Game {
   }
 
   update() {
+    super.update()
+
     if (Input.isKeyDown(Keys.Escape)) {
       console.clear()
+    }
+    if (Input.isButtonPressed(Buttons.MIDDLE)) {
+      console.log(this)
     }
   }
 }

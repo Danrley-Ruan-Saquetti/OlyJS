@@ -12,7 +12,7 @@ export class CanvasRenderer {
 
   constructor(
     public ctx: ContextRender2D,
-    private cameraTransform = new Transform()
+    private cameraTransform = new Transform(null!)
   ) { }
 
   drawRectangle({ x, y, height, width, color, stroke, strokeWidth, fixed }: IRectangle & DrawOptions & DrawStrokeOptions) {
