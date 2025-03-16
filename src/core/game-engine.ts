@@ -14,6 +14,11 @@ export abstract class GameEngine extends LoopCore {
     this.start()
   }
 
+  stop() {
+    super.stop()
+    this.stopObjects()
+  }
+
   protected initializeEngine() { }
   protected async loadAssets() { }
 
@@ -21,6 +26,7 @@ export abstract class GameEngine extends LoopCore {
   protected initializeObjects() { }
 
   protected startObjects() { }
+  protected stopObjects() { }
 
   updateObjects() { }
   update() { }

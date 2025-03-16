@@ -1,5 +1,5 @@
 import { GameEngine } from "./game-engine.js";
-import { GameObjectSystem, GameSystem } from "../systems/index.js";
+import { GameSystem, KeyboardSystem, GameObjectSystem } from "../systems/index.js";
 import { GameObject } from "../entities/index.js";
 
 export class Game extends GameEngine {
@@ -11,6 +11,7 @@ export class Game extends GameEngine {
   protected initializeEngine() {
     this.gameSystems.push(
       this.gameObjectSystem,
+      new KeyboardSystem()
     )
   }
 
@@ -20,6 +21,16 @@ export class Game extends GameEngine {
 
     while (i < len) {
       this.gameSystems[i].start()
+      i++
+    }
+  }
+
+  protected stopObjects() {
+    const len = this.gameSystems.length
+    let i = 0
+
+    while (i < len) {
+      this.gameSystems[i].stop()
       i++
     }
   }
