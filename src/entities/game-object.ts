@@ -1,12 +1,13 @@
 import { Game } from '../core/index.js'
 import { GameComponent, Transform } from '../components/index.js'
+import { Container } from '../util/container.js'
 
 export class GameObject {
 
   transform = new Transform()
 
-  private gameComponents: GameComponent[] = []
-  private tags: string[] = []
+  private gameContainer = new Container<GameComponent>()
+  private tagContainer = new Container<string>()
 
   get time() { return this._game.deltaTime }
 
@@ -25,11 +26,11 @@ export class GameObject {
   }
 
   addComponent(gameComponent: GameComponent) {
-    this.gameComponents.push(gameComponent)
+    this.gameContainer.add(gameComponent)
   }
 
   getComponent<T extends GameComponent>(classGameComponent: new (...args: any[]) => T) {
-    const gameComponent = this.gameComponents.find(gameComponent => gameComponent instanceof classGameComponent)
+    const gameComponent = this.gameContainer.getItens().find(gameComponent => gameComponent instanceof classGameComponent)
 
     if (!gameComponent) {
       throw new Error(`Component "${classGameComponent.name}" not found`)
@@ -39,26 +40,18 @@ export class GameObject {
   }
 
   removeComponent(gameComponent: GameComponent) {
-    const index = this.gameComponents.indexOf(gameComponent)
-
-    if (index >= 0) {
-      this.gameComponents.splice(index, 1)
-    }
+    this.gameContainer.remove(gameComponent)
   }
 
   addTag(tag: string) {
-    this.tags.push(tag)
+    this.tagContainer.add(tag)
   }
 
   removeTag(tag: string) {
-    const index = this.tags.indexOf(tag)
-
-    if (index >= 0) {
-      this.tags.splice(index, 1)
-    }
+    this.tagContainer.remove(tag)
   }
 
   hasTag(tag: string) {
-    return this.tags.find(t => t === tag)
+    return this.tagContainer.contains(tag)
   }
 }
