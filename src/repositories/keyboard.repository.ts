@@ -14,12 +14,8 @@ export class KeyboardRepository {
     delete this.keysPressed[key]
   }
 
-  isKeyDown(...keys: Keys[]) {
-    return keys.every(key => this.keysPressed?.[key])
-  }
-
-  getKeysPressed() {
-    return Object.keys(this.keysPressed) as Keys[]
+  isKeyDown(key: Keys) {
+    return !!this.keysPressed?.[key]
   }
 
   clear() {

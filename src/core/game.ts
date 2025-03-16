@@ -1,5 +1,5 @@
 import { GameEngine } from "./game-engine.js";
-import { GameSystem, KeyboardSystem, GameObjectSystem } from "../systems/index.js";
+import { GameSystem, KeyboardSystem, GameObjectSystem, MouseSystem } from "../systems/index.js";
 import { GameObject } from "../entities/index.js";
 
 export class Game extends GameEngine {
@@ -8,10 +8,15 @@ export class Game extends GameEngine {
 
   private gameSystems: GameSystem[] = []
 
+  constructor(public canvas: HTMLCanvasElement) {
+    super()
+  }
+
   protected initializeEngine() {
     this.gameSystems.push(
       this.gameObjectSystem,
-      new KeyboardSystem()
+      new KeyboardSystem(),
+      new MouseSystem(this.canvas),
     )
   }
 
