@@ -7,7 +7,7 @@ import {
   RenderSystem
 } from '../systems/index.js'
 import { GameObject } from '../entities/index.js'
-import { Listener, ListenerHandle } from '../utils/index.js'
+import { Listener, ListenerHandle, ObserverListener } from '../utils/index.js'
 import { Class } from '../types/index.js'
 
 export class Game extends GameEngine {
@@ -15,6 +15,8 @@ export class Game extends GameEngine {
   private gameObjectSystem = new GameObjectSystem(this)
 
   private gameSystems: GameSystem[] = []
+
+  private observerListener = new ObserverListener()
 
   constructor(public canvas: HTMLCanvasElement) {
     super()
@@ -82,10 +84,24 @@ export class Game extends GameEngine {
   instantiate<T extends Class<typeof GameObject>>(classGameObject: T) {
     const gameObject = this.gameObjectSystem.instantiate(classGameObject)
 
+    this.emit('game/game-object/instantiate', gameObject)
+
     return gameObject
   }
 
   destroy(gameObject: GameObject) {
     this.gameObjectSystem.destroy(gameObject)
+  }
+
+  on(event: string, handler: ListenerHandle) {
+    return this.observerListener.on(event, handler)
+  }
+
+  off(event: string, listener: Listener) {
+    return this.observerListener.off(event, listener)
+  }
+
+  protected emit(event: string, data: any) {
+    this.observerListener.emit(event, data)
   }
 }
