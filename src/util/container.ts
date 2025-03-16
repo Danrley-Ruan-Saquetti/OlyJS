@@ -1,29 +1,29 @@
 export class Container<T = any> {
 
-  private itens: T[] = []
+  private items: T[] = []
 
   add(item: T) {
-    this.itens.push(item)
+    this.items.push(item)
   }
 
   remove(item: T) {
-    const index = this.itens.indexOf(item)
+    const index = this.items.indexOf(item)
 
     if (index >= 0) {
-      this.itens.splice(index, 1)
+      this.items.splice(index, 1)
     }
   }
 
   get(index: number) {
-    return this.itens[index]
+    return this.items[index]
   }
 
   contains(item: T) {
     // @ts-expect-error
-    return this.itens.includes(item)
+    return this.items.includes(item)
   }
 
   getItens() {
-    return this.itens
+    return this.items
   }
 }
