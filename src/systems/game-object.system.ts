@@ -2,6 +2,7 @@ import { Game } from './../core/index.js'
 import { GameSystem } from './game-system.js'
 import { GameObject } from '../entities/index.js'
 import { GameObjectRepository } from '../repositories/index.js'
+import { DeltaTime } from '../util/delta-time.js'
 
 export class GameObjectSystem extends GameSystem {
 
@@ -14,15 +15,15 @@ export class GameObjectSystem extends GameSystem {
     super()
   }
 
-  updateBefore() {
+  updateBefore(deltaTime: DeltaTime) {
     this.startInQueueToStart()
   }
 
-  update() {
-    this.updateGameObject()
+  update(deltaTime: DeltaTime) {
+    this.updateGameObject(deltaTime)
   }
 
-  updateAfter() {
+  updateAfter(deltaTime: DeltaTime) {
     this.removeGameObjects()
   }
 
@@ -40,14 +41,14 @@ export class GameObjectSystem extends GameSystem {
     this.gameObjectsInQueueToDestroy.push(gameObject)
   }
 
-  private updateGameObject() {
+  private updateGameObject(deltaTime: DeltaTime) {
     const gameObjects = this.gameObjectRepository.getGameObjects()
 
     const len = gameObjects.length
     let i = 0
 
     while (i < len) {
-      gameObjects[i].update()
+      gameObjects[i].update(deltaTime)
       i++
     }
   }

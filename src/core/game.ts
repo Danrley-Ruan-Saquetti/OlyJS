@@ -45,7 +45,7 @@ export class Game extends GameEngine {
     let i = 0
 
     while (i < len) {
-      this.gameSystems[i].updateBefore()
+      this.gameSystems[i].updateBefore(this.deltaTime)
       i++
     }
   }
@@ -55,7 +55,7 @@ export class Game extends GameEngine {
     let i = 0
 
     while (i < len) {
-      this.gameSystems[i].update()
+      this.gameSystems[i].update(this.deltaTime)
       i++
     }
   }
@@ -65,7 +65,7 @@ export class Game extends GameEngine {
     let i = 0
 
     while (i < len) {
-      this.gameSystems[i].updateAfter()
+      this.gameSystems[i].updateAfter(this.deltaTime)
       i++
     }
   }

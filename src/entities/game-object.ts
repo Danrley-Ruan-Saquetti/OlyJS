@@ -1,6 +1,6 @@
 import { Game } from '../core/index.js'
 import { GameComponent, Transform } from '../components/index.js'
-import { Container } from '../util/container.js'
+import { Container, DeltaTime } from '../util/index.js'
 
 export class GameObject {
 
@@ -15,7 +15,7 @@ export class GameObject {
 
   awake() { }
   start() { }
-  update() { }
+  update(deltaTime: DeltaTime) { }
 
   destroy(gameObject: GameObject) {
     this._game.destroy(gameObject)
