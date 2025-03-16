@@ -1,5 +1,5 @@
-import { Game } from "../core/index.js"
-import { IMonoBehaviour } from "../interfaces/index.js"
+import { Game } from '../core/index.js'
+import { IMonoBehaviour } from '../interfaces/index.js'
 
 export class GameObject implements IMonoBehaviour {
 

@@ -1,7 +1,7 @@
-import { Game } from './../core/index.js';
-import { GameSystem } from "./game-system.js";
-import { GameObject } from "../entities/index.js";
-import { GameObjectRepository } from "../repositories/index.js";
+import { Game } from './../core/index.js'
+import { GameSystem } from './game-system.js'
+import { GameObject } from '../entities/index.js'
+import { GameObjectRepository } from '../repositories/index.js'
 
 export class GameObjectSystem extends GameSystem {
 

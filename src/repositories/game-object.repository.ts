@@ -1,4 +1,4 @@
-import { GameObject } from "../entities/game-object.js"
+import { GameObject } from '../entities/game-object.js'
 
 export class GameObjectRepository {
 

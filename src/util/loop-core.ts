@@ -1,4 +1,4 @@
-import { DeltaTime } from "./delta-time.js"
+import { DeltaTime } from './delta-time.js'
 
 export class LoopCore {
 

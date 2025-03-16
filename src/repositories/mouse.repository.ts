@@ -1,5 +1,5 @@
-import { Buttons } from "../enums/index.js";
-import { IVector2 } from "../interfaces/index.js";
+import { Buttons } from '../enums/index.js'
+import { IVector2 } from '../interfaces/index.js'
 
 export class MouseRepository {
 

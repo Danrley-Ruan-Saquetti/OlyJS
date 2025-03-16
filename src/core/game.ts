@@ -1,6 +1,6 @@
-import { GameEngine } from "./game-engine.js";
-import { GameSystem, KeyboardSystem, GameObjectSystem, MouseSystem } from "../systems/index.js";
-import { GameObject } from "../entities/index.js";
+import { GameEngine } from './game-engine.js'
+import { GameSystem, KeyboardSystem, GameObjectSystem, MouseSystem } from '../systems/index.js'
+import { GameObject } from '../entities/index.js'
 
 export class Game extends GameEngine {
 

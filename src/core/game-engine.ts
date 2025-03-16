@@ -1,4 +1,4 @@
-import { LoopCore } from "../util/index.js"
+import { LoopCore } from '../util/index.js'
 
 export abstract class GameEngine extends LoopCore {
 

@@ -1,4 +1,4 @@
-import { KeyboardRepository, MouseRepository } from "../repositories/index.js"
+import { KeyboardRepository, MouseRepository } from '../repositories/index.js'
 
 export class InputManager {
 

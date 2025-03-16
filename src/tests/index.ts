@@ -1,4 +1,4 @@
-import { Game, GameObject } from "../index.js";
+import { Game, GameObject } from '../index.js'
 
 class Player extends GameObject {
 
