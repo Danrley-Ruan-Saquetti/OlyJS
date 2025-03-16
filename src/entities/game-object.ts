@@ -6,6 +6,7 @@ export class GameObject {
   transform = new Transform()
 
   private gameComponents: GameComponent[] = []
+  private tags: string[] = []
 
   get time() { return this._game.deltaTime }
 
@@ -43,5 +44,21 @@ export class GameObject {
     if (index >= 0) {
       this.gameComponents.splice(index, 1)
     }
+  }
+
+  addTag(tag: string) {
+    this.tags.push(tag)
+  }
+
+  removeTag(tag: string) {
+    const index = this.tags.indexOf(tag)
+
+    if (index >= 0) {
+      this.tags.splice(index, 1)
+    }
+  }
+
+  hasTag(tag: string) {
+    return this.tags.find(t => t === tag)
   }
 }
