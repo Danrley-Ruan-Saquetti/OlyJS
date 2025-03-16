@@ -19,7 +19,13 @@ export class GameObject {
   start() { }
   update(deltaTime: DeltaTime) { }
 
+  onDestroy() { }
+
   destroy(gameObject: GameObject) {
+    gameObject.onDestroy()
+
+    gameObject.emit('game-object/component/add', null)
+
     this._game.destroy(gameObject)
   }
 
@@ -29,6 +35,8 @@ export class GameObject {
 
   addComponent(gameComponent: GameComponent) {
     this.gameContainer.add(gameComponent)
+
+    this.emit('game-object/component/add', gameComponent)
   }
 
   getComponent<T extends GameComponent>(classGameComponent: new (...args: any[]) => T) {
@@ -43,6 +51,8 @@ export class GameObject {
 
   removeComponent(gameComponent: GameComponent) {
     this.gameContainer.remove(gameComponent)
+
+    this.emit('game-object/component/remove', gameComponent)
   }
 
   addTag(tag: string) {
@@ -65,7 +75,7 @@ export class GameObject {
     return this.observerListener.off(event, listener)
   }
 
-  emit(event: string, data: any) {
+  protected emit(event: string, data: any) {
     this.observerListener.emit(event, data)
   }
 }

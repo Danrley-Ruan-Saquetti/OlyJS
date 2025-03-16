@@ -5,6 +5,7 @@ import { GameObjectRepository } from '../repositories/index.js'
 import { DeltaTime } from '../util/delta-time.js'
 import { IQueue } from '../interfaces/queue.interface.js'
 import { Queue } from '../util/queue.js'
+import { GameComponent } from '../components/game-component.js'
 
 export class GameObjectSystem extends GameSystem {
 
@@ -35,6 +36,10 @@ export class GameObjectSystem extends GameSystem {
     gameObject.awake()
 
     this.gameObjectToStartQueue.enqueue(gameObject)
+
+    gameObject.on('game-object/component/add', (gameComponent: GameComponent) => {
+
+    })
 
     return gameObject
   }
