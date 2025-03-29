@@ -1,14 +1,14 @@
 import { Game } from '../core/index.js'
 import { GameComponent, Transform } from '../components/index.js'
-import { Container, DeltaTime, Listener, ListenerHandle, ObserverListener } from '../utils/index.js'
+import { ContainerList, DeltaTime, Listener, ListenerHandle, ObserverListener } from '../utils/index.js'
 import { Class } from '../types/index.js'
 
 export class GameObject {
 
   readonly transform = new Transform(this)
 
-  private gameContainer = new Container<GameComponent>()
-  private tagContainer = new Container<string>()
+  private gameContainer = new ContainerList<GameComponent>()
+  private tagContainer = new ContainerList<string>()
 
   private observerListener = new ObserverListener()
 

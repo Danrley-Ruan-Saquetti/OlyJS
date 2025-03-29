@@ -1,6 +1,8 @@
 export interface IQueue<T = any> {
+  readonly size: number
+
   enqueue(item: T): void
   dequeue(): T | null
   clear(): void
-  iterator(): Generator<T, void, unknown>
+  toIterator(): Generator<T, void, unknown>
 }

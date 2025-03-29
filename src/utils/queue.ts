@@ -4,6 +4,8 @@ export class Queue<T = any> implements IQueue<T> {
 
   private items: T[] = []
 
+  get size() { return this.items.length }
+
   enqueue(item: T) {
     this.items.push(item)
   }
@@ -16,7 +18,7 @@ export class Queue<T = any> implements IQueue<T> {
     this.items = []
   }
 
-  *iterator() {
+  *toIterator() {
     while (this.items.length) {
       yield this.dequeue()!
     }

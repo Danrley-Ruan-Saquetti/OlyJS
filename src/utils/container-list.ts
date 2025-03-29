@@ -1,4 +1,4 @@
-export class Container<T = any> {
+export class ContainerList<T = any> {
 
   private items: T[] = []
 

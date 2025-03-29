@@ -1,14 +1,14 @@
 import { GameComponent, RendererComponent, Transform } from '../components/index.js'
 import { Game } from '../core/index.js'
 import { GameObject } from '../entities/index.js'
-import { CanvasRenderer, Container } from '../utils/index.js'
+import { CanvasRenderer, ContainerList } from '../utils/index.js'
 import { GameSystem } from './game-system.js'
 
 export class RenderSystem extends GameSystem {
 
   public canvasRenderer: CanvasRenderer
 
-  private rendererComponentContainer = new Container<RendererComponent>()
+  private rendererComponentContainer = new ContainerList<RendererComponent>()
 
   constructor(private _game: Game, private canvas: HTMLCanvasElement, cameraTransform?: Transform) {
     super()

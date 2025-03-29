@@ -2,7 +2,7 @@ import { Game } from './../core/index.js'
 import { GameSystem } from './game-system.js'
 import { GameObject } from '../entities/index.js'
 import { GameObjectRepository } from '../repositories/index.js'
-import { DeltaTime, Queue, Container } from '../utils/index.js'
+import { DeltaTime, Queue, ContainerList } from '../utils/index.js'
 import { IQueue } from '../interfaces/index.js'
 import { Class } from '../types/index.js'
 
@@ -13,7 +13,7 @@ export class GameObjectSystem extends GameSystem {
   private gameObjectToStartQueue: IQueue<GameObject> = new Queue()
   private gameObjectToDestroyQueue: IQueue<GameObject> = new Queue()
 
-  private gameObjectsActiveContainer = new Container<GameObject>()
+  private gameObjectsActiveContainer = new ContainerList<GameObject>()
 
   constructor(private _game: Game) {
     super()
@@ -89,7 +89,7 @@ export class GameObjectSystem extends GameSystem {
   }
 
   private startInQueueToStart() {
-    for (const gameObject of this.gameObjectToStartQueue.iterator()) {
+    for (const gameObject of this.gameObjectToStartQueue.toIterator()) {
       gameObject.start()
 
       this.gameObjectRepository.addGameObject(gameObject)
@@ -97,7 +97,7 @@ export class GameObjectSystem extends GameSystem {
   }
 
   private removeGameObjects() {
-    for (const gameObject of this.gameObjectToDestroyQueue.iterator()) {
+    for (const gameObject of this.gameObjectToDestroyQueue.toIterator()) {
       this.gameObjectRepository.removeGameObject(gameObject)
     }
   }
