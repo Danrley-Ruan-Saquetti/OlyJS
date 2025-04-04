@@ -9,14 +9,16 @@ import {
 import { GameObject } from '../entities/index.js'
 import { Listener, ListenerHandle, ObserverListener } from '../utils/index.js'
 import { Class } from '../types/index.js'
+import { Transform } from '../components/transform.component.js'
 
 export class Game extends GameEngine {
 
   private gameObjectSystem = new GameObjectSystem(this)
+  private observerListener = new ObserverListener()
 
   private gameSystems: GameSystem[] = []
 
-  private observerListener = new ObserverListener()
+  protected camera = new Transform(null!)
 
   constructor(public canvas: HTMLCanvasElement) {
     super()
@@ -25,7 +27,7 @@ export class Game extends GameEngine {
   protected initializeEngine() {
     this.gameSystems.push(
       this.gameObjectSystem,
-      new RenderSystem(this, this.canvas),
+      new RenderSystem(this, this.canvas, this.camera),
       new KeyboardSystem(),
       new MouseSystem(this.canvas),
     )
@@ -86,7 +88,7 @@ export class Game extends GameEngine {
 
     this.emit('game/game-object/instantiate', gameObject)
 
-    return gameObject
+    return gameObject as InstanceType<T>
   }
 
   destroy(gameObject: GameObject) {

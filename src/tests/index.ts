@@ -12,7 +12,7 @@ import { getCanvas } from './common.js'
 class Player extends GameObject {
 
   start() {
-    const rectangle = this.addComponent(RectangleComponent)
+    this.addComponent(RectangleComponent)
   }
 
   update(deltaTime: DeltaTime) {
@@ -23,6 +23,9 @@ class OlyGame extends Game {
 
   protected initializeScene() {
     this.instantiate(Player)
+
+    this.camera.scale.x = this.canvas.width
+    this.camera.scale.y = this.canvas.height
   }
 
   update() {

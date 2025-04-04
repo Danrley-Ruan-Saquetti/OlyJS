@@ -21,7 +21,7 @@ export class CanvasRenderer {
 
     if (!fixed) this.applyViewCamera()
 
-    this.ctx.rect(x, y, width, height)
+    this.ctx.rect(x - (width / 2), y - (height / 2), width, height)
 
     if (color) this.ctx.fillStyle = color
 
@@ -60,27 +60,32 @@ export class CanvasRenderer {
 
   drawImage({ image, x, y, width, height, fixed }: DrawImageOptions) {
     this.ctx.save()
+
     if (!fixed) this.applyViewCamera()
+
     this.ctx.drawImage(image, x, y, width, height)
     this.ctx.restore()
   }
 
   drawImageFrame({ image, x, y, imageX, imageY, imageWidth, imageHeight, width = imageWidth, height = imageHeight, fixed }: DrawImageFrameOptions) {
     this.ctx.save()
+
     if (!fixed) this.applyViewCamera()
+
     this.ctx.drawImage(image, imageX, imageY, imageWidth, imageHeight, x, y, width, height)
     this.ctx.restore()
   }
 
   drawText({ text, x, y, maxWidth, font, color, fixed }: DrawTextOptions) {
     this.ctx.save()
+
     if (!fixed) this.applyViewCamera()
     if (font) this.ctx.font = font
     if (color) this.ctx.fillStyle = color
+
     this.ctx.fillText(text, x, y, maxWidth)
     this.ctx.restore()
   }
-
 
   clear() {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
@@ -91,6 +96,7 @@ export class CanvasRenderer {
       (this.cameraTransform.scale.x / 2) - this.cameraTransform.position.x,
       (this.cameraTransform.scale.y / 2) - this.cameraTransform.position.y
     )
+
     this.scale(this.cameraTransform.scale.x, this.cameraTransform.scale.y)
   }
 
