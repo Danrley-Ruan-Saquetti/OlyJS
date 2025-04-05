@@ -9,6 +9,11 @@ export class DeltaTime {
   get deltaTime() { return this._deltaTimeMilliseconds / 1_000 }
   get timeMilliseconds() { return this._timeMilliseconds }
   get time() { return this._timeMilliseconds / 1_000 }
+  get fps() {
+    const deltaTime = this.deltaTime
+
+    return deltaTime > 0 ? Math.round(1 / deltaTime) : 0
+  }
 
   constructor() {
     this.reset()

@@ -97,6 +97,18 @@ export class Vector3 extends Vector2 implements IVector3 {
     return vector
   }
 
+  translate({ x = 0, y = 0, z = 0 }: Partial<IVector3>) {
+    this.x += x
+    this.y += y
+    this.z += z
+  }
+
+  move({ x, y, z }: IVector3) {
+    this.x = x
+    this.y = y
+    this.z = z
+  }
+
   normalized() {
     const magnitude = this.magnitude()
 

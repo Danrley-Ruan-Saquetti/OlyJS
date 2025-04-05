@@ -65,6 +65,7 @@ export class GameObjectSystem extends GameSystem {
 
   destroy(gameObject: GameObject) {
     this.onInactiveGameObject(gameObject)
+
     this.gameObjectToDestroyQueue.enqueue(gameObject)
   }
 

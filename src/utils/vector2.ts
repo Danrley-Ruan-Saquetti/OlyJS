@@ -70,6 +70,16 @@ export class Vector2 implements IVector2 {
     return mag > maxLength ? vector.normalized().multiply(maxLength) : vector
   }
 
+  translate({ x = 0, y = 0 }: Partial<IVector2>) {
+    this.x += x
+    this.y += y
+  }
+
+  move({ x, y }: IVector2) {
+    this.x = x
+    this.y = y
+  }
+
   normalized() {
     const magnitude = this.magnitude()
 
