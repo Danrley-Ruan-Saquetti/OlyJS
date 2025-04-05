@@ -29,7 +29,7 @@ export class GameObject {
   destroy(gameObject: GameObject) {
     gameObject.onDestroy()
 
-    gameObject.emit('game-object/component/add', null)
+    gameObject.emit('game-object/destroy', null)
 
     this._game.destroy(gameObject)
   }
