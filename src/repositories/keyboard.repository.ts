@@ -1,24 +1,22 @@
 import { Keys } from '../enums/index.js'
 
-export type KeyPressed = { [x in Keys]?: boolean }
-
 export class KeyboardRepository {
 
-  private keysPressed: KeyPressed = {}
+  private keysPressed = new Map<Keys, boolean>()
 
   press(key: Keys) {
-    this.keysPressed[key] = true
+    this.keysPressed.set(key, true)
   }
 
   release(key: Keys) {
-    delete this.keysPressed[key]
+    this.keysPressed.delete(key)
   }
 
   isKeyDown(key: Keys) {
-    return !!this.keysPressed?.[key]
+    return !!this.keysPressed.get(key)
   }
 
   clear() {
-    this.keysPressed = {}
+    this.keysPressed.clear()
   }
 }
