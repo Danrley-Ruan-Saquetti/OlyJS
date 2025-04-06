@@ -6,8 +6,8 @@ import {
   Input,
   Keys,
   RectangleComponent
-} from '../index.js'
-import { getCanvas } from './common.js'
+} from '../../index.js'
+import { getCanvas } from '../common.js'
 
 class Player extends GameObject {
 
