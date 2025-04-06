@@ -14,7 +14,7 @@ export abstract class GameEngine extends LoopCore {
     this.start()
   }
 
-  stop() {
+  override stop() {
     super.stop()
     this.stopObjects()
   }

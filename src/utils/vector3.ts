@@ -16,19 +16,123 @@ export class Vector3 extends Vector2 implements IVector3 {
     super(x, y)
   }
 
-  static diff(ref1: Vector3, ref2: Vector3) {
-    return new Vector3(ref1.x - ref2.x, ref1.y - ref2.y, ref1.z - ref2.z)
+  override magnitude() {
+    return Vector3.magnitude(this)
   }
 
-  static distance(ref1: Vector3, ref2: Vector3) {
-    return Math.sqrt((ref2.x - ref1.x) ** 2 + (ref2.y - ref1.y) ** 2 + (ref2.z - ref1.z) ** 2)
+  override normalize() {
+    return Vector3.normalize(this)
   }
 
-  static dot(ref1: Vector3, ref2: Vector3) {
+  override normalizeSelf() {
+    const mag = this.magnitude()
+
+    if (mag > 0) {
+      this.x /= mag
+      this.y /= mag
+      this.z /= mag
+    }
+
+    return this
+  }
+
+  override multiply(scalar: number) {
+    return Vector3.multiply(this, scalar)
+  }
+
+  override multiplySelf(scalar: number) {
+    this.x *= scalar
+    this.y *= scalar
+    this.z *= scalar
+
+    return this
+  }
+
+  add({ x = 0, y = 0, z = 0 }: Partial<IVector3>) {
+    return Vector3.add(this, { x, y, z })
+  }
+
+  addSelf({ x = 0, y = 0, z = 0 }: Partial<IVector3>) {
+    this.x += x
+    this.y += y
+    this.z += z
+
+    return this
+  }
+
+  subtract({ x = 0, y = 0, z = 0 }: Partial<IVector3>) {
+    return Vector3.subtract(this, { x, y, z })
+  }
+
+  subtractSelf({ x = 0, y = 0, z = 0 }: Partial<IVector3>) {
+    this.x -= x
+    this.y -= y
+    this.z -= z
+
+    return this
+  }
+
+  override sqrt() {
+    return Vector3.sqrt(this)
+  }
+
+  override clone() {
+    return Vector3.from(this)
+  }
+
+  override toString() {
+    return `Vector3(${this.x}, ${this.y}, ${this.z})`
+  }
+
+  static from({ x = 0, y = 0, z = 0 }: Partial<IVector3>) {
+    return new Vector3(x, y, z)
+  }
+
+  static equals(ref1: IVector3, ref2: IVector3) {
+    return ref1.x === ref2.x && ref1.y === ref2.y && ref1.z === ref2.z
+  }
+
+  static add(ref1: IVector3, ref2: IVector3) {
+    return new Vector3(
+      ref1.x + ref2.x,
+      ref1.y + ref2.y,
+      ref1.z + ref2.z
+    )
+  }
+
+  static subtract(ref1: IVector3, ref2: IVector3) {
+    return new Vector3(
+      ref1.x - ref2.x,
+      ref1.y - ref2.y,
+      ref1.z - ref2.z
+    )
+  }
+
+  static multiply(vector: IVector3, scalar: number) {
+    return new Vector3(
+      vector.x * scalar,
+      vector.y * scalar,
+      vector.z * scalar
+    )
+  }
+
+  static normalize(vector: IVector3) {
+    const mag = Vector3.magnitude(vector)
+
+    return mag > 0
+      ? new Vector3(
+        vector.x / mag,
+        vector.y / mag,
+        vector.z / mag
+      )
+      : Vector3.zero
+  }
+
+  static dot(ref1: IVector3, ref2: IVector3) {
     return ref1.x * ref2.x + ref1.y * ref2.y + ref1.z * ref2.z
   }
 
-  static cross(ref1: Vector3, ref2: Vector3) {
+  static cross(ref1: IVector3, ref2: IVector3) {
     return new Vector3(
       ref1.y * ref2.z - ref1.z * ref2.y,
       ref1.z * ref2.x - ref1.x * ref2.z,
@@ -36,32 +140,29 @@ export class Vector3 extends Vector2 implements IVector3 {
     )
   }
 
-  static lerp(ref1: Vector3, ref2: Vector3, t: number) {
-    t = Math.max(0, Math.min(1, t))
+  static sqrt(vector: IVector3) {
+    return vector.x ** 2 + vector.y ** 2 + vector.z ** 2
+  }
 
-    return new Vector3(
-      ref1.x + (ref2.x - ref1.x) * t,
-      ref1.y + (ref2.y - ref1.y) * t,
-      ref1.z + (ref2.z - ref1.z) * t
+  static magnitude(vector: IVector3) {
+    return Math.sqrt(Vector3.sqrt(vector))
+  }
+
+  static distance(ref1: IVector3, ref2: IVector3) {
+    return Math.sqrt(
+      (ref2.x - ref1.x) ** 2 +
+      (ref2.y - ref1.y) ** 2 +
+      (ref2.z - ref1.z) ** 2
     )
   }
 
-  static moveTowards(ref1: Vector3, ref2: Vector3, maxDistanceDelta: number) {
-    const diff = Vector3.diff(ref2, ref1)
-    const dist = diff.magnitude()
+  static angle(ref1: IVector3, ref2: IVector3) {
+    const dot = Vector3.dot(Vector3.normalize(ref1), Vector3.normalize(ref2))
 
-    if (dist <= maxDistanceDelta || dist === 0) {
-      return new Vector3(ref2.x, ref2.y, ref2.z)
-    }
-
-    return new Vector3(
-      ref1.x + (diff.x / dist) * maxDistanceDelta,
-      ref1.y + (diff.y / dist) * maxDistanceDelta,
-      ref1.z + (diff.z / dist) * maxDistanceDelta
-    )
+    return Math.acos(Math.max(-1, Math.min(1, dot))) * (180 / Math.PI)
   }
 
-  static reflect(inDirection: Vector3, inNormal: Vector3) {
+  static reflect(inDirection: IVector3, inNormal: IVector3) {
     const dot = Vector3.dot(inDirection, inNormal)
 
     return new Vector3(
@@ -71,63 +172,9 @@ export class Vector3 extends Vector2 implements IVector3 {
     )
   }
 
-  static angle(ref1: Vector3, ref2: Vector3) {
-    const dot = Vector3.dot(ref1.normalized(), ref2.normalized())
+  static clampMagnitude(vector: IVector3, maxLength: number) {
+    const mag = Vector3.magnitude(vector)
 
-    return Math.acos(Math.max(-1, Math.min(1, dot))) * (180 / Math.PI)
-  }
-
-  static project(vector: Vector3, onNormal: Vector3) {
-    const scale = Vector3.dot(vector, onNormal) / onNormal.sqrMagnitude()
-
-    return new Vector3(onNormal.x * scale, onNormal.y * scale, onNormal.z * scale)
-  }
-
-  static projectOnPlane(vector: Vector3, planeNormal: Vector3) {
-    return Vector3.diff(vector, Vector3.project(vector, planeNormal))
-  }
-
-  static clampMagnitude(vector: Vector3, maxLength: number) {
-    const magnitude = vector.magnitude()
-
-    if (magnitude > maxLength) {
-      return vector.normalized().multiply(maxLength)
-    }
-
-    return vector
-  }
-
-  translate({ x = 0, y = 0, z = 0 }: Partial<IVector3>) {
-    this.x += x
-    this.y += y
-    this.z += z
-  }
-
-  move({ x, y, z }: IVector3) {
-    this.x = x
-    this.y = y
-    this.z = z
-  }
-
-  normalized() {
-    const magnitude = this.magnitude()
-
-    return magnitude > 0 ? new Vector3(this.x / magnitude, this.y / magnitude, this.z / magnitude) : Vector3.zero
-  }
-
-  magnitude() {
-    return Math.sqrt(this.sqrMagnitude())
-  }
-
-  sqrMagnitude() {
-    return this.x ** 2 + this.y ** 2 + this.z ** 2
-  }
-
-  multiply(scalar: number) {
-    return new Vector3(this.x * scalar, this.y * scalar, this.z * scalar)
-  }
-
-  toString() {
-    return `Vector3(${this.x}, ${this.y}, ${this.z})`
+    return mag > maxLength ? Vector3.normalize(vector).multiply(maxLength) : vector
   }
 }

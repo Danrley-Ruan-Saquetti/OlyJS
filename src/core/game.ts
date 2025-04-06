@@ -24,7 +24,7 @@ export class Game extends GameEngine {
     super()
   }
 
-  protected initializeEngine() {
+  protected override initializeEngine() {
     this.gameSystems.push(
       this.gameObjectSystem,
       new RenderSystem(this, this.canvas, this.camera),
@@ -33,7 +33,7 @@ export class Game extends GameEngine {
     )
   }
 
-  protected startObjects() {
+  protected override startObjects() {
     const len = this.gameSystems.length
     let i = 0
 
@@ -43,7 +43,7 @@ export class Game extends GameEngine {
     }
   }
 
-  protected stopObjects() {
+  protected override stopObjects() {
     const len = this.gameSystems.length
     let i = 0
 
@@ -53,7 +53,7 @@ export class Game extends GameEngine {
     }
   }
 
-  updateBefore() {
+  override updateBefore() {
     const len = this.gameSystems.length
     let i = 0
 
@@ -63,7 +63,7 @@ export class Game extends GameEngine {
     }
   }
 
-  update() {
+  override update() {
     const len = this.gameSystems.length
     let i = 0
 
@@ -73,7 +73,7 @@ export class Game extends GameEngine {
     }
   }
 
-  updateAfter() {
+  override updateAfter() {
     const len = this.gameSystems.length
     let i = 0
 
