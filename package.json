@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json && tsc-alias",
-    "build:dev": "concurrently \"tsc -w\" \"tsc-alias -w\""
+    "build:dev": "concurrently \"tsc -w -p tsconfig.dev.json\" \"tsc-alias -w\"",
+    "serve": "live-server --port=4200 --open=tests"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "live-server": "^1.2.2",
     "prettier": "^3.7.4",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3",
