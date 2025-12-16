@@ -1,4 +1,4 @@
-import { EventMap } from '@common/event/types'
+import { EventMap } from '@common/event/types.js'
 
 export type Listener<T = any> = (payload: T) => void
 
