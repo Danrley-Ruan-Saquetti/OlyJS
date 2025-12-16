@@ -1,12 +1,23 @@
 {
 	"compilerOptions": {
-		"target": "ES2019",
-		"module": "CommonJS",
-		"declaration": true,
-		"declarationDir": "dist",
+		"target": "ES2020",
+		"lib": [
+			"DOM",
+			"DOM.Iterable",
+			"ES2020"
+		],
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
 		"outDir": "dist",
+		"sourceMap": true,
+		"declaration": true,
+		"removeComments": true,
+		"declarationDir": "dist",
 		"strict": true,
 		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"isolatedModules": true,
 		"skipLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
