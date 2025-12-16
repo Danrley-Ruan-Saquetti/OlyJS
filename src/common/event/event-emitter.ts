@@ -1,4 +1,4 @@
-import { EventMap } from '@utils/event/types'
+import { EventMap } from '@common/event/types'
 
 type Listener<T = any> = (payload: T) => void
 

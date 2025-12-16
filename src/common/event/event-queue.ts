@@ -1,4 +1,4 @@
-import { EventMap, EventName } from '@utils/event/types'
+import { EventMap, EventName } from '@common/event/types'
 
 type EventBuffer<Type extends EventName = any, Payload = any> = {
   type: keyof Type
