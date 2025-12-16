@@ -1,7 +1,7 @@
 import { EventMap } from '@common/event/types.js'
 import { Runtime } from '@runtimes/runtime.js'
 
-export class WorkerHostRuntime<Events extends EventMap = any> extends Runtime<Events> {
+export class WorkerHostRuntime<In extends EventMap = any, Out extends EventMap = any> extends Runtime<In, Out> {
 
   constructor() {
     super()
@@ -13,7 +13,7 @@ export class WorkerHostRuntime<Events extends EventMap = any> extends Runtime<Ev
     }
   }
 
-  send<KEvent extends keyof Events>(event: KEvent, payload: Events[KEvent]): void {
+  send<KEvent extends keyof In>(event: KEvent, payload: In[KEvent]): void {
     self.postMessage({ type: event, payload })
   }
 }
