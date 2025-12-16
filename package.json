@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && tsc-alias",
+    "build": "tsc -p tsconfig.build.json && tsc-alias",
     "build:dev": "concurrently \"tsc -w -p tsconfig.dev.json\" \"tsc-alias -w\"",
     "serve": "live-server --port=4200 --open=tests"
   },

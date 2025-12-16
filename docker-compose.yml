@@ -14,36 +14,16 @@ services:
     command: npm run build:dev
     tty: true
     volumes:
-      - ./dist:/app/dist
-    develop:
-      watch:
-        - action: sync
-          path: /src
-          target: /app
-          ignore:
-            - node_modules/
-            - dist/
-            - .git/
-
-        - action: restart
-          path: tsconfig.json
-        - action: restart
-          path: tsconfig.dev.json
-
-        - action: rebuild
-          path: package.json
-        - action: rebuild
-          path: package-lock.json
+      - .:/app
+      - /app/node_modules
 
   serve:
     image: node:20-alpine
     container_name: serve
     working_dir: /app
-    command: npx live-server --port=4200 --open=tests
+    command: npx live-server --port=4200 --open=./tests
+    volumes:
+      - ./dist:/app/dist
+      - ./tests:/app/tests
     ports:
       - 4200:4200
-    develop:
-      watch:
-        - action: sync
-          path: ./tests
-          target: /app

@@ -1,3 +1,9 @@
 {
-	"extends": "./tsconfig.json"
+	"extends": "./tsconfig.json",
+	"watchOptions": {
+		"watchFile": "fixedPollingInterval",
+		"watchDirectory": "fixedPollingInterval",
+		"fallbackPolling": "fixedPollingInterval",
+		"pollingInterval": 1000
+	}
 }
