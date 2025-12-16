@@ -1,7 +1,6 @@
-import { Engine, WorkerRuntime } from '../dist/index.js'
+import { Engine, MainWorker, WorkerRuntime } from '../dist/index.js'
 
-const worker = new Worker(new URL('../dist/workers/main.worker.js', import.meta.url), { type: 'module' })
-const runtime = new WorkerRuntime(worker)
+const runtime = new WorkerRuntime(new MainWorker())
 
 const engine = new Engine(runtime)
 
