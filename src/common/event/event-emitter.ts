@@ -1,6 +1,6 @@
 import { EventMap } from '@common/event/types'
 
-type Listener<T = any> = (payload: T) => void
+export type Listener<T = any> = (payload: T) => void
 
 type ListenersMap<Events extends EventMap = any> = {
   [KEvent in keyof Events]?: Listener<Events[KEvent]>[]
