@@ -1,0 +1,10 @@
+name: olyjs
+
+services:
+  wasm-build:
+    image: emscripten/emsdk:latest
+    working_dir: /app
+    volumes:
+      - ./native:/app
+      - ./build/native:/app/build/bin
+    command: bash -c "mkdir -p build && cd build && emcmake cmake .. && make"
