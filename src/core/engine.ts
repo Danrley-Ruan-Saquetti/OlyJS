@@ -1,21 +1,21 @@
-import { DeltaTime, DeltaTimer } from '@common/delta-time'
+import { DeltaTimer } from '@common/delta-time'
 import { EventEmitter } from '@common/event/event-emitter'
 import { EventQueue } from '@common/event/event-queue'
+import { EventMap } from '@common/event/types'
+import { EngineEvents, IEngine, IEngineRegisterEvent } from '@core/types'
 
-export type EngineEvents = {
-  'engine:start': undefined
-  'engine:tick': DeltaTime
-  'engine:stop': undefined
-}
-
-export class Engine {
+export class Engine<Events extends EventMap = any> extends EventEmitter<Events> implements IEngine<Events> {
 
   protected emitter = new EventEmitter<EngineEvents>()
-  protected eventQueue = new EventQueue<EngineEvents>()
+  protected eventQueue = new EventQueue<Events>()
 
   protected deltaTime = new DeltaTimer()
 
   private _isRunning = false
+
+  registerListener(listener: IEngineRegisterEvent<Events>) {
+    listener.registerEngine(this)
+  }
 
   start() {
     if (this._isRunning) {
