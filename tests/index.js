@@ -1,17 +1,17 @@
-import Module from '../build/native/engine.js';
+import { Engine } from '../build/web/index.js';
 
 async function main() {
-  const engine = await Module();
+  const engine = await Engine.create();
 
   const counterEl = document.getElementById('counter')
   const stepBtn = document.getElementById('step')
 
   let value = 0
 
-  engine._init()
+  engine.engine._init()
 
   stepBtn.addEventListener('click', () => {
-    value = engine._step(1, 0.016)
+    value = engine.engine._step(1, 0.016)
     counterEl.textContent = value.toString()
   })
 }
