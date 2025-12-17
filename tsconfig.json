@@ -17,6 +17,7 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
+		"strictPropertyInitialization": false,
 		"isolatedModules": true,
 		"skipLibCheck": true,
 		"baseUrl": ".",
