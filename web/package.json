@@ -4,8 +4,8 @@
   "type": "module",
   "description": "",
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && tsc-alias",
-    "build:dev": "concurrently \"tsc -w -p tsconfig.dev.json\" \"tsc-alias -w\""
+    "build": "rm -rf build && tsc -p tsconfig.build.json && tsc-alias",
+    "build:dev": "concurrently \"tsc -w -p tsconfig.dev.json --preserveWatchOutput\" \"nodemon -w build/dist -e js -x tsc-alias\""
   },
   "repository": {
     "type": "git",
@@ -24,9 +24,14 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "http-server": "^14.1.1",
+    "nodemon": "^3.1.11",
     "prettier": "^3.7.4",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.50.0"
+  },
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true
   }
 }
