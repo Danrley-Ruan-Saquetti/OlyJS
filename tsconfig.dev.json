@@ -1,8 +1,12 @@
 {
-	"extends": "./tsconfig.json",
-	"watchOptions": {
-		"watchFile": "fixedPollingInterval",
-		"watchDirectory": "dynamicPriorityPolling",
-		"fallbackPolling": "synchronous"
-	}
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "build/dist",
+    "declarationDir": "build/dist",
+  },
+  "watchOptions": {
+    "watchFile": "fixedPollingInterval",
+    "watchDirectory": "dynamicPriorityPolling",
+    "fallbackPolling": "dynamicpriority"
+  }
 }

@@ -1,18 +1,20 @@
 name: olyjs
 
 services:
-  build:
+  web-build:
     build: .
-    container_name: build
+    container_name: web-build
     command: npm run build
     volumes:
       - .:/app
 
-  build_dev:
+  web-dev:
     build: .
-    container_name: build_dev
+    container_name: web-dev
     command: npm run build:dev
     tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - .:/app
       - /app/node_modules
@@ -23,7 +25,7 @@ services:
     working_dir: /app
     command: npx live-server --port=4200 --open=./tests
     volumes:
-      - ./dist:/app/dist
+      - ./build/dist:/app/build/dist
       - ./tests:/app/tests
     ports:
       - 4200:4200
