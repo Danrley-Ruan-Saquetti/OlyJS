@@ -13,8 +13,6 @@ export default defineConfig(
   {
     files: ['**/*.{js,ts,mjs}'],
     rules: {
-      project: './tsconfig.dev.json',
-      tsconfigRootDir: __dirname,
       indent: ['off', 'spaces', 2],
       'linebreak-style': ['off', 'windows'],
       quotes: ['warn', 'single'],
