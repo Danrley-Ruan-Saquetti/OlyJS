@@ -1,10 +1,21 @@
 name: olyjs
 
 services:
-  wasm-build:
+  engine-build:
     image: emscripten/emsdk:latest
+    container_name: engine-build
     working_dir: /app
     volumes:
       - ./native:/app
       - ./build/native:/app/build/bin
     command: bash -c "mkdir -p build && cd build && emcmake cmake .. && make"
+
+  web-dev:
+    build: ./web
+    container_name: web-dev
+    command: npm run build:dev
+    tty: true
+    volumes:
+      - ./web:/app
+      - ./build/web:/app/dist
+      - ./web/node_modules:/app/node_modules
