@@ -1,20 +1,23 @@
-import { EventMap } from '@common/event/types';
+import { EventMap } from '@common/event/types'
 
 export type Listener<T = any> = (data: T) => void
 
-type ListenersMap<Events extends EventMap = any> = {
+type ListenersMap<Events extends EventMap = {}> = {
   [KEvent in keyof Events]?: Listener<Events[KEvent]>[]
 }
 
-export interface IEventEmitter<Events extends EventMap = any> {
-  once<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void;
-  on<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void;
-  emit<E extends keyof Events>(event: E, data: Events[E]): void;
-  off<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void;
-  clear(event?: keyof Events): void;
+export interface IEventEmitterRegister<Events extends EventMap = {}> {
+  once<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
+  on<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
+  off<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
+  clear(event?: keyof Events): void
 }
 
-export class EventEmitter<Events extends EventMap = any> implements IEventEmitter<Events> {
+export interface IEventEmitterDispatcher<Events extends EventMap = {}> {
+  emit<E extends keyof Events>(event: E, data: Events[E]): void
+}
+
+export class EventEmitter<Events extends EventMap = {}> implements IEventEmitterRegister<Events>, IEventEmitterDispatcher<Events> {
 
   protected listeners: ListenersMap<Events> = Object.create(null)
 
