@@ -1,8 +1,7 @@
-import { World } from '@ecs/world.js'
-import { DeltaTime } from '@runtime/contracts/time.js'
+import { SystemContext } from '@runtime/contracts/system-context'
 
 export interface ISystem {
   start(): void
   stop(): void
-  update(world: World, deltaTime: DeltaTime): void
+  update(context: SystemContext): void
 }

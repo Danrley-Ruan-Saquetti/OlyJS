@@ -5,6 +5,7 @@ import { EventQueue } from '@engine/events/event-queue.js'
 import { Clock } from '@engine/time/clock.js'
 import { EngineEventMap, IEngine } from '@engine/types.js'
 import { EventMap, Listener } from '@runtime/contracts/event.js'
+import { SystemContext } from '@runtime/contracts/system-context.js'
 
 export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents> {
 
@@ -57,11 +58,16 @@ export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents>
     }
 
     this.clock.tick()
-    const deltaTime = this.clock.getState()
+
+    const systemContext: SystemContext = {
+      deltaTime: this.clock.getState(),
+      world: this.world,
+      events: this
+    }
 
     let i = 0, length = this.systems.length
     while (i < length) {
-      this.systems[i].update(this.world, deltaTime)
+      this.systems[i].update(systemContext)
       i++
     }
 
