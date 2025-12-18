@@ -8,11 +8,13 @@ export default defineConfig(
   eslint.configs.recommended,
   tseslint.configs.recommended,
   {
-    ignores: ['dist/*', 'node_modules/*'],
+    ignores: ['dist/*', 'node_modules/*', 'build/*'],
   },
   {
     files: ['**/*.{js,ts,mjs}'],
     rules: {
+      project: './tsconfig.dev.json',
+      tsconfigRootDir: __dirname,
       indent: ['off', 'spaces', 2],
       'linebreak-style': ['off', 'windows'],
       quotes: ['warn', 'single'],
