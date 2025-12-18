@@ -1,20 +1,15 @@
-import { EventMap, EventName } from '@runtime/contracts/event.js'
+import { EventBuffer, EventMap, IEventQueueExecuter, IEventQueueSender } from '@runtime/contracts/event.js'
 
-type EventBuffer<Event extends EventName = any, Data = any> = {
-  event: Event
-  data: Data
-}
+export class BufferedEventQueue<Events extends EventMap = {}> implements IEventQueueSender<Events>, IEventQueueExecuter<Events> {
 
-export class EventQueue<Events extends EventMap = any> {
+  private buffer: EventBuffer<Events>[] = []
+  private swap: EventBuffer<Events>[] = []
 
-  private buffer: EventBuffer[]
-  private swap: EventBuffer[]
-
-  push<E extends keyof Events>(event: E, data: Events[E]) {
+  send<E extends keyof Events>(event: E, data: Events[E]) {
     this.buffer.push({ event, data })
   }
 
-  flush() {
+  execute() {
     const temp = this.buffer
 
     this.buffer = this.swap

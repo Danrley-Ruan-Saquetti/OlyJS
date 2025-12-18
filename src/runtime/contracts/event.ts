@@ -7,15 +7,39 @@ export type ListenersMap<Events extends EventMap = {}> = {
   [KEvent in keyof Events]?: Listener<Events[KEvent]>[]
 }
 
-export interface IEventEmitterRegister<Events extends EventMap = {}> {
+export interface IEventListenerRegistry<Events extends EventMap = {}> {
   on<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
   off<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
   clear(event?: keyof Events): void
 }
 
-export interface IEventEmitterDispatcher<Events extends EventMap = {}> {
+export interface IEventDispatcher<Events extends EventMap = {}> {
   emit<E extends keyof Events>(event: E, data: Events[E]): void
 }
 
-export interface IEventEmitter<Events extends EventMap = {}> extends IEventEmitterRegister<Events>, IEventEmitterDispatcher<Events> {
+export interface IEventBus<Events extends EventMap = {}> extends
+  IEventListenerRegistry<Events>,
+  IEventDispatcher<Events> { }
+
+export type EventBuffer<Events extends EventMap = {}> = {
+  event: keyof Events
+  data: Events[keyof Events]
 }
+
+export interface IEventQueueSender<Events extends EventMap = {}> {
+  send<E extends keyof Events>(event: E, data: Events[E]): void
+}
+
+export interface IEventQueueExecuter<Events extends EventMap = {}> {
+  execute<E extends keyof Events>(event: E, data: Events[E]): void
+}
+
+export interface IBufferedEventBus<Events extends EventMap = {}> extends
+  IEventListenerRegistry<Events>,
+  IEventDispatcher<Events>,
+  IEventQueueSender<Events>,
+  IEventQueueExecuter<Events> { }
+
+export interface IEventQueueProcessor<Events extends EventMap = {}> extends
+  IEventListenerRegistry<Events>,
+  IEventQueueSender<Events> { }
