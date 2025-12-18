@@ -1,20 +1,18 @@
 import { ISystem } from '@ecs/system.js'
 import { World } from '@ecs/world.js'
-import { EventEmitter } from '@engine/events/event-emitter.js'
-import { EventQueue } from '@engine/events/event-queue.js'
+import { BufferedEventBus } from '@engine/events/buffered-event-bus.js'
 import { Clock } from '@engine/time/clock.js'
 import { EngineEventMap, IEngine } from '@engine/types.js'
 import { EventMap, Listener } from '@runtime/contracts/event.js'
 import { SystemContext } from '@runtime/contracts/system-context.js'
 
-export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents> {
+export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<ExternalEvents> {
 
   protected systems: ISystem[] = []
 
   protected world = new World()
 
-  protected emitter = new EventEmitter<EngineEventMap<InEvents>>()
-  protected eventQueue = new EventQueue<EngineEventMap<InEvents>>()
+  protected emitter = new BufferedEventBus<EngineEventMap<ExternalEvents>>()
 
   protected clock = new Clock()
 
@@ -33,7 +31,7 @@ export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents>
       i++
     }
 
-    this.emitter.emit('engine:start', undefined as EngineEventMap<InEvents>['engine:start'])
+    this.emitter.emit('engine:start', undefined as EngineEventMap<ExternalEvents>['engine:start'])
   }
 
   stop() {
@@ -49,7 +47,7 @@ export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents>
       i++
     }
 
-    this.emitter.emit('engine:stop', undefined as EngineEventMap<InEvents>['engine:stop'])
+    this.emitter.emit('engine:stop', undefined as EngineEventMap<ExternalEvents>['engine:stop'])
   }
 
   tick() {
@@ -71,32 +69,26 @@ export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents>
       i++
     }
 
-    this.processEvents()
-  }
-
-  protected processEvents() {
-    for (const { event, data } of this.eventQueue.flush()) {
-      this.emitter.emit(event, data)
-    }
+    this.emitter.execute()
   }
 
   registerSystem(system: ISystem) {
     this.systems.push(system)
   }
 
-  on<E extends keyof EngineEventMap<InEvents>>(event: E, listener: Listener<EngineEventMap<InEvents>[E]>) {
+  on<E extends keyof EngineEventMap<ExternalEvents>>(event: E, listener: Listener<EngineEventMap<ExternalEvents>[E]>) {
     this.emitter.on(event, listener)
   }
 
-  emit<E extends keyof InEvents>(event: E, data: InEvents[E]) {
-    this.eventQueue.push(event as keyof EngineEventMap<InEvents>, data as any)
+  send<E extends keyof ExternalEvents>(event: E, data: ExternalEvents[E]) {
+    this.emitter.send(event as keyof EngineEventMap<ExternalEvents>, data as any)
   }
 
-  off<E extends keyof EngineEventMap<InEvents>>(event: E, listener: Listener<EngineEventMap<InEvents>[E]>) {
+  off<E extends keyof EngineEventMap<ExternalEvents>>(event: E, listener: Listener<EngineEventMap<ExternalEvents>[E]>) {
     this.emitter.off(event, listener)
   }
 
-  clear(event?: keyof EngineEventMap<InEvents>) {
+  clear(event?: keyof EngineEventMap<ExternalEvents>) {
     this.emitter.clear(event)
   }
 }
