@@ -4,8 +4,8 @@
   "type": "module",
   "description": "",
   "scripts": {
-    "build": "rm -rf build/prod && tsc -p tsconfig.build.json && tsc-alias",
-    "build:dev": "concurrently \"tsc -w -p tsconfig.dev.json --preserveWatchOutput\" \"nodemon -w build/dist -e js -x tsc-alias\""
+    "build": "rm -rf dist && node esbuild.config.build.js && tsc -p tsconfig.dev.json --preserveWatchOutput --emitDeclarationOnly",
+    "build:dev": "concurrently \"node esbuild.dev.config.js\" \"tsc -w -p tsconfig.dev.json --preserveWatchOutput --emitDeclarationOnly\""
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
     "concurrently": "^9.2.1",
+    "esbuild": "^0.27.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
