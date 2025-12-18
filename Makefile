@@ -1,14 +1,14 @@
 clean:
-	@rm -rf build
+	@rm -rf dist
 	@docker compose down
 .PHONY: clean
 
 build:
-	docker compose up web-build -d
+	docker compose up build -d
 .PHONY: build
 
 build_dev:
-	docker compose up web-dev -d
+	docker compose up dev -d
 .PHONY: build_dev
 
 serve:

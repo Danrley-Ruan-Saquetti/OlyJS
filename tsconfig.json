@@ -9,11 +9,11 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "outDir": "build",
+    "outDir": "dist",
     "sourceMap": true,
     "declaration": true,
     "removeComments": true,
-    "declarationDir": "build",
+    "declarationDir": "dist",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -32,6 +32,6 @@
   ],
   "exclude": [
     "node_modules",
-    "build"
+    "dist"
   ]
 }
