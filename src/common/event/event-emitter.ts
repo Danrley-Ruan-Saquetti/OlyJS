@@ -1,21 +1,4 @@
-import { EventMap } from '@common/event/types'
-
-export type Listener<T = any> = (data: T) => void
-
-type ListenersMap<Events extends EventMap = {}> = {
-  [KEvent in keyof Events]?: Listener<Events[KEvent]>[]
-}
-
-export interface IEventEmitterRegister<Events extends EventMap = {}> {
-  once<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
-  on<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
-  off<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
-  clear(event?: keyof Events): void
-}
-
-export interface IEventEmitterDispatcher<Events extends EventMap = {}> {
-  emit<E extends keyof Events>(event: E, data: Events[E]): void
-}
+import { EventMap, IEventEmitterDispatcher, IEventEmitterRegister, Listener, ListenersMap } from '@common/event/types'
 
 export class EventEmitter<Events extends EventMap = {}> implements IEventEmitterRegister<Events>, IEventEmitterDispatcher<Events> {
 

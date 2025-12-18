@@ -1,7 +1,7 @@
 import { DeltaTimer } from '@common/delta-time'
-import { EventEmitter, Listener } from '@common/event/event-emitter'
+import { EventEmitter } from '@common/event/event-emitter'
 import { EventQueue } from '@common/event/event-queue'
-import { EventMap } from '@common/event/types'
+import { EventMap, Listener } from '@common/event/types'
 import { EngineEventMap, IEngine, IEngineRegisterEvent } from '@core/types'
 
 export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents> {
