@@ -1,4 +1,5 @@
 import { ISystem } from '@ecs/system.js'
+import { World } from '@ecs/world.js'
 import { EventEmitter } from '@engine/events/event-emitter.js'
 import { EventQueue } from '@engine/events/event-queue.js'
 import { Clock } from '@engine/time/clock.js'
@@ -7,7 +8,9 @@ import { EventMap, Listener } from '@runtime/contracts/event.js'
 
 export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents> {
 
-  protected systems: ISystem[]
+  protected systems: ISystem[] = []
+
+  protected world = new World()
 
   protected emitter = new EventEmitter<EngineEventMap<InEvents>>()
   protected eventQueue = new EventQueue<EngineEventMap<InEvents>>()
@@ -58,7 +61,7 @@ export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents>
 
     let i = 0, length = this.systems.length
     while (i < length) {
-      this.systems[i].update(deltaTime)
+      this.systems[i].update(this.world, deltaTime)
       i++
     }
 
