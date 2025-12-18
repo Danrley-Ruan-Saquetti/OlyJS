@@ -30,15 +30,19 @@ export interface IEventQueueSender<Events extends EventMap = {}> {
   send<E extends keyof Events>(event: E, data: Events[E]): void
 }
 
-export interface IEventQueueExecuter<Events extends EventMap = {}> {
-  execute<E extends keyof Events>(event: E, data: Events[E]): void
+export interface IEventQueueFlusher {
+  flush(): void
+}
+
+export interface IEventQueueExecuter {
+  execute(): void
 }
 
 export interface IBufferedEventBus<Events extends EventMap = {}> extends
   IEventListenerRegistry<Events>,
   IEventDispatcher<Events>,
   IEventQueueSender<Events>,
-  IEventQueueExecuter<Events> { }
+  IEventQueueExecuter { }
 
 export interface IEventQueueProcessor<Events extends EventMap = {}> extends
   IEventListenerRegistry<Events>,

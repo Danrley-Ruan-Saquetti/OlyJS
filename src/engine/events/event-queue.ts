@@ -1,6 +1,6 @@
-import { EventBuffer, EventMap, IEventQueueExecuter, IEventQueueSender } from '@runtime/contracts/event.js'
+import { EventBuffer, EventMap, IEventQueueFlusher, IEventQueueSender } from '@runtime/contracts/event.js'
 
-export class BufferedEventQueue<Events extends EventMap = {}> implements IEventQueueSender<Events>, IEventQueueExecuter<Events> {
+export class BufferedEventQueue<Events extends EventMap = {}> implements IEventQueueSender<Events>, IEventQueueFlusher {
 
   private buffer: EventBuffer<Events>[] = []
   private swap: EventBuffer<Events>[] = []
@@ -9,7 +9,7 @@ export class BufferedEventQueue<Events extends EventMap = {}> implements IEventQ
     this.buffer.push({ event, data })
   }
 
-  execute() {
+  flush() {
     const temp = this.buffer
 
     this.buffer = this.swap

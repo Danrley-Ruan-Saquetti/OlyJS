@@ -20,7 +20,7 @@ export class BufferedEventBus<Events extends EventMap = {}> implements IBuffered
   }
 
   execute() {
-    for (const { event, data } of this.eventQueue.execute()) {
+    for (const { event, data } of this.eventQueue.flush()) {
       this.emitter.emit(event, data)
     }
   }
