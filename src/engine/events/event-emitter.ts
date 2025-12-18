@@ -1,6 +1,6 @@
-import { EventMap, IEventEmitterDispatcher, IEventEmitterRegister, Listener, ListenersMap } from '@runtime/contracts/event.js'
+import { EventMap, IEventEmitter, Listener, ListenersMap } from '@runtime/contracts/event.js'
 
-export class EventEmitter<Events extends EventMap = {}> implements IEventEmitterRegister<Events>, IEventEmitterDispatcher<Events> {
+export class EventEmitter<Events extends EventMap = {}> implements IEventEmitter<Events> {
 
   protected listeners: ListenersMap<Events> = Object.create(null)
 

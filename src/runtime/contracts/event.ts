@@ -16,3 +16,6 @@ export interface IEventEmitterRegister<Events extends EventMap = {}> {
 export interface IEventEmitterDispatcher<Events extends EventMap = {}> {
   emit<E extends keyof Events>(event: E, data: Events[E]): void
 }
+
+export interface IEventEmitter<Events extends EventMap = {}> extends IEventEmitterRegister<Events>, IEventEmitterDispatcher<Events> {
+}
