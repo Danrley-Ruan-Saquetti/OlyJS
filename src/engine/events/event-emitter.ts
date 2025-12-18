@@ -1,17 +1,8 @@
-import { EventMap, IEventEmitterDispatcher, IEventEmitterRegister, Listener, ListenersMap } from '@common/event/types'
+import { EventMap, IEventEmitterDispatcher, IEventEmitterRegister, Listener, ListenersMap } from '@runtime/contracts/event.js'
 
 export class EventEmitter<Events extends EventMap = {}> implements IEventEmitterRegister<Events>, IEventEmitterDispatcher<Events> {
 
   protected listeners: ListenersMap<Events> = Object.create(null)
-
-  once<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
-    const wrapper: Listener<Events[E]> = data => {
-      this.off(event, wrapper)
-      listener(data)
-    }
-
-    this.on(event, wrapper)
-  }
 
   on<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
     const listeners = this.listeners[event]

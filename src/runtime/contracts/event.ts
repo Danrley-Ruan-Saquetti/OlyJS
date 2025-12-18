@@ -8,7 +8,6 @@ export type ListenersMap<Events extends EventMap = {}> = {
 }
 
 export interface IEventEmitterRegister<Events extends EventMap = {}> {
-  once<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
   on<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
   off<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
   clear(event?: keyof Events): void

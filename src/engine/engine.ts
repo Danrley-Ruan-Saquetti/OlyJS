@@ -1,21 +1,20 @@
-import { DeltaTimer } from '@common/delta-time'
-import { EventEmitter } from '@common/event/event-emitter'
-import { EventQueue } from '@common/event/event-queue'
-import { EventMap, Listener } from '@common/event/types'
-import { EngineEventMap, IEngine, IEngineRegisterEvent } from '@core/types'
+import { ISystem } from '@ecs/system.js'
+import { EventEmitter } from '@engine/events/event-emitter.js'
+import { EventQueue } from '@engine/events/event-queue.js'
+import { Clock } from '@engine/time/clock.js'
+import { EngineEventMap, IEngine } from '@engine/types.js'
+import { EventMap, Listener } from '@runtime/contracts/event.js'
 
 export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents> {
+
+  protected systems: ISystem[]
 
   protected emitter = new EventEmitter<EngineEventMap<InEvents>>()
   protected eventQueue = new EventQueue<EngineEventMap<InEvents>>()
 
-  protected deltaTime = new DeltaTimer()
+  protected clock = new Clock()
 
   private _isRunning = false
-
-  registerListener(listener: IEngineRegisterEvent<InEvents>) {
-    listener.registerEngine(this)
-  }
 
   start() {
     if (this._isRunning) {
@@ -24,7 +23,12 @@ export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents>
 
     this._isRunning = true
 
-    this.deltaTime.reset()
+    let i = 0, length = this.systems.length
+    while (i < length) {
+      this.systems[i].start()
+      i++
+    }
+
     this.emitter.emit('engine:start', undefined as EngineEventMap<InEvents>['engine:start'])
   }
 
@@ -35,6 +39,12 @@ export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents>
 
     this._isRunning = false
 
+    let i = 0, length = this.systems.length
+    while (i < length) {
+      this.systems[i].stop()
+      i++
+    }
+
     this.emitter.emit('engine:stop', undefined as EngineEventMap<InEvents>['engine:stop'])
   }
 
@@ -43,9 +53,16 @@ export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents>
       return
     }
 
-    this.deltaTime.tick()
+    this.clock.tick()
+    const deltaTime = this.clock.getState()
+
+    let i = 0, length = this.systems.length
+    while (i < length) {
+      this.systems[i].update(deltaTime)
+      i++
+    }
+
     this.processEvents()
-    this.emitter.emit('engine:tick', this.deltaTime.getState() as EngineEventMap<InEvents>['engine:tick'])
   }
 
   protected processEvents() {
@@ -54,8 +71,8 @@ export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents>
     }
   }
 
-  once<E extends keyof EngineEventMap<InEvents>>(event: E, listener: Listener<EngineEventMap<InEvents>[E]>) {
-    this.emitter.once(event, listener)
+  registerSystem(system: ISystem) {
+    this.systems.push(system)
   }
 
   on<E extends keyof EngineEventMap<InEvents>>(event: E, listener: Listener<EngineEventMap<InEvents>[E]>) {

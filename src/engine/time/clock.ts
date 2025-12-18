@@ -1,10 +1,6 @@
-export interface DeltaTime {
-  deltaTime: number
-  deltaTimeSeconds: number
-  totalElapsedTime: number
-}
+import { DeltaTime } from '@runtime/contracts/time.js'
 
-export class DeltaTimer {
+export class Clock {
 
   protected lastTime = 0
   protected totalElapsedTime = 0

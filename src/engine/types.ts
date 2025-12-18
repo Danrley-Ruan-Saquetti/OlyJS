@@ -1,9 +1,8 @@
-import { DeltaTime } from '@common/delta-time'
-import { EventMap, IEventEmitterDispatcher, IEventEmitterRegister } from '@common/event/types'
+import { ISystem } from '@ecs/system.js'
+import { EventMap, IEventEmitterDispatcher, IEventEmitterRegister } from '@runtime/contracts/event.js'
 
 export type EngineEvents = {
   'engine:start': undefined
-  'engine:tick': DeltaTime
   'engine:stop': undefined
 }
 
@@ -13,8 +12,5 @@ export interface IEngine<InEvents extends EventMap = {}> extends IEventEmitterRe
   start(): void
   stop(): void
   tick(): void
-}
-
-export interface IEngineRegisterEvent<InEvents extends EventMap = {}> {
-  registerEngine(engine: IEngine<InEvents>): void
+  registerSystem(system: ISystem): void
 }

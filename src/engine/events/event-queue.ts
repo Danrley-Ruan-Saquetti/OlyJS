@@ -1,4 +1,4 @@
-import { EventMap, EventName } from '@common/event/types'
+import { EventMap, EventName } from '@runtime/contracts/event.js'
 
 type EventBuffer<Event extends EventName = any, Data = any> = {
   event: Event
