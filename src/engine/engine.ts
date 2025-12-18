@@ -11,10 +11,9 @@ export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<Ext
   protected systems: ISystem[] = []
 
   protected world = new World()
+  protected clock = new Clock()
 
   protected emitter = new BufferedEventBus<EngineEventMap<ExternalEvents>>()
-
-  protected clock = new Clock()
 
   private _isRunning = false
 
