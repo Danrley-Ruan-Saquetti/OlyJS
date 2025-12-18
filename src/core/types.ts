@@ -1,12 +1,6 @@
 import { DeltaTime } from '@common/delta-time'
-import { IEventEmitter } from '@common/event/event-emitter'
+import { IEventEmitterDispatcher, IEventEmitterRegister } from '@common/event/event-emitter'
 import { EventMap } from '@common/event/types'
-
-export interface IEngine<Events extends EventMap = any> extends IEventEmitter<Events> {
-  start(): void
-  stop(): void
-  tick(): void
-}
 
 export type EngineEvents = {
   'engine:start': undefined
@@ -14,6 +8,14 @@ export type EngineEvents = {
   'engine:stop': undefined
 }
 
-export interface IEngineRegisterEvent<Events extends EventMap = any> {
-  registerEngine(engine: IEngine<Events>): void
+export type EngineEventMap<InEvents extends EventMap = {}> = EngineEvents & Omit<InEvents, keyof EngineEvents>
+
+export interface IEngine<InEvents extends EventMap = {}> extends IEventEmitterRegister<EngineEventMap<InEvents>>, IEventEmitterDispatcher<InEvents> {
+  start(): void
+  stop(): void
+  tick(): void
+}
+
+export interface IEngineRegisterEvent<InEvents extends EventMap = {}> {
+  registerEngine(engine: IEngine<InEvents>): void
 }

@@ -1,19 +1,19 @@
 import { DeltaTimer } from '@common/delta-time'
-import { EventEmitter } from '@common/event/event-emitter'
+import { EventEmitter, Listener } from '@common/event/event-emitter'
 import { EventQueue } from '@common/event/event-queue'
 import { EventMap } from '@common/event/types'
-import { EngineEvents, IEngine, IEngineRegisterEvent } from '@core/types'
+import { EngineEventMap, IEngine, IEngineRegisterEvent } from '@core/types'
 
-export class Engine<Events extends EventMap = any> extends EventEmitter<Events> implements IEngine<Events> {
+export class Engine<InEvents extends EventMap = {}> implements IEngine<InEvents> {
 
-  protected emitter = new EventEmitter<EngineEvents>()
-  protected eventQueue = new EventQueue<Events>()
+  protected emitter = new EventEmitter<EngineEventMap<InEvents>>()
+  protected eventQueue = new EventQueue<EngineEventMap<InEvents>>()
 
   protected deltaTime = new DeltaTimer()
 
   private _isRunning = false
 
-  registerListener(listener: IEngineRegisterEvent<Events>) {
+  registerListener(listener: IEngineRegisterEvent<InEvents>) {
     listener.registerEngine(this)
   }
 
@@ -25,7 +25,7 @@ export class Engine<Events extends EventMap = any> extends EventEmitter<Events> 
     this._isRunning = true
 
     this.deltaTime.reset()
-    this.emitter.emit('engine:start', undefined)
+    this.emitter.emit('engine:start', undefined as EngineEventMap<InEvents>['engine:start'])
   }
 
   stop() {
@@ -35,7 +35,7 @@ export class Engine<Events extends EventMap = any> extends EventEmitter<Events> 
 
     this._isRunning = false
 
-    this.emitter.emit('engine:stop', undefined)
+    this.emitter.emit('engine:stop', undefined as EngineEventMap<InEvents>['engine:stop'])
   }
 
   tick() {
@@ -45,12 +45,32 @@ export class Engine<Events extends EventMap = any> extends EventEmitter<Events> 
 
     this.deltaTime.tick()
     this.processEvents()
-    this.emitter.emit('engine:tick', this.deltaTime.getState())
+    this.emitter.emit('engine:tick', this.deltaTime.getState() as EngineEventMap<InEvents>['engine:tick'])
   }
 
   protected processEvents() {
     for (const { event, data } of this.eventQueue.flush()) {
       this.emitter.emit(event, data)
     }
+  }
+
+  once<E extends keyof EngineEventMap<InEvents>>(event: E, listener: Listener<EngineEventMap<InEvents>[E]>) {
+    this.emitter.once(event, listener)
+  }
+
+  on<E extends keyof EngineEventMap<InEvents>>(event: E, listener: Listener<EngineEventMap<InEvents>[E]>) {
+    this.emitter.on(event, listener)
+  }
+
+  emit<E extends keyof InEvents>(event: E, data: InEvents[E]) {
+    this.eventQueue.push(event as keyof EngineEventMap<InEvents>, data as any)
+  }
+
+  off<E extends keyof EngineEventMap<InEvents>>(event: E, listener: Listener<EngineEventMap<InEvents>[E]>) {
+    this.emitter.off(event, listener)
+  }
+
+  clear(event?: keyof EngineEventMap<InEvents>) {
+    this.emitter.clear(event)
   }
 }
