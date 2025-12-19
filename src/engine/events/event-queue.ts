@@ -1,6 +1,7 @@
-import { EventBuffer, EventMap, IEventQueueFlusher, IEventQueueSender } from '@runtime/contracts/event'
+import { EventBuffer, IEventQueue } from '@engine/events/types'
+import { EventMap, IEventSender } from '@runtime/contracts/event'
 
-export class BufferedEventQueue<Events extends EventMap = {}> implements IEventQueueSender<Events>, IEventQueueFlusher {
+export class BufferedEventQueue<Events extends EventMap = {}> implements IEventSender<Events>, IEventQueue {
 
   private buffer: EventBuffer<Events>[] = []
   private swap: EventBuffer<Events>[] = []

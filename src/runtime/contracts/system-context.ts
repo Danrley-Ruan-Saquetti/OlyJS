@@ -1,13 +1,11 @@
 import { World } from '@ecs/world'
-import { EventMap } from '@runtime/contracts/event'
+import { EventMap, IEventSender } from '@runtime/contracts/event'
 import { DeltaTime } from '@runtime/contracts/time'
 
-export interface IEventSink<Events extends EventMap = {}> {
-  send<E extends keyof Events>(event: E, data: Events[E]): void
-}
+export type IEventSink<Events extends EventMap = {}> = IEventSender<Events>
 
 export interface SystemContext<Events extends EventMap = {}> {
-  world: World
-  deltaTime: DeltaTime
-  events: IEventSink<Events>
+  readonly world: World
+  readonly deltaTime: DeltaTime
+  readonly events: IEventSink<Events>
 }

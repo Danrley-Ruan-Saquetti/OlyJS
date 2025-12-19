@@ -1,4 +1,5 @@
-import { EventMap, IEventBus, Listener, ListenersMap } from '@runtime/contracts/event'
+import { IEventBus, ListenersMap } from '@engine/events/types'
+import { EventMap, Listener } from '@runtime/contracts/event'
 
 export class EventBus<Events extends EventMap = {}> implements IEventBus<Events> {
 
