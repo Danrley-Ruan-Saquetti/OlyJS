@@ -1,4 +1,4 @@
-import { DeltaTime } from '@runtime/contracts/time.js'
+import { DeltaTime } from '@runtime/contracts/time'
 
 export class Clock {
 

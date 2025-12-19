@@ -1,4 +1,4 @@
-export * from '@runtime/contracts/event.js'
-export * from '@runtime/contracts/system-context.js'
-export * from '@runtime/contracts/time.js'
+export * from '@runtime/contracts/event'
+export * from '@runtime/contracts/system-context'
+export * from '@runtime/contracts/time'
 

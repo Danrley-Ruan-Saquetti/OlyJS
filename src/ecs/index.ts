@@ -1,3 +1,3 @@
-export * from '@ecs/system.js'
-export * from '@ecs/world.js'
+export * from '@ecs/system'
+export * from '@ecs/world'
 

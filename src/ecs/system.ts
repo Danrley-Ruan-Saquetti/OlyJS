@@ -1,4 +1,4 @@
-import { SystemContext } from '@runtime/contracts/system-context.js'
+import { SystemContext } from '@runtime/contracts/system-context'
 
 export interface ISystem {
   start(): void

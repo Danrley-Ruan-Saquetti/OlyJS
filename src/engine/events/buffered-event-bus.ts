@@ -1,6 +1,6 @@
-import { EventBus } from '@engine/events/event-bus.js'
-import { BufferedEventQueue } from '@engine/events/event-queue.js'
-import { EventMap, IBufferedEventBus, Listener } from '@runtime/contracts/event.js'
+import { EventBus } from '@engine/events/event-bus'
+import { BufferedEventQueue } from '@engine/events/event-queue'
+import { EventMap, IBufferedEventBus, Listener } from '@runtime/contracts/event'
 
 export class BufferedEventBus<Events extends EventMap = {}> implements IBufferedEventBus<Events> {
 

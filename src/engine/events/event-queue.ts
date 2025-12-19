@@ -1,4 +1,4 @@
-import { EventBuffer, EventMap, IEventQueueFlusher, IEventQueueSender } from '@runtime/contracts/event.js'
+import { EventBuffer, EventMap, IEventQueueFlusher, IEventQueueSender } from '@runtime/contracts/event'
 
 export class BufferedEventQueue<Events extends EventMap = {}> implements IEventQueueSender<Events>, IEventQueueFlusher {
 

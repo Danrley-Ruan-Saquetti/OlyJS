@@ -1,10 +1,10 @@
-import { ISystem } from '@ecs/system.js'
-import { World } from '@ecs/world.js'
-import { BufferedEventBus } from '@engine/events/buffered-event-bus.js'
-import { Clock } from '@engine/time/clock.js'
-import { EngineEventMap, IEngine } from '@engine/types.js'
-import { EventMap, Listener } from '@runtime/contracts/event.js'
-import { SystemContext } from '@runtime/contracts/system-context.js'
+import { ISystem } from '@ecs/system'
+import { World } from '@ecs/world'
+import { BufferedEventBus } from '@engine/events/buffered-event-bus'
+import { Clock } from '@engine/time/clock'
+import { EngineEventMap, IEngine } from '@engine/types'
+import { EventMap, Listener } from '@runtime/contracts/event'
+import { SystemContext } from '@runtime/contracts/system-context'
 
 export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<ExternalEvents> {
 

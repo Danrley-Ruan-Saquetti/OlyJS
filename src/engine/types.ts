@@ -1,5 +1,5 @@
-import { ISystem } from '@ecs/system.js'
-import { EventMap, IEventListenerRegistry, IEventQueueSender } from '@runtime/contracts/event.js'
+import { ISystem } from '@ecs/system'
+import { EventMap, IEventListenerRegistry, IEventQueueSender } from '@runtime/contracts/event'
 
 export type EngineEvents = {
   'engine:start': undefined

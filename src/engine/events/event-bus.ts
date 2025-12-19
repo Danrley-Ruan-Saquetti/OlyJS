@@ -1,4 +1,4 @@
-import { EventMap, IEventBus, Listener, ListenersMap } from '@runtime/contracts/event.js'
+import { EventMap, IEventBus, Listener, ListenersMap } from '@runtime/contracts/event'
 
 export class EventBus<Events extends EventMap = {}> implements IEventBus<Events> {
 
