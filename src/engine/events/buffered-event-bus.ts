@@ -1,7 +1,7 @@
 import { EventBus } from '@engine/events/event-bus'
 import { BufferedEventQueue } from '@engine/events/event-queue'
-import { IBufferedEventBus } from '@engine/events/types'
-import { EventMap, Listener } from '@runtime/contracts/event'
+import { IBufferedEventBus } from '@engine/events/types.d'
+import { EventMap, Listener } from '@runtime/contracts/event.d'
 
 export class BufferedEventBus<Events extends EventMap = {}> implements IBufferedEventBus<Events> {
 

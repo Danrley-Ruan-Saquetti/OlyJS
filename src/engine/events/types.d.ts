@@ -1,4 +1,4 @@
-import { EventMap, IEventEmitter, IEventListenerRegistry, IEventSender, Listener } from '@runtime/contracts/event'
+import { EventMap, IEventEmitter, IEventListenerRegistry, IEventSender, Listener } from '@runtime/contracts/event.d'
 
 export type ListenersMap<Events extends EventMap = {}> = {
   [KEvent in keyof Events]?: Listener<Events[KEvent]>[]

@@ -1,12 +1,12 @@
 import { ISystem } from '@ecs/system'
 import { World } from '@ecs/world'
 import { BufferedEventBus } from '@engine/events/buffered-event-bus'
-import { IBufferedEventBus } from '@engine/events/types'
+import { IBufferedEventBus } from '@engine/events/types.d'
 import { Clock } from '@engine/time/clock'
-import { ITimer } from '@engine/time/types'
-import { IEngine } from '@engine/types'
-import { EventMap, Listener } from '@runtime/contracts/event'
-import { SystemContext } from '@runtime/contracts/system-context'
+import { ITimer } from '@engine/time/types.d'
+import { IEngine } from '@engine/types.d'
+import { EventMap, Listener } from '@runtime/contracts/event.d'
+import { SystemContext } from '@runtime/contracts/system-context.d'
 
 export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
 

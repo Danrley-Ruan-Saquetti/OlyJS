@@ -1,5 +1,5 @@
 import { ISystem } from '@ecs/system'
-import { EventMap, IEventListenerRegistry } from '@runtime/contracts/event'
+import { EventMap, IEventListenerRegistry } from '@runtime/contracts/event.d'
 
 export interface IEngineController {
   start(): void
