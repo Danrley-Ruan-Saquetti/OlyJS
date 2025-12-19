@@ -23,7 +23,9 @@ export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<Ext
     this.systemContext = {
       world: this.world,
       deltaTime: this.clock.getState(),
-      events: this
+      events: {
+        send: this.send.bind(this)
+      }
     }
   }
 
