@@ -1,28 +1,28 @@
 import { ISystem } from '@ecs/system'
 import { World } from '@ecs/world'
 import { BufferedEventBus } from '@engine/events/buffered-event-bus'
+import { IBufferedEventBus } from '@engine/events/types'
 import { Clock } from '@engine/time/clock'
-import { EngineEventMap, IEngine } from '@engine/types'
+import { ITimer } from '@engine/time/types'
+import { IEngine } from '@engine/types'
 import { EventMap, Listener } from '@runtime/contracts/event'
 import { SystemContext } from '@runtime/contracts/system-context'
 
-export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<ExternalEvents> {
+export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
 
   protected systems: ISystem[] = []
+  protected clock: ITimer = new Clock()
+  protected emitter: IBufferedEventBus<Events> = new BufferedEventBus<Events>()
 
   protected world = new World()
-  protected clock = new Clock()
-
-  protected emitter = new BufferedEventBus<EngineEventMap<ExternalEvents>>()
+  protected systemContext: SystemContext<Events>
 
   private _isRunning = false
-
-  protected systemContext: SystemContext<ExternalEvents>
 
   constructor() {
     this.systemContext = {
       world: this.world,
-      deltaTime: this.clock.getState(),
+      deltaTime: this.clock.time,
       events: {
         send: this.send.bind(this)
       }
@@ -41,8 +41,6 @@ export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<Ext
       this.systems[i].start()
       i++
     }
-
-    this.emitter.emit('engine:start', undefined as EngineEventMap<ExternalEvents>['engine:start'])
   }
 
   stop() {
@@ -57,8 +55,6 @@ export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<Ext
       this.systems[i].stop()
       i++
     }
-
-    this.emitter.emit('engine:stop', undefined as EngineEventMap<ExternalEvents>['engine:stop'])
   }
 
   tick() {
@@ -67,7 +63,6 @@ export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<Ext
     }
 
     this.clock.tick()
-    this.systemContext.deltaTime = this.clock.getState()
 
     let i = 0, length = this.systems.length
     while (i < length) {
@@ -82,19 +77,19 @@ export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<Ext
     this.systems.push(system)
   }
 
-  on<E extends keyof EngineEventMap<ExternalEvents>>(event: E, listener: Listener<EngineEventMap<ExternalEvents>[E]>) {
+  on<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
     this.emitter.on(event, listener)
   }
 
-  send<E extends keyof ExternalEvents>(event: E, data: ExternalEvents[E]) {
-    this.emitter.send(event as keyof EngineEventMap<ExternalEvents>, data as any)
+  send<E extends keyof Events>(event: E, data: Events[E]) {
+    this.emitter.send(event as keyof Events, data as any)
   }
 
-  off<E extends keyof EngineEventMap<ExternalEvents>>(event: E, listener: Listener<EngineEventMap<ExternalEvents>[E]>) {
+  off<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
     this.emitter.off(event, listener)
   }
 
-  clear(event?: keyof EngineEventMap<ExternalEvents>) {
+  clear(event?: keyof Events) {
     this.emitter.clear(event)
   }
 }
