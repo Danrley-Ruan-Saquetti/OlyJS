@@ -1,15 +1,20 @@
+import { ITimer } from '@engine/time/types'
 import { DeltaTime } from '@runtime/contracts/time'
 
-export class Clock {
+export class Clock implements ITimer {
 
   protected lastTime = 0
   protected totalElapsedTime = 0
   protected deltaTime = 0
 
-  protected state: DeltaTime = {
+  protected _time: DeltaTime = {
     deltaTime: 0,
     deltaTimeSeconds: 0,
     totalElapsedTime: 0,
+  }
+
+  get time(): DeltaTime {
+    return this._time
   }
 
   constructor() {
@@ -32,12 +37,12 @@ export class Clock {
   }
 
   private updateState() {
-    this.state.deltaTime = this.deltaTime
-    this.state.deltaTimeSeconds = this.deltaTime / 1000
-    this.state.totalElapsedTime = this.totalElapsedTime
+    this._time.deltaTime = this.deltaTime
+    this._time.deltaTimeSeconds = this.deltaTime / 1000
+    this._time.totalElapsedTime = this.totalElapsedTime
   }
 
   getState(): DeltaTime {
-    return this.state
+    return this._time
   }
 }
