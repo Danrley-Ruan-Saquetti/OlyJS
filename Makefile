@@ -1,6 +1,6 @@
 clean:
 	@rm -rf dist
-	@docker compose down
+	@docker compose down -v
 .PHONY: clean
 
 build:
