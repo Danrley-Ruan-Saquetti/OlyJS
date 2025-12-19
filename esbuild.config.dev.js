@@ -1,9 +1,15 @@
 import esbuild from 'esbuild'
+import dtsPlugin from 'esbuild-plugin-d.ts'
 import path from 'path'
 
 const ctx = await esbuild.context({
-  entryPoints: ['src/index.ts'],
-  outfile: 'dist/index.js',
+  entryPoints: ['./src/index.ts'],
+  outfile: './dist/index.js',
+  plugins: [
+    dtsPlugin({
+      tsconfigPath: './tsconfig.dev.json',
+    }),
+  ],
   bundle: true,
   platform: 'browser',
   format: 'esm',
