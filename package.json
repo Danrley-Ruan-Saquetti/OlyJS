@@ -5,7 +5,7 @@
   "description": "",
   "scripts": {
     "build": "rm -rf dist && node esbuild.config.build.js && tsc -p tsconfig.dev.json --preserveWatchOutput --emitDeclarationOnly",
-    "build:dev": "concurrently \"node esbuild.dev.config.js\" \"tsc -w -p tsconfig.dev.json --preserveWatchOutput --emitDeclarationOnly\""
+    "build:dev": "concurrently \"node esbuild.dev.config.js\" \"tsc -w -p tsconfig.dev.json --preserveWatchOutput --emitDeclarationOnly\" \"nodemon -w dist -e js,ts -x tsc-alias\""
   },
   "repository": {
     "type": "git",
