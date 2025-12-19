@@ -17,6 +17,16 @@ export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<Ext
 
   private _isRunning = false
 
+  protected systemContext: SystemContext<ExternalEvents>
+
+  constructor() {
+    this.systemContext = {
+      world: this.world,
+      deltaTime: this.clock.getState(),
+      events: this
+    }
+  }
+
   start() {
     if (this._isRunning) {
       return
@@ -55,16 +65,11 @@ export class Engine<ExternalEvents extends EventMap = {}> implements IEngine<Ext
     }
 
     this.clock.tick()
-
-    const systemContext: SystemContext = {
-      deltaTime: this.clock.getState(),
-      world: this.world,
-      events: this
-    }
+    this.systemContext.deltaTime = this.clock.getState()
 
     let i = 0, length = this.systems.length
     while (i < length) {
-      this.systems[i].update(systemContext)
+      this.systems[i].update(this.systemContext)
       i++
     }
 
