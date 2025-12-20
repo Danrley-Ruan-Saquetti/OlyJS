@@ -1,4 +1,4 @@
-import { DeltaTime } from '@runtime/contracts/time.d'
+import { DeltaTime } from '../../runtime/contracts/time'
 
 export interface ITimeSource {
   readonly time: Readonly<DeltaTime>

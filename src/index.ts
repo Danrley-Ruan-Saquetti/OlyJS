@@ -1,4 +1,4 @@
-export * from '@ecs'
-export * from '@engine'
-export * from '@runtime'
+export * from './ecs'
+export * from './engine'
+export * from './runtime'
 

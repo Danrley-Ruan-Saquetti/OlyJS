@@ -1,23 +1,7 @@
 import { build } from 'esbuild'
-import dtsPlugin from 'esbuild-plugin-d.ts'
-import path from 'path'
+import common from './esbuild.config.common.js'
 
 build({
-  entryPoints: ['./src/index.ts'],
-  outfile: './dist/index.js',
-  plugins: [
-    dtsPlugin({
-      tsconfigPath: './tsconfig.build.json',
-    }),
-  ],
-  bundle: true,
-  platform: 'browser',
-  format: 'esm',
-  target: 'es2020',
-  sourcemap: true,
-  minify: false,
+  ...common,
   tsconfig: 'tsconfig.build.json',
-  alias: {
-    '@': path.resolve('./src')
-  }
 }).catch(() => process.exit(1))

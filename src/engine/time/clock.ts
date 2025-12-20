@@ -1,5 +1,5 @@
-import { ITimer } from '@engine/time/types.d'
-import { DeltaTime } from '@runtime/contracts/time.d'
+import { DeltaTime } from '../../runtime/contracts/time'
+import { ITimer } from './types'
 
 export class Clock implements ITimer {
 

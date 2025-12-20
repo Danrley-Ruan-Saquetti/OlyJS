@@ -1,4 +1,4 @@
-export * from '@runtime/contracts/event.d'
-export * from '@runtime/contracts/system-context.d'
-export * from '@runtime/contracts/time.d'
+export * from './contracts/event'
+export * from './contracts/system-context'
+export * from './contracts/time'
 

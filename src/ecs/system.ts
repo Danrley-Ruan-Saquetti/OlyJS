@@ -1,4 +1,4 @@
-import { SystemContext } from '@runtime/contracts/system-context.d'
+import { SystemContext } from '../runtime/contracts/system-context'
 
 export interface ISystem {
   start(): void

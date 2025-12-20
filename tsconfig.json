@@ -20,12 +20,7 @@
     "strictPropertyInitialization": false,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@*": [
-        "./src/*"
-      ]
-    }
+    "baseUrl": "."
   },
   "include": [
     "src"

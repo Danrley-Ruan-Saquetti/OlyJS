@@ -2,10 +2,6 @@ import { Engine } from '../dist/index.js';
 
 const engine = new Engine()
 
-engine.on('engine:start', () => {
-  console.log('Engine started')
-})
-
 engine.on('engine:test', (data) => {
   console.log(data)
 })

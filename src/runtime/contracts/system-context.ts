@@ -1,6 +1,6 @@
-import { World } from '@ecs/world'
-import { EventMap, IEventSender } from '@runtime/contracts/event.d'
-import { DeltaTime } from '@runtime/contracts/time.d'
+import { World } from '../../ecs/world'
+import { EventMap, IEventSender } from './event'
+import { DeltaTime } from './time'
 
 export type IEventSink<Events extends EventMap = {}> = IEventSender<Events>
 

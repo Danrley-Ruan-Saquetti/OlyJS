@@ -1,5 +1,5 @@
-import { EventBuffer, IEventQueue } from '@engine/events/types.d'
-import { EventMap, IEventSender } from '@runtime/contracts/event.d'
+import { EventMap, IEventSender } from '../../runtime/contracts/event'
+import { EventBuffer, IEventQueue } from './types'
 
 export class BufferedEventQueue<Events extends EventMap = {}> implements IEventSender<Events>, IEventQueue {
 

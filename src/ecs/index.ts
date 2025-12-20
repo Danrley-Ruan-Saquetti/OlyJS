@@ -1,3 +1,3 @@
-export * from '@ecs/system'
-export * from '@ecs/world'
+export * from './system'
+export * from './world'
 
