@@ -23,7 +23,7 @@ services:
     image: node:20-alpine
     container_name: serve
     working_dir: /app
-    command: npx live-server --port=4200 --open=./tests
+    command: npx live-server --port=4200
     volumes:
       - ./dist:/app/dist
       - ./tests:/app/tests
