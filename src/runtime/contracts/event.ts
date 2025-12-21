@@ -16,3 +16,5 @@ export interface IEventListenerRegistry<Events extends EventMap = {}> {
   off<E extends keyof Events>(event: E, listener: Listener<Events[E]>): void
   clear(event?: keyof Events): void
 }
+
+export type IEventSink<Events extends EventMap = {}> = IEventSender<Events>

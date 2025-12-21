@@ -1,5 +1,6 @@
 import { ISystem } from '../ecs/system'
 import { World } from '../ecs/world'
+import { EngineContext } from '../runtime/contracts/engine-context'
 import { EventMap, Listener } from '../runtime/contracts/event'
 import { SystemContext } from '../runtime/contracts/system-context'
 import { BufferedEventBus } from './events/buffered-event-bus'
@@ -10,12 +11,22 @@ import { IEngine } from './types'
 
 export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
 
-  protected systems: ISystem[] = []
-  protected clock: ITimerTracker = new TimeTracker()
-  protected emitter: IBufferedEventBus<Events> = new BufferedEventBus<Events>()
+  protected readonly systems: ISystem[] = []
+  protected readonly clock: ITimerTracker = new TimeTracker()
+  protected readonly emitter: IBufferedEventBus<Events> = new BufferedEventBus<Events>()
 
-  protected world = new World()
-  protected systemContext: SystemContext<Events> = {
+  protected readonly world = new World()
+
+  protected readonly engineContext: EngineContext<Events> = {
+    world: this.world,
+    events: {
+      on: this.on.bind(this),
+      send: this.send.bind(this),
+      off: this.off.bind(this),
+      clear: this.clear.bind(this),
+    }
+  }
+  protected readonly systemContext: SystemContext<Events> = {
     world: this.world,
     deltaTime: this.clock.time,
     events: {
@@ -34,7 +45,7 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
 
     let i = 0, length = this.systems.length
     while (i < length) {
-      this.systems[i].start()
+      this.systems[i].start(this.engineContext)
       i++
     }
   }
@@ -69,7 +80,7 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
     this.emitter.execute()
   }
 
-  registerSystem(system: ISystem) {
+  registerSystem(system: ISystem<Events>) {
     this.systems.push(system)
   }
 
