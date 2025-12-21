@@ -8,16 +8,18 @@ build:
 .PHONY: build
 
 build_dev:
+	docker compose stop dev
 	docker compose up dev -d
 .PHONY: build_dev
 
 serve:
+	docker compose stop serve
 	docker compose up serve -d
 .PHONY: serve
 
 dev:
-	make build_dev
-	make serve
+	docker compose stop dev serve
+	docker compose up dev serve -d
 .PHONY: dev
 
 all: build
