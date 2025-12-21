@@ -10,6 +10,7 @@ export class TimeTracker implements ITimerTracker {
     deltaTime: 0,
     deltaTimeMilliseconds: 0,
     totalElapsedTime: 0,
+    totalElapsedTimeMilliseconds: 0
   }
 
   get time(): DeltaTime {
@@ -31,7 +32,8 @@ export class TimeTracker implements ITimerTracker {
   private updateState() {
     this._time.deltaTime = this.deltaTime / 1000
     this._time.deltaTimeMilliseconds = this.deltaTime
-    this._time.totalElapsedTime = this.totalElapsedTime
+    this._time.totalElapsedTime = this.totalElapsedTime / 1000
+    this._time.totalElapsedTimeMilliseconds = this.totalElapsedTime
   }
 
   getState(): DeltaTime {

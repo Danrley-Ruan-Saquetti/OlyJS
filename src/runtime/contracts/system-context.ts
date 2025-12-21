@@ -4,6 +4,6 @@ import { DeltaTime } from './time'
 
 export interface SystemContext<Events extends EventMap = {}> {
   readonly world: World
-  readonly deltaTime: DeltaTime
+  readonly time: DeltaTime
   readonly events: IEventSink<Events>
 }

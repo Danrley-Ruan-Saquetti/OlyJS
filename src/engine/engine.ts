@@ -28,7 +28,7 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
   }
   protected readonly systemContext: SystemContext<Events> = {
     world: this.world,
-    deltaTime: this.clock.time,
+    time: this.clock.time,
     events: {
       send: this.send.bind(this)
     }
