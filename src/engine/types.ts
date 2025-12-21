@@ -4,11 +4,11 @@ import { EventMap, IEventListenerRegistry } from '../runtime/contracts/event'
 export interface IEngineController {
   start(): void
   stop(): void
-  tick(): void
+  tick(deltaTime: number): void
   registerSystem(system: ISystem): void
 }
 
-export interface IEngineEvents<Events extends EventMap = {}> extends IEventListenerRegistry<Events> { }
+export type IEngineEvents<Events extends EventMap = {}> = IEventListenerRegistry<Events>
 
 export interface IEngine<Events extends EventMap = {}> extends
   IEngineController,

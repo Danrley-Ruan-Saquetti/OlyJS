@@ -4,9 +4,9 @@ export interface ITimeSource {
   readonly time: Readonly<DeltaTime>
 }
 
-export interface ITimerController {
+export interface ITimerTrackerController {
   reset(): void
-  tick(): void
+  advance(milliseconds: number): void
 }
 
-export interface ITimer extends ITimeSource, ITimerController { }
+export interface ITimerTracker extends ITimeSource, ITimerTrackerController { }

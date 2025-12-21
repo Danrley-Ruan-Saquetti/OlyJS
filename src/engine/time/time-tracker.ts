@@ -1,15 +1,14 @@
 import { DeltaTime } from '../../runtime/contracts/time'
-import { ITimer } from './types'
+import { ITimerTracker } from './types'
 
-export class Clock implements ITimer {
+export class TimeTracker implements ITimerTracker {
 
-  protected lastTime = 0
   protected totalElapsedTime = 0
   protected deltaTime = 0
 
   protected _time: DeltaTime = {
     deltaTime: 0,
-    deltaTimeSeconds: 0,
+    deltaTimeMilliseconds: 0,
     totalElapsedTime: 0,
   }
 
@@ -17,28 +16,21 @@ export class Clock implements ITimer {
     return this._time
   }
 
-  constructor() {
-    this.lastTime = performance.now()
-  }
-
   reset() {
-    this.lastTime = performance.now()
+    this.deltaTime = 0
     this.totalElapsedTime = 0
   }
 
-  tick() {
-    const currentTime = performance.now()
-
-    this.deltaTime = currentTime - this.lastTime
+  advance(milliseconds: number) {
+    this.deltaTime = milliseconds
     this.totalElapsedTime += this.deltaTime
-    this.lastTime = currentTime
 
     this.updateState()
   }
 
   private updateState() {
-    this._time.deltaTime = this.deltaTime
-    this._time.deltaTimeSeconds = this.deltaTime / 1000
+    this._time.deltaTime = this.deltaTime / 1000
+    this._time.deltaTimeMilliseconds = this.deltaTime
     this._time.totalElapsedTime = this.totalElapsedTime
   }
 

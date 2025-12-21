@@ -1,5 +1,5 @@
 export type DeltaTime = {
   deltaTime: number
-  deltaTimeSeconds: number
+  deltaTimeMilliseconds: number
   totalElapsedTime: number
 }

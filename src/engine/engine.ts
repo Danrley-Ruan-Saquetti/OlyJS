@@ -4,30 +4,26 @@ import { EventMap, Listener } from '../runtime/contracts/event'
 import { SystemContext } from '../runtime/contracts/system-context'
 import { BufferedEventBus } from './events/buffered-event-bus'
 import { IBufferedEventBus } from './events/types'
-import { Clock } from './time/clock'
-import { ITimer } from './time/types'
+import { TimeTracker } from './time/time-tracker'
+import { ITimerTracker } from './time/types'
 import { IEngine } from './types'
 
 export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
 
   protected systems: ISystem[] = []
-  protected clock: ITimer = new Clock()
+  protected clock: ITimerTracker = new TimeTracker()
   protected emitter: IBufferedEventBus<Events> = new BufferedEventBus<Events>()
 
   protected world = new World()
-  protected systemContext: SystemContext<Events>
-
-  private _isRunning = false
-
-  constructor() {
-    this.systemContext = {
-      world: this.world,
-      deltaTime: this.clock.time,
-      events: {
-        send: this.send.bind(this)
-      }
+  protected systemContext: SystemContext<Events> = {
+    world: this.world,
+    deltaTime: this.clock.time,
+    events: {
+      send: this.send.bind(this)
     }
   }
+
+  private _isRunning = false
 
   start() {
     if (this._isRunning) {
@@ -57,12 +53,12 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
     }
   }
 
-  tick() {
+  tick(deltaTime: number) {
     if (!this._isRunning) {
       return
     }
 
-    this.clock.tick()
+    this.clock.advance(deltaTime)
 
     let i = 0, length = this.systems.length
     while (i < length) {
