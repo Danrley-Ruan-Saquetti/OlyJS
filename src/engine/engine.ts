@@ -84,6 +84,10 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
     this.systems.push(system)
   }
 
+  isRunning() {
+    return this._isRunning
+  }
+
   on<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
     this.emitter.on(event, listener)
   }

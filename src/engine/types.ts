@@ -6,6 +6,7 @@ export interface IEngineController<Events extends EventMap = {}> {
   stop(): void
   tick(deltaTime: number): void
   registerSystem(system: ISystem<Events>): void
+  isRunning(): boolean
 }
 
 export type IEngineEvents<Events extends EventMap = {}> = IEventListenerRegistry<Events>
