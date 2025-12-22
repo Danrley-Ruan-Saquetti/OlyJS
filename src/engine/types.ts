@@ -1,15 +1,17 @@
 import { ISystem } from '../ecs/system'
-import { EventMap, IEventListenerRegistry } from '../runtime/contracts/event'
+import { EngineStartContext } from '../runtime/contracts/engine-context'
+import { EventMap, IEventListenerRegistry, IEventSender } from '../runtime/contracts/event'
+import { SystemContext } from './../runtime/contracts/system-context'
 
 export interface IEngineController<Events extends EventMap = {}> {
-  start(): void
+  start(context: EngineStartContext): void
   stop(): void
-  tick(deltaTime: number): void
+  tick(context: SystemContext): void
   registerSystem(system: ISystem<Events>): void
   isRunning(): boolean
 }
 
-export type IEngineEvents<Events extends EventMap = {}> = IEventListenerRegistry<Events>
+export interface IEngineEvents<Events extends EventMap = {}> extends IEventListenerRegistry<Events>, IEventSender<Events> { }
 
 export interface IEngine<Events extends EventMap = {}> extends
   IEngineController<Events>,

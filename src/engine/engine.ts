@@ -1,52 +1,30 @@
 import { ISystem } from '../ecs/system'
-import { World } from '../ecs/world'
-import { EngineContext } from '../runtime/contracts/engine-context'
+import { EngineContext, EngineStartContext } from '../runtime/contracts/engine-context'
 import { EventMap, Listener } from '../runtime/contracts/event'
 import { SystemContext } from '../runtime/contracts/system-context'
 import { BufferedEventBus } from './events/buffered-event-bus'
 import { IBufferedEventBus } from './events/types'
-import { TimeTracker } from './time/time-tracker'
-import { ITimerTracker } from './time/types'
 import { IEngine } from './types'
 
 export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
 
   protected readonly systems: ISystem[] = []
-  protected readonly clock: ITimerTracker = new TimeTracker()
   protected readonly emitter: IBufferedEventBus<Events> = new BufferedEventBus<Events>()
-
-  protected readonly world = new World()
-
-  protected readonly engineContext: EngineContext<Events> = {
-    world: this.world,
-    events: {
-      on: this.on.bind(this),
-      send: this.send.bind(this),
-      off: this.off.bind(this),
-      clear: this.clear.bind(this),
-    }
-  }
-  protected readonly systemContext: SystemContext<Events> = {
-    world: this.world,
-    time: this.clock.time,
-    events: {
-      send: this.send.bind(this)
-    }
-  }
 
   private _isRunning = false
 
-  start() {
+  start(context: EngineStartContext) {
     if (this._isRunning) {
       return
     }
+
+    const engineContext = this.createEngineContext(context)
 
     this._isRunning = true
 
     let i = 0, length = this.systems.length
     while (i < length) {
-      this.systems[i].start(this.engineContext)
-      i++
+      this.systems[i].start(engineContext)
     }
   }
 
@@ -64,20 +42,30 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
     }
   }
 
-  tick(deltaTime: number) {
+  tick(context: SystemContext) {
     if (!this._isRunning) {
       return
     }
 
-    this.clock.advance(deltaTime)
-
     let i = 0, length = this.systems.length
     while (i < length) {
-      this.systems[i].update(this.systemContext)
+      this.systems[i].update(context)
       i++
     }
 
     this.emitter.execute()
+  }
+
+  protected createEngineContext(context: EngineStartContext): EngineContext<Events> {
+    return {
+      world: context.world,
+      events: {
+        on: this.on.bind(this),
+        send: this.send.bind(this),
+        off: this.off.bind(this),
+        clear: this.clear.bind(this),
+      }
+    }
   }
 
   registerSystem(system: ISystem<Events>) {

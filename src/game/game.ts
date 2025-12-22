@@ -1,14 +1,31 @@
 import { ISystem } from '../ecs/system'
+import { World } from '../ecs/world'
 import { Engine } from '../engine/engine'
 import { IEngine } from '../engine/types'
 import { EventMap } from '../runtime/contracts/event'
+import { MutableSystemContext } from './mutable-system-context'
+import { TimeTracker } from './time/time-tracker'
+import { ITimerTracker } from './time/types'
 
 export class Game<Events extends EventMap = {}> {
+
+  protected engine: IEngine<Events> = new Engine<Events>()
+
+  protected readonly world = new World()
+  protected readonly clock: ITimerTracker = new TimeTracker()
+
+  protected systemContext = new MutableSystemContext<Events>()
 
   private timeout: number
   private lastTime = 0
 
-  protected engine: IEngine<Events> = new Engine<Events>()
+  constructor() {
+    this.systemContext.events = {
+      send: this.engine.send.bind(this.engine),
+    }
+    this.systemContext.world = this.world
+    this.systemContext.time = this.clock.time
+  }
 
   start() {
     if (this.engine.isRunning()) {
@@ -16,7 +33,8 @@ export class Game<Events extends EventMap = {}> {
     }
 
     this.initialize()
-    this.engine.start()
+    this.clock.reset()
+    this.engine.start({ world: this.world })
 
     this.update(0)
   }
@@ -41,7 +59,8 @@ export class Game<Events extends EventMap = {}> {
   private updateEngine(timestamp: number) {
     const deltaTime = timestamp - this.lastTime
 
-    this.engine.tick(deltaTime)
+    this.clock.advance(deltaTime)
+    this.engine.tick(this.systemContext)
 
     this.lastTime = timestamp
   }
