@@ -1,4 +1,5 @@
 import { World } from '../ecs/world'
+import { InputState } from '../runtime'
 import { EventMap, IEventSink } from '../runtime/contracts/event'
 import { SystemContext } from '../runtime/contracts/system-context'
 import { DeltaTime } from '../runtime/contracts/time'
@@ -7,6 +8,6 @@ export class MutableSystemContext<Events extends EventMap = any> implements Syst
 
   world: World
   time: DeltaTime
+  input: InputState
   events: IEventSink<Events>
-
 }
