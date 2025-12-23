@@ -1,8 +1,8 @@
 import { ISystem } from '../ecs/system'
-import { World } from '../ecs/world'
 import { Engine } from '../engine/engine'
 import { IEngine } from '../engine/types'
 import { EventMap } from '../runtime/contracts/event'
+import { DefaultWorld } from '../runtime/world/default-world'
 import { InputSystem } from '../systems/input.system'
 import { MutableSystemContext } from './mutable-system-context'
 import { TimeTracker } from './time/time-tracker'
@@ -12,7 +12,7 @@ export class Game<Events extends EventMap = {}> {
 
   protected engine: IEngine<Events> = new Engine<Events>()
 
-  protected readonly world = new World()
+  protected readonly world = new DefaultWorld()
 
   protected readonly clock: ITimerTracker = new TimeTracker()
   protected readonly input = new InputSystem()
