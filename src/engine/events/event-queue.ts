@@ -1,23 +1,39 @@
 import { EventMap, IEventSender } from '../../runtime/contracts/event'
-import { EventBuffer, IEventQueue } from './types'
+import { IEventQueue } from './types'
 
-export class BufferedEventQueue<Events extends EventMap = {}> implements IEventSender<Events>, IEventQueue {
+export class BufferedEventQueue<Events extends EventMap = {}> implements IEventSender<Events>, IEventQueue<Events> {
 
-  private buffer: EventBuffer<Events>[] = []
-  private swap: EventBuffer<Events>[] = []
+  private bufferEvents: (keyof Events)[] = []
+  private bufferData: Events[keyof Events][] = []
+
+  private swapEvents: (keyof Events)[] = []
+  private swapData: Events[keyof Events][] = []
 
   send<E extends keyof Events>(event: E, data: Events[E]) {
-    this.buffer.push({ event, data })
+    this.bufferEvents.push(event)
+    this.bufferData.push(data)
   }
 
   flush() {
-    const temp = this.buffer
+    const tempEvents = this.bufferEvents
+    this.bufferEvents = this.swapEvents
+    this.swapEvents = tempEvents
 
-    this.buffer = this.swap
-    this.swap = temp
+    const tempData = this.bufferData
+    this.bufferData = this.swapData
+    this.swapData = tempData
 
-    this.buffer.length = 0
+    this.bufferEvents.length = 0
+    this.bufferData.length = 0
 
-    return this.swap
+    return this.swapEvents.length
+  }
+
+  getFlushedEvent(index: number) {
+    return this.swapEvents[index]
+  }
+
+  getFlushedData(index: number) {
+    return this.swapData[index]
   }
 }

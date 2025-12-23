@@ -8,13 +8,10 @@ export interface IEventBus<Events extends EventMap = {}> extends
   IEventListenerRegistry<Events>,
   IEventEmitter<Events> { }
 
-export type EventBuffer<Events extends EventMap = {}> = {
-  event: keyof Events
-  data: Events[keyof Events]
-}
-
-export interface IEventQueue {
-  flush(): void
+export interface IEventQueue<Events extends EventMap = {}> {
+  flush(): number
+  getFlushedEvent(index: number): keyof Events
+  getFlushedData(index: number): Events[keyof Events]
 }
 
 export interface IEventQueueExecuter {

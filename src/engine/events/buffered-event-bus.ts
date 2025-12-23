@@ -21,8 +21,16 @@ export class BufferedEventBus<Events extends EventMap = {}> implements IBuffered
   }
 
   execute() {
-    for (const { event, data } of this.eventQueue.flush()) {
+    const count = this.eventQueue.flush()
+
+    let i = 0
+    while (i < count) {
+      const event = this.eventQueue.getFlushedEvent(i)
+      const data = this.eventQueue.getFlushedData(i)
+
       this.emitter.emit(event, data)
+
+      i++
     }
   }
 
