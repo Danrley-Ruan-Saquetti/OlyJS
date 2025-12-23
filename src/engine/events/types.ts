@@ -21,7 +21,9 @@ export interface IEventQueueExecuter {
 }
 
 export interface IBufferedEventBus<Events extends EventMap = {}> extends
-  IEventListenerRegistry<Events>,
-  IEventEmitter<Events>,
   IEventSender<Events>,
   IEventQueueExecuter { }
+
+export interface IBufferedEventQueue<Events extends EventMap = {}> extends
+  IEventSender<Events>,
+  IEventQueue<Events> { }

@@ -1,7 +1,7 @@
-import { EventMap, IEventSender } from '../../runtime/contracts/event'
-import { IEventQueue } from './types'
+import { EventMap } from '../../runtime/contracts/event'
+import { IBufferedEventQueue } from './types'
 
-export class BufferedEventQueue<Events extends EventMap = {}> implements IEventSender<Events>, IEventQueue<Events> {
+export class BufferedEventQueue<Events extends EventMap = {}> implements IBufferedEventQueue<Events> {
 
   private bufferEvents: (keyof Events)[] = []
   private bufferData: Events[keyof Events][] = []

@@ -1,23 +1,17 @@
-import { EventMap, EventPriority, ListenerHandler } from '../../runtime/contracts/event'
+import { EventMap } from '../../runtime/contracts/event'
 import { BufferedEventQueue } from './buffered-event-queue'
-import { EventBus } from './event-bus'
-import { IBufferedEventBus } from './types'
+import { IBufferedEventBus, IBufferedEventQueue, IEventBus } from './types'
 
 export class BufferedEventBus<Events extends EventMap = {}> implements IBufferedEventBus<Events> {
 
-  protected emitter = new EventBus<Events>()
-  protected eventQueue = new BufferedEventQueue<Events>()
+  protected eventQueue: IBufferedEventQueue<Events> = new BufferedEventQueue<Events>()
 
-  on<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>, priority?: EventPriority) {
-    this.emitter.on(event, listener, priority)
-  }
+  constructor(
+    protected emitter: IEventBus<Events>
+  ) { }
 
   send<E extends keyof Events>(event: E, data: Events[E]) {
     this.eventQueue.send(event as keyof Events, data as any)
-  }
-
-  emit<E extends keyof Events>(event: E, data: Events[E]): void {
-    this.emitter.emit(event, data)
   }
 
   execute() {
@@ -29,16 +23,7 @@ export class BufferedEventBus<Events extends EventMap = {}> implements IBuffered
       const data = this.eventQueue.getFlushedData(i)
 
       this.emitter.emit(event, data)
-
       i++
     }
-  }
-
-  off<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
-    this.emitter.off(event, listener)
-  }
-
-  clear(event?: keyof Events) {
-    this.emitter.clear(event)
   }
 }

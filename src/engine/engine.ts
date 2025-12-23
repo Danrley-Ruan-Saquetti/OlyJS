@@ -3,13 +3,16 @@ import { EngineContext, EngineStartContext } from '../runtime/contracts/engine-c
 import { EventMap, EventPriority, ListenerHandler } from '../runtime/contracts/event'
 import { SystemContext } from '../runtime/contracts/system-context'
 import { BufferedEventBus } from './events/buffered-event-bus'
+import { EventBus } from './events/event-bus'
 import { IBufferedEventBus } from './events/types'
 import { IEngine } from './types'
 
 export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
 
   protected readonly systems: ISystem[] = []
-  protected readonly emitter: IBufferedEventBus<Events> = new BufferedEventBus<Events>()
+
+  protected eventBus = new EventBus<Events>()
+  protected readonly bufferedEmitter: IBufferedEventBus<Events> = new BufferedEventBus<Events>(this.eventBus)
 
   private _isRunning = false
 
@@ -54,7 +57,7 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
       i++
     }
 
-    this.emitter.execute()
+    this.bufferedEmitter.execute()
   }
 
   protected createEngineContext(context: EngineStartContext): EngineContext<Events> {
@@ -78,18 +81,18 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
   }
 
   on<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>, priority?: EventPriority) {
-    this.emitter.on(event, listener, priority)
+    this.eventBus.on(event, listener, priority)
   }
 
   send<E extends keyof Events>(event: E, data: Events[E]) {
-    this.emitter.send(event as keyof Events, data as any)
+    this.bufferedEmitter.send(event as keyof Events, data as any)
   }
 
   off<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
-    this.emitter.off(event, listener)
+    this.eventBus.off(event, listener)
   }
 
   clear(event?: keyof Events) {
-    this.emitter.clear(event)
+    this.eventBus.clear(event)
   }
 }
