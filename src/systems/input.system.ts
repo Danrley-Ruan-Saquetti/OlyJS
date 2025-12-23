@@ -27,11 +27,15 @@ export class InputSystem extends EngineSystem implements IInputSource {
   start() {
     window.addEventListener('keydown', this.onKeyDown)
     window.addEventListener('keyup', this.onKeyUp)
+    window.addEventListener('mousedown', this.onMouseDown)
+    window.addEventListener('mouseup', this.onMouseUp)
   }
 
   stop() {
     window.removeEventListener('keydown', this.onKeyDown)
     window.removeEventListener('keyup', this.onKeyUp)
+    window.removeEventListener('mousedown', this.onMouseDown)
+    window.removeEventListener('mouseup', this.onMouseUp)
   }
 
   update() {
@@ -46,6 +50,18 @@ export class InputSystem extends EngineSystem implements IInputSource {
     }
 
     this.keysToAdd.clear()
+
+    for (const value of this.buttonsToRemove) {
+      this._state.mouse.buttons.delete(value)
+    }
+
+    this.buttonsToRemove.clear()
+
+    for (const value of this.buttonsToAdd) {
+      this._state.mouse.buttons.add(value)
+    }
+
+    this.buttonsToAdd.clear()
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
@@ -60,5 +76,19 @@ export class InputSystem extends EngineSystem implements IInputSource {
   private onKeyUp = (e: KeyboardEvent) => {
     this.keysToRemove.add(e.key as Keys)
     this.keysToAdd.delete(e.key as Keys)
+  }
+
+  private onMouseDown = (e: MouseEvent) => {
+    if (this._state.mouse.buttons.has(e.button)) {
+      return
+    }
+
+    this.buttonsToAdd.add(e.button)
+    this.buttonsToRemove.delete(e.button)
+  }
+
+  private onMouseUp = (e: MouseEvent) => {
+    this.buttonsToRemove.add(e.button)
+    this.buttonsToAdd.delete(e.button)
   }
 }
