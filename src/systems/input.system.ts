@@ -25,19 +25,36 @@ export class InputSystem extends EngineSystem implements IInputSource {
   }
 
   start() {
+    this.reset()
+
     window.addEventListener('keydown', this.onKeyDown)
     window.addEventListener('keyup', this.onKeyUp)
     window.addEventListener('mousedown', this.onMouseDown)
     window.addEventListener('mouseup', this.onMouseUp)
     window.addEventListener('mousemove', this.onMouseMove)
+    window.addEventListener('blur', this.onBlur)
   }
 
   stop() {
+    this.reset()
+
     window.removeEventListener('keydown', this.onKeyDown)
     window.removeEventListener('keyup', this.onKeyUp)
     window.removeEventListener('mousedown', this.onMouseDown)
     window.removeEventListener('mouseup', this.onMouseUp)
     window.removeEventListener('mousemove', this.onMouseMove)
+    window.removeEventListener('blur', this.onBlur)
+  }
+
+  private reset() {
+    this._state.keys.clear()
+    this._state.mouse.buttons.clear()
+    this.keysToAdd.clear()
+    this.keysToRemove.clear()
+    this.buttonsToAdd.clear()
+    this.buttonsToRemove.clear()
+    this.offsetMouse.x = 0
+    this.offsetMouse.y = 0
   }
 
   update() {
@@ -107,5 +124,9 @@ export class InputSystem extends EngineSystem implements IInputSource {
 
     this.offsetMouse.x += e.movementX
     this.offsetMouse.y += e.movementY
+  }
+
+  private onBlur = () => {
+    this.reset()
   }
 }
