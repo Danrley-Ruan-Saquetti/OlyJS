@@ -41,11 +41,11 @@ export class InputSystem extends EngineSystem implements IInputSource {
       return
     }
 
-    this._state.keyDown(e.key as Keys)
+    this._state.keyDown(e.code as Keys)
   }
 
   private onKeyUp = (e: KeyboardEvent) => {
-    this._state.keyUp(e.key as Keys)
+    this._state.keyUp(e.code as Keys)
   }
 
   private onMouseDown = (e: MouseEvent) => {
