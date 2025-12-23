@@ -4,7 +4,7 @@ import { EngineSystem } from './system'
 
 export class InputSystem extends EngineSystem implements IInputSource {
 
-  private readonly _state = new InputState()
+  private readonly _state = new InputState({ mouseSensitivity: .002 })
 
   get state(): Input {
     return this._state
