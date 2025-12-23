@@ -17,7 +17,7 @@ export interface IEventListenerRegistry<Events extends EventMap = {}> {
   clear(event?: keyof Events): void
 }
 
-export interface IEventBus<Events extends EventMap = {}> extends
+export interface IEventPublisher<Events extends EventMap = {}> extends
   IEventSender<Events>,
   IEventListenerRegistry<Events> { }
 

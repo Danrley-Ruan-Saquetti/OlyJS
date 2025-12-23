@@ -1,7 +1,8 @@
 export * from './engine'
 export * from './events/buffered-event-bus'
+export * from './events/buffered-event-queue'
 export * from './events/event-bus'
-export * from './events/event-queue'
+export * from './events/types'
 export * from './input/input-state'
 export * from './types'
 

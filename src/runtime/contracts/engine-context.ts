@@ -1,9 +1,9 @@
 import { World } from '../../ecs/world'
-import { EventMap, IEventBus } from './event'
+import { EventMap, IEventPublisher } from './event'
 
 export interface EngineContext<Events extends EventMap = {}> {
   readonly world: World
-  readonly events: IEventBus<Events>
+  readonly events: IEventPublisher<Events>
 }
 
 export interface EngineStartContext {

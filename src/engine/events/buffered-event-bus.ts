@@ -1,6 +1,6 @@
 import { EventMap, Listener } from '../../runtime/contracts/event'
+import { BufferedEventQueue } from './buffered-event-queue'
 import { EventBus } from './event-bus'
-import { BufferedEventQueue } from './event-queue'
 import { IBufferedEventBus } from './types'
 
 export class BufferedEventBus<Events extends EventMap = {}> implements IBufferedEventBus<Events> {
