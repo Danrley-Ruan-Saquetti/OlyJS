@@ -18,7 +18,7 @@ export class InputSystem extends EngineSystem implements IInputSource {
   private buttonsToAdd = new Set<number>()
   private buttonsToRemove = new Set<number>()
 
-  private positionToUpdate = { x: 0, y: 0 }
+  private offsetMouse = { x: 0, y: 0 }
 
   get state(): InputState {
     return this._state
@@ -29,6 +29,7 @@ export class InputSystem extends EngineSystem implements IInputSource {
     window.addEventListener('keyup', this.onKeyUp)
     window.addEventListener('mousedown', this.onMouseDown)
     window.addEventListener('mouseup', this.onMouseUp)
+    window.addEventListener('mousemove', this.onMouseMove)
   }
 
   stop() {
@@ -36,6 +37,7 @@ export class InputSystem extends EngineSystem implements IInputSource {
     window.removeEventListener('keyup', this.onKeyUp)
     window.removeEventListener('mousedown', this.onMouseDown)
     window.removeEventListener('mouseup', this.onMouseUp)
+    window.removeEventListener('mousemove', this.onMouseMove)
   }
 
   update() {
@@ -62,10 +64,16 @@ export class InputSystem extends EngineSystem implements IInputSource {
     }
 
     this.buttonsToAdd.clear()
+
+    this._state.mouse.x = this.offsetMouse.x
+    this._state.mouse.y = this.offsetMouse.y
+
+    this.offsetMouse.x = 0
+    this.offsetMouse.y = 0
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
-    if (this._state.keys.has(e.key as Keys)) {
+    if (e.repeat || this._state.keys.has(e.key as Keys)) {
       return
     }
 
@@ -90,5 +98,14 @@ export class InputSystem extends EngineSystem implements IInputSource {
   private onMouseUp = (e: MouseEvent) => {
     this.buttonsToRemove.add(e.button)
     this.buttonsToAdd.delete(e.button)
+  }
+
+  private onMouseMove = (e: MouseEvent) => {
+    if (document.pointerLockElement === null) {
+      return
+    }
+
+    this.offsetMouse.x += e.movementX
+    this.offsetMouse.y += e.movementY
   }
 }
