@@ -4,11 +4,22 @@ import { EngineSystem } from './system'
 export class InputSystem extends EngineSystem implements IInputSource {
 
   private readonly _state = {
-    keys: new Set<Keys>(),
+    keys: {
+      held: new Set<Keys>(),
+      down: new Set<Keys>(),
+      up: new Set<Keys>()
+    },
     mouse: {
       x: 0,
       y: 0,
-      buttons: new Set<number>()
+      buttons: {
+        held: new Set<number>(),
+        down: new Set<number>(),
+        up: new Set<number>()
+      }
+    },
+    toString() {
+      return `{keys: [${(this.keys.held.values() as any).toArray()}], position: {x: ${this.mouse.x}, y: ${this.mouse.y}}, mouse: [${(this.mouse.buttons.held.values() as any).toArray()}]}`
     }
   }
 
@@ -19,6 +30,8 @@ export class InputSystem extends EngineSystem implements IInputSource {
   private buttonsToRemove = new Set<number>()
 
   private offsetMouse = { x: 0, y: 0 }
+
+  private mouseSensitivity = .002
 
   get state(): InputState {
     return this._state
@@ -47,8 +60,12 @@ export class InputSystem extends EngineSystem implements IInputSource {
   }
 
   private reset() {
-    this._state.keys.clear()
-    this._state.mouse.buttons.clear()
+    this._state.keys.down.clear()
+    this._state.keys.held.clear()
+    this._state.keys.up.clear()
+    this._state.mouse.buttons.down.clear()
+    this._state.mouse.buttons.held.clear()
+    this._state.mouse.buttons.up.clear()
     this.keysToAdd.clear()
     this.keysToRemove.clear()
     this.buttonsToAdd.clear()
@@ -58,39 +75,48 @@ export class InputSystem extends EngineSystem implements IInputSource {
   }
 
   update() {
+    this._state.keys.down.clear()
+    this._state.keys.up.clear()
+    this._state.mouse.buttons.down.clear()
+    this._state.mouse.buttons.up.clear()
+
     for (const value of this.keysToRemove) {
-      this._state.keys.delete(value)
+      this._state.keys.held.delete(value)
+      this._state.keys.up.add(value)
     }
 
     this.keysToRemove.clear()
 
     for (const value of this.keysToAdd) {
-      this._state.keys.add(value)
+      this._state.keys.held.add(value)
+      this._state.keys.down.add(value)
     }
 
     this.keysToAdd.clear()
 
     for (const value of this.buttonsToRemove) {
-      this._state.mouse.buttons.delete(value)
+      this._state.mouse.buttons.held.delete(value)
+      this._state.mouse.buttons.up.add(value)
     }
 
     this.buttonsToRemove.clear()
 
     for (const value of this.buttonsToAdd) {
-      this._state.mouse.buttons.add(value)
+      this._state.mouse.buttons.held.add(value)
+      this._state.mouse.buttons.down.add(value)
     }
 
     this.buttonsToAdd.clear()
 
-    this._state.mouse.x = this.offsetMouse.x
-    this._state.mouse.y = this.offsetMouse.y
+    this._state.mouse.x = this.offsetMouse.x * this.mouseSensitivity
+    this._state.mouse.y = this.offsetMouse.y * this.mouseSensitivity
 
     this.offsetMouse.x = 0
     this.offsetMouse.y = 0
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
-    if (e.repeat || this._state.keys.has(e.key as Keys)) {
+    if (e.repeat || this._state.keys.held.has(e.key as Keys)) {
       return
     }
 
@@ -104,7 +130,7 @@ export class InputSystem extends EngineSystem implements IInputSource {
   }
 
   private onMouseDown = (e: MouseEvent) => {
-    if (this._state.mouse.buttons.has(e.button)) {
+    if (this._state.mouse.buttons.held.has(e.button)) {
       return
     }
 

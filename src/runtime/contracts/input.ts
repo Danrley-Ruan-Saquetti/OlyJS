@@ -1,9 +1,15 @@
+type InputStateFrame<T = any> = {
+  held: ReadonlySet<T>
+  down: ReadonlySet<T>
+  up: ReadonlySet<T>
+}
+
 export interface InputState {
-  readonly keys: ReadonlySet<Keys>
+  readonly keys: InputStateFrame<Keys>
   readonly mouse: {
     x: number
     y: number
-    buttons: ReadonlySet<number>
+    buttons: InputStateFrame<number>
   }
 }
 
