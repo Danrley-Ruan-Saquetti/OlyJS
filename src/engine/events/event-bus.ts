@@ -28,7 +28,9 @@ export class EventBus<Events extends EventMap = {}> implements IEventBus<Events>
       const bucket = buckets[i]
 
       for (let j = 0, lengthBucket = bucket.length; j < lengthBucket; j++) {
-        bucket[j](data)
+        if (bucket[j](data) === false) {
+          return
+        }
       }
     }
   }

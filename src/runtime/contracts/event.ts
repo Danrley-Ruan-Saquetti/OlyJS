@@ -7,7 +7,7 @@ export enum EventPriority {
   LOW = 2
 }
 
-export type ListenerHandler<T = {}> = (data: T) => void
+export type ListenerHandler<T = {}> = (data: T) => void | boolean
 
 export interface IEventSender<Events extends EventMap = {}> {
   send<E extends keyof Events>(event: E, data: Events[E]): void
