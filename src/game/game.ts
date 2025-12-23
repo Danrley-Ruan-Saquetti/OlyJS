@@ -43,7 +43,9 @@ export class Game<Events extends EventMap = {}> {
     this.update(0)
   }
 
-  protected initialize() { }
+  protected initialize() {
+    this.registerSystem(this.input)
+  }
 
   stop() {
     if (!this.engine.isRunning()) {
