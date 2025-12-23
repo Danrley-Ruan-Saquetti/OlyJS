@@ -57,6 +57,8 @@ export class InputSystem extends EngineSystem implements IInputSource {
   }
 
   private onMouseMove = (e: MouseEvent) => {
+    this._state.setMousePosition(e.clientX, e.clientY)
+
     if (document.pointerLockElement === null) {
       return
     }

@@ -12,9 +12,14 @@ export class InputState implements Input {
     up: new Set<Keys>()
   }
 
-  private readonly mouse = {
-    deltaX: 0,
-    deltaY: 0
+  private readonly mouseDelta = {
+    x: 0,
+    y: 0
+  }
+
+  private readonly mousePosition = {
+    x: 0,
+    y: 0
   }
 
   private readonly buttons = {
@@ -29,7 +34,8 @@ export class InputState implements Input {
   private readonly buttonsToAdd = new Set<number>()
   private readonly buttonsToRemove = new Set<number>()
 
-  private readonly offsetMouse = { x: 0, y: 0 }
+  private readonly bufferMouseDelta = { x: 0, y: 0 }
+  private readonly bufferMousePosition = { x: 0, y: 0 }
 
   private config: InputStateConfig = {
     mouseSensitivity: 1
@@ -75,11 +81,14 @@ export class InputState implements Input {
 
     this.buttonsToAdd.clear()
 
-    this.mouse.deltaX = this.offsetMouse.x * this.config.mouseSensitivity
-    this.mouse.deltaY = this.offsetMouse.y * this.config.mouseSensitivity
+    this.mousePosition.x = this.bufferMousePosition.x
+    this.mousePosition.y = this.bufferMousePosition.y
 
-    this.offsetMouse.x = 0
-    this.offsetMouse.y = 0
+    this.mouseDelta.x = this.bufferMouseDelta.x * this.config.mouseSensitivity
+    this.mouseDelta.y = this.bufferMouseDelta.y * this.config.mouseSensitivity
+
+    this.bufferMouseDelta.x = 0
+    this.bufferMouseDelta.y = 0
   }
 
   reset() {
@@ -93,8 +102,8 @@ export class InputState implements Input {
     this.keysToRemove.clear()
     this.buttonsToAdd.clear()
     this.buttonsToRemove.clear()
-    this.offsetMouse.x = 0
-    this.offsetMouse.y = 0
+    this.bufferMouseDelta.x = 0
+    this.bufferMouseDelta.y = 0
   }
 
   keyDown(key: Keys) {
@@ -130,8 +139,13 @@ export class InputState implements Input {
       return
     }
 
-    this.offsetMouse.x += deltaX
-    this.offsetMouse.y += deltaY
+    this.bufferMouseDelta.x += deltaX
+    this.bufferMouseDelta.y += deltaY
+  }
+
+  setMousePosition(x: number, y: number) {
+    this.bufferMousePosition.x = x
+    this.bufferMousePosition.y = y
   }
 
   isKeyHeld(key: Keys) {
@@ -159,10 +173,26 @@ export class InputState implements Input {
   }
 
   getMouseDeltaX() {
-    return this.mouse.deltaX
+    return this.mouseDelta.x
   }
 
   getMouseDeltaY() {
-    return this.mouse.deltaY
+    return this.mouseDelta.y
+  }
+
+  getMousePositionX() {
+    return this.mousePosition.x
+  }
+
+  getMousePositionY() {
+    return this.mousePosition.y
+  }
+
+  getMouseDelta() {
+    return this.mouseDelta
+  }
+
+  getMousePosition() {
+    return this.mousePosition
   }
 }

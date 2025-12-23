@@ -9,6 +9,18 @@ export interface Input {
 
   getMouseDeltaX(): number
   getMouseDeltaY(): number
+
+  getMousePositionX(): number
+  getMousePositionY(): number
+
+  getMouseDelta(): {
+    readonly x: number,
+    readonly y: number
+  }
+  getMousePosition(): {
+    readonly x: number,
+    readonly y: number
+  }
 }
 
 export interface IInputSource {
