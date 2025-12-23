@@ -1,20 +1,18 @@
-type InputStateFrame<T = any> = {
-  held: ReadonlySet<T>
-  down: ReadonlySet<T>
-  up: ReadonlySet<T>
-}
+export interface Input {
+  isKeyHeld(key: Keys): boolean
+  isKeyDown(key: Keys): boolean
+  isKeyUp(key: Keys): boolean
 
-export interface InputState {
-  readonly keys: InputStateFrame<Keys>
-  readonly mouse: {
-    x: number
-    y: number
-    buttons: InputStateFrame<number>
-  }
+  isMouseButtonHeld(btn: number): boolean
+  isMouseButtonDown(btn: number): boolean
+  isMouseButtonUp(btn: number): boolean
+
+  getMouseDeltaX(): number
+  getMouseDeltaY(): number
 }
 
 export interface IInputSource {
-  readonly state: InputState
+  readonly state: Input
 }
 
 export enum Keys {
