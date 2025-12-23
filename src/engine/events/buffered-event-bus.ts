@@ -1,4 +1,4 @@
-import { EventMap, Listener } from '../../runtime/contracts/event'
+import { EventMap, EventPriority, ListenerHandler } from '../../runtime/contracts/event'
 import { BufferedEventQueue } from './buffered-event-queue'
 import { EventBus } from './event-bus'
 import { IBufferedEventBus } from './types'
@@ -8,8 +8,8 @@ export class BufferedEventBus<Events extends EventMap = {}> implements IBuffered
   protected emitter = new EventBus<Events>()
   protected eventQueue = new BufferedEventQueue<Events>()
 
-  on<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
-    this.emitter.on(event, listener)
+  on<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>, priority?: EventPriority) {
+    this.emitter.on(event, listener, priority)
   }
 
   send<E extends keyof Events>(event: E, data: Events[E]) {
@@ -34,7 +34,7 @@ export class BufferedEventBus<Events extends EventMap = {}> implements IBuffered
     }
   }
 
-  off<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
+  off<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
     this.emitter.off(event, listener)
   }
 

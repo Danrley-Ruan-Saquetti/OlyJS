@@ -1,48 +1,55 @@
-import { EventMap, Listener } from '../../runtime/contracts/event'
+import { EventMap, EventPriority, ListenerHandler } from '../../runtime/contracts/event'
 import { IEventBus, ListenersMap } from './types'
 
 export class EventBus<Events extends EventMap = {}> implements IEventBus<Events> {
 
   protected listeners: ListenersMap<Events> = Object.create(null)
 
-  on<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
-    const listeners = this.listeners[event]
+  on<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>, priority = EventPriority.NORMAL) {
+    let buckets = this.listeners[event]
 
-    if (listeners) {
-      listeners.push(listener)
-    } else {
-      this.listeners[event] = [listener]
+    if (!buckets) {
+      buckets = [[], [], []]
+
+      this.listeners[event] = buckets
     }
+
+    buckets[priority].push(listener)
   }
 
   emit<E extends keyof Events>(event: E, data: Events[E]) {
-    const listeners = this.listeners[event]
+    const buckets = this.listeners[event]
 
-    if (!listeners) {
+    if (!buckets) {
       return
     }
 
-    for (let i = 0, length = listeners.length; i < length; i++) {
-      listeners[i](data)
+    for (let i = 0, lengthBuckets = buckets.length; i < lengthBuckets; i++) {
+      const bucket = buckets[i]
+
+      for (let j = 0, lengthBucket = bucket.length; j < lengthBucket; j++) {
+        bucket[j](data)
+      }
     }
   }
 
-  off<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
-    const listeners = this.listeners[event]
+  off<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
+    const buckets = this.listeners[event]
 
-    if (!listeners) {
+    if (!buckets) {
       return
     }
 
-    const index = listeners.indexOf(listener)
+    for (let i = 0, lengthBuckets = buckets.length; i < lengthBuckets; i++) {
+      const bucket = buckets[i]
 
-    if (index !== -1) {
-      listeners[index] = listeners[listeners.length - 1]
-      listeners.pop()
-    }
-
-    if (!listeners.length) {
-      delete this.listeners[event]
+      for (let j = 0, lengthBucket = bucket.length; j < lengthBucket; j++) {
+        if (bucket[j] === listener) {
+          bucket[j] = bucket[bucket.length - 1]
+          bucket.pop()
+          return
+        }
+      }
     }
   }
 

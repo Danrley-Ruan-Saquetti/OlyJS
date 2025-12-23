@@ -1,7 +1,9 @@
-import { EventMap, IEventEmitter, IEventListenerRegistry, IEventSender, Listener } from '../../runtime/contracts/event'
+import { EventMap, IEventEmitter, IEventListenerRegistry, IEventSender, ListenerHandler } from '../../runtime/contracts/event'
+
+export type PriorityBucket<T = any> = ListenerHandler<T>[][]
 
 export type ListenersMap<Events extends EventMap = {}> = {
-  [KEvent in keyof Events]?: Listener<Events[KEvent]>[]
+  [KEvent in keyof Events]?: PriorityBucket<Events[KEvent]>
 }
 
 export interface IEventBus<Events extends EventMap = {}> extends
@@ -23,7 +25,3 @@ export interface IBufferedEventBus<Events extends EventMap = {}> extends
   IEventEmitter<Events>,
   IEventSender<Events>,
   IEventQueueExecuter { }
-
-export interface IEventQueueProcessor<Events extends EventMap = {}> extends
-  IEventListenerRegistry<Events>,
-  IEventSender<Events> { }
