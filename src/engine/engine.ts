@@ -25,6 +25,7 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
     let i = 0, length = this.systems.length
     while (i < length) {
       this.systems[i].start(engineContext)
+      i++
     }
   }
 
