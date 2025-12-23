@@ -1,3 +1,3 @@
-export class World {
+export interface IWorld {
 
 }
