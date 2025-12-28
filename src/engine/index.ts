@@ -1,3 +1,5 @@
+export * from './commands/command-buffer'
+export * from './commands/types'
 export * from './engine'
 export * from './events/buffered-event-bus'
 export * from './events/buffered-event-queue'
