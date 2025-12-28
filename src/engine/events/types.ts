@@ -19,6 +19,4 @@ export interface IBufferedEventBus<Events extends EventMap = {}> extends
   IEventSender<Events>,
   IEventQueueExecuter { }
 
-export interface IBufferedEventQueue<Events extends EventMap = {}> extends
-  IEventSender<Events>,
-  IBufferStream<Events> { }
+export type IBufferedEventQueue<Events extends EventMap = {}> = IBufferStream<Events>
