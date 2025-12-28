@@ -1,5 +1,12 @@
 import { IBufferStream } from '../../runtime/buffer/type'
-import { EventMap, IEventEmitter, IEventListenerRegistryPriority, IEventSender, ListenerHandler } from '../../runtime/contracts/event'
+import {
+  EventMap,
+  IEventEmitter,
+  IEventListenerRegistry,
+  IEventListenerRegistryPriority,
+  IEventSender,
+  ListenerHandler
+} from '../../runtime/contracts/event'
 
 export type PriorityBucket<T = any> = ListenerHandler<T>[][]
 
@@ -8,6 +15,10 @@ export type ListenersMap<Events extends EventMap = {}> = {
 }
 
 export interface IEventBus<Events extends EventMap = {}> extends
+  IEventListenerRegistry<Events>,
+  IEventEmitter<Events> { }
+
+export interface IEventBusPriority<Events extends EventMap = {}> extends
   IEventListenerRegistryPriority<Events>,
   IEventEmitter<Events> { }
 

@@ -1,7 +1,7 @@
 import { EventMap, EventPriority, ListenerHandler } from '../../runtime/contracts/event'
-import { IEventBus, ListenersMap } from './types'
+import { IEventBusPriority, ListenersMap } from './types'
 
-export class EventBus<Events extends EventMap = {}> implements IEventBus<Events> {
+export class EventBus<Events extends EventMap = {}> implements IEventBusPriority<Events> {
 
   protected listeners: ListenersMap<Events> = Object.create(null)
 
