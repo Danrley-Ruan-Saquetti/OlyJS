@@ -19,10 +19,10 @@ export class BufferedEventBus<Events extends EventMap = {}> implements IBuffered
 
     let i = 0
     while (i < count) {
-      const event = this.eventQueue.getFlushedEvent(i)
-      const data = this.eventQueue.getFlushedData(i)
-
-      this.emitter.emit(event, data)
+      this.emitter.emit(
+        this.eventQueue.getFlushedKey(i),
+        this.eventQueue.getFlushedData(i)
+      )
       i++
     }
   }
