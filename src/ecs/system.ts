@@ -1,9 +1,8 @@
 import { EventMap } from '../runtime'
 import { EngineContext } from '../runtime/contracts/engine-context'
-import { SystemContext } from '../runtime/contracts/system-context'
+import { IUpgradeable } from '../runtime/contracts/upgradeable'
 
-export interface ISystem<Events extends EventMap = {}> {
+export interface ISystem<Events extends EventMap = {}> extends IUpgradeable<Events> {
   start(context: EngineContext<Events>): void
   stop(): void
-  update(context: SystemContext<Events>): void
 }
