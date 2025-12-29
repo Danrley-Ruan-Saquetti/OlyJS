@@ -1,14 +1,13 @@
-import { EventName, ListenerHandler } from './event'
+import { ListenerHandler } from './event'
 
-export type CommandName = EventName
 export type CommandHandler<T = unknown> = ListenerHandler<T>
 
 export interface ICommandRegister {
-  register(event: CommandName, handler: CommandHandler): void
+  register(event: string, handler: CommandHandler): void
 }
 
 export interface ICommandSender {
-  send(event: CommandName, data: unknown): void
+  send(event: string, data: unknown): void
 }
 
 export interface ICommandPublisher extends

@@ -1,11 +1,11 @@
-import { EventName, EventPriority, ListenerHandler } from '../../runtime/contracts/event'
+import { EventPriority, ListenerHandler } from '../../runtime/contracts/event'
 import { IEventBusPriority, ListenersPriorityMap } from './types'
 
 export class EventBusPriority implements IEventBusPriority {
 
   protected listeners: ListenersPriorityMap = Object.create(null)
 
-  on(event: EventName, listener: ListenerHandler, priority = EventPriority.NORMAL) {
+  on(event: string, listener: ListenerHandler, priority = EventPriority.NORMAL) {
     let buckets = this.listeners[event]
 
     if (!buckets) {
@@ -17,7 +17,7 @@ export class EventBusPriority implements IEventBusPriority {
     buckets[priority].push(listener)
   }
 
-  emit(event: EventName, data: unknown) {
+  emit(event: string, data: unknown) {
     const buckets = this.listeners[event]
 
     if (!buckets) {
@@ -35,7 +35,7 @@ export class EventBusPriority implements IEventBusPriority {
     }
   }
 
-  off(event: EventName, listener: ListenerHandler) {
+  off(event: string, listener: ListenerHandler) {
     const buckets = this.listeners[event]
 
     if (!buckets) {
@@ -55,7 +55,7 @@ export class EventBusPriority implements IEventBusPriority {
     }
   }
 
-  clear(event?: EventName) {
+  clear(event?: string) {
     if (event) {
       delete this.listeners[event]
     } else {

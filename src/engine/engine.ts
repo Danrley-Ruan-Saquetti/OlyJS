@@ -1,12 +1,14 @@
 import { ISystem } from '../ecs/system'
 import { IWorld } from '../ecs/world'
+import { BufferStream } from '../runtime/buffer/buffer-stream'
 import { BufferStreamConsumer } from '../runtime/buffer/buffer-stream-consumer'
 import { ICommandPublisher } from '../runtime/contracts/command'
 import { EngineContext, EngineStartContext } from '../runtime/contracts/engine-context'
 import { IEventPublisher } from '../runtime/contracts/event'
 import { SystemContext } from '../runtime/contracts/system-context'
-import { EventBus } from './events/event-bus'
+import { CommandDispatcher } from './command/command-dispatcher'
 import { EventBusPriority } from './events/event-bus-priority'
+import { EventDispatcher } from './events/event-dispatcher'
 import { IEngine } from './types'
 
 export class Engine implements IEngine {
@@ -20,10 +22,13 @@ export class Engine implements IEngine {
   protected readonly systems: ISystem[] = []
 
   protected readonly eventBus = new EventBusPriority()
-  protected readonly eventConsumer = new BufferStreamConsumer(this.eventBus)
+  protected readonly eventStream = new BufferStream()
+  protected readonly eventDispatcher = new EventDispatcher(this.eventBus)
+  protected readonly eventConsumer = new BufferStreamConsumer(this.eventStream, this.eventDispatcher)
 
-  protected readonly commandEventBus = new EventBus()
-  protected readonly commandConsumer = new BufferStreamConsumer(this.commandEventBus)
+  protected readonly commandDispatcher = new CommandDispatcher()
+  protected readonly commandStream = new BufferStream()
+  protected readonly commandConsumer = new BufferStreamConsumer(this.commandStream, this.commandDispatcher)
 
   private _isRunning = false
 
@@ -35,14 +40,14 @@ export class Engine implements IEngine {
     this._context = {
       world: null! as IWorld,
       events: {
-        on: this.eventBus.on.bind(this),
-        send: this.eventConsumer.send.bind(this),
-        off: this.eventBus.off.bind(this),
-        clear: this.eventBus.clear.bind(this),
+        on: this.eventDispatcher.on.bind(this.eventDispatcher),
+        send: this.eventConsumer.send.bind(this.eventConsumer),
+        off: this.eventDispatcher.off.bind(this.eventDispatcher),
+        clear: this.eventDispatcher.clear.bind(this.eventDispatcher),
       },
       commands: {
-        register: this.commandEventBus.on.bind(this),
-        send: this.commandConsumer.send.bind(this),
+        register: this.commandDispatcher.register.bind(this.commandDispatcher),
+        send: this.commandConsumer.send.bind(this.commandConsumer),
       },
     }
   }
@@ -54,12 +59,7 @@ export class Engine implements IEngine {
 
     this._context.world = context.world
     this._isRunning = true
-
-    let i = 0, length = this.systems.length
-    while (i < length) {
-      this.systems[i].start(this._context)
-      i++
-    }
+    this.startSystems()
   }
 
   stop() {
@@ -68,12 +68,7 @@ export class Engine implements IEngine {
     }
 
     this._isRunning = false
-
-    let i = 0, length = this.systems.length
-    while (i < length) {
-      this.systems[i].stop()
-      i++
-    }
+    this.stopSystems()
   }
 
   tick(context: SystemContext) {
@@ -81,18 +76,37 @@ export class Engine implements IEngine {
       return
     }
 
-    let i = 0, length = this.systems.length
-    while (i < length) {
-      this.systems[i].update(context)
-      i++
-    }
-
+    this.tickSystems(context)
     this.eventConsumer.execute()
     this.commandConsumer.execute()
   }
 
   registerSystem(system: ISystem) {
     this.systems.push(system)
+  }
+
+  private startSystems() {
+    let i = 0, length = this.systems.length
+    while (i < length) {
+      this.systems[i].start(this._context)
+      i++
+    }
+  }
+
+  private stopSystems() {
+    let i = 0, length = this.systems.length
+    while (i < length) {
+      this.systems[i].stop()
+      i++
+    }
+  }
+
+  private tickSystems(context: SystemContext) {
+    let i = 0, length = this.systems.length
+    while (i < length) {
+      this.systems[i].update(context)
+      i++
+    }
   }
 
   isRunning() {

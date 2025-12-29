@@ -1,8 +1,6 @@
 import { IBufferStream } from '../../runtime/buffer/type'
 import {
-  EventName,
   IEventEmitter,
-  IEventListenerRegistry,
   IEventListenerRegistryPriority,
   IEventSender,
   ListenerHandler
@@ -11,16 +9,8 @@ import {
 export type PriorityBucket<T = unknown> = ListenerHandler<T>[][]
 
 export type ListenersPriorityMap = {
-  [K in EventName]?: PriorityBucket
+  [K in string]?: PriorityBucket
 }
-
-export type ListenersMap = {
-  [K in EventName]?: ListenerHandler[]
-}
-
-export interface IEventBus extends
-  IEventListenerRegistry,
-  IEventEmitter { }
 
 export interface IEventBusPriority extends
   IEventListenerRegistryPriority,
