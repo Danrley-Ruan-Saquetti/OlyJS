@@ -1,6 +1,7 @@
 import { ISystem } from '../ecs/system'
+import { IWorld } from '../ecs/world'
 import { EngineContext, EngineStartContext } from '../runtime/contracts/engine-context'
-import { EventName, EventPriority, ListenerHandler } from '../runtime/contracts/event'
+import { IEventPublisher } from '../runtime/contracts/event'
 import { SystemContext } from '../runtime/contracts/system-context'
 import { BufferedEventBus } from './events/buffered-event-bus'
 import { EventBusPriority } from './events/event-bus-priority'
@@ -9,6 +10,11 @@ import { IEngine } from './types'
 
 export class Engine implements IEngine {
 
+  private _context: {
+    world: IWorld
+    events: IEventPublisher
+  }
+
   protected readonly systems: ISystem[] = []
 
   protected eventBus = new EventBusPriority()
@@ -16,18 +22,33 @@ export class Engine implements IEngine {
 
   private _isRunning = false
 
+  get context(): EngineContext {
+    return this._context
+  }
+
+  constructor() {
+    this._context = {
+      world: null! as IWorld,
+      events: {
+        on: this.eventBus.on.bind(this),
+        send: this.bufferedEmitter.send.bind(this),
+        off: this.eventBus.off.bind(this),
+        clear: this.eventBus.clear.bind(this),
+      }
+    }
+  }
+
   start(context: EngineStartContext) {
     if (this._isRunning) {
       return
     }
 
-    const engineContext = this.createEngineContext(context)
-
+    this._context.world = context.world
     this._isRunning = true
 
     let i = 0, length = this.systems.length
     while (i < length) {
-      this.systems[i].start(engineContext)
+      this.systems[i].start(this._context)
       i++
     }
   }
@@ -60,39 +81,11 @@ export class Engine implements IEngine {
     this.bufferedEmitter.execute()
   }
 
-  protected createEngineContext(context: EngineStartContext): EngineContext {
-    return {
-      world: context.world,
-      events: {
-        on: this.on.bind(this),
-        send: this.send.bind(this),
-        off: this.off.bind(this),
-        clear: this.clear.bind(this),
-      }
-    }
-  }
-
   registerSystem(system: ISystem) {
     this.systems.push(system)
   }
 
   isRunning() {
     return this._isRunning
-  }
-
-  on(event: EventName, listener: ListenerHandler, priority?: EventPriority) {
-    this.eventBus.on(event, listener, priority)
-  }
-
-  send(event: EventName, data: unknown) {
-    this.bufferedEmitter.send(event, data as any)
-  }
-
-  off(event: EventName, listener: ListenerHandler) {
-    this.eventBus.off(event, listener)
-  }
-
-  clear(event?: EventName) {
-    this.eventBus.clear(event)
   }
 }

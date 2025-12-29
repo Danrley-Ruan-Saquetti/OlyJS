@@ -1,6 +1,5 @@
 import { ISystem } from '../ecs/system'
-import { EngineStartContext } from '../runtime/contracts/engine-context'
-import { IEventListenerRegistryPriority, IEventSender } from '../runtime/contracts/event'
+import { EngineContext, EngineStartContext } from '../runtime/contracts/engine-context'
 import { SystemContext } from './../runtime/contracts/system-context'
 
 export interface IEngineController {
@@ -11,8 +10,6 @@ export interface IEngineController {
   isRunning(): boolean
 }
 
-export interface IEngineEvents extends IEventListenerRegistryPriority, IEventSender { }
-
-export interface IEngine extends
-  IEngineController,
-  IEngineEvents { }
+export interface IEngine extends IEngineController {
+  readonly context: EngineContext
+}
