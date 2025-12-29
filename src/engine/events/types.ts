@@ -1,6 +1,6 @@
 import { IBufferStream } from '../../runtime/buffer/type'
 import {
-  EventMap,
+  EventName,
   IEventEmitter,
   IEventListenerRegistry,
   IEventListenerRegistryPriority,
@@ -8,30 +8,30 @@ import {
   ListenerHandler
 } from '../../runtime/contracts/event'
 
-export type PriorityBucket<T = any> = ListenerHandler<T>[][]
+export type PriorityBucket<T = unknown> = ListenerHandler<T>[][]
 
-export type ListenersPriorityMap<Events extends EventMap = {}> = {
-  [KEvent in keyof Events]?: PriorityBucket<Events[KEvent]>
+export type ListenersPriorityMap = {
+  [K in EventName]?: PriorityBucket
 }
 
-export type ListenersMap<Events extends EventMap = {}> = {
-  [KEvent in keyof Events]?: ListenerHandler<Events[KEvent]>[]
+export type ListenersMap = {
+  [K in EventName]?: ListenerHandler[]
 }
 
-export interface IEventBus<Events extends EventMap = {}> extends
-  IEventListenerRegistry<Events>,
-  IEventEmitter<Events> { }
+export interface IEventBus extends
+  IEventListenerRegistry,
+  IEventEmitter { }
 
-export interface IEventBusPriority<Events extends EventMap = {}> extends
-  IEventListenerRegistryPriority<Events>,
-  IEventEmitter<Events> { }
+export interface IEventBusPriority extends
+  IEventListenerRegistryPriority,
+  IEventEmitter { }
 
 export interface IEventQueueExecuter {
   execute(): void
 }
 
-export interface IBufferedEventBus<Events extends EventMap = {}> extends
-  IEventSender<Events>,
+export interface IBufferedEventBus extends
+  IEventSender,
   IEventQueueExecuter { }
 
-export type IBufferedEventQueue<Events extends EventMap = {}> = IBufferStream<Events>
+export type IBufferedEventQueue = IBufferStream

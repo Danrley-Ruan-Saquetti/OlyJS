@@ -1,7 +1,7 @@
 import { EntityId } from '../../ecs'
 import { IComponentStorage } from './types'
 
-export class ComponentStorage<T = any> implements IComponentStorage<T> {
+export class ComponentStorage<T = unknown> implements IComponentStorage<T> {
 
   private storage = new Map<EntityId, T>()
 

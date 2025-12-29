@@ -1,8 +1,10 @@
-export type StreamDataMap = Record<string, unknown>
+import { EventMap } from '../contracts/event'
 
-export interface IBufferStream<StreamData extends StreamDataMap = {}> {
-  send<E extends keyof StreamData>(key: E, data: StreamData[E]): void
+export type StreamDataMap = EventMap
+
+export interface IBufferStream {
+  send(key: string, data: unknown): void
   flush(): number
-  getFlushedKey(index: number): keyof StreamData
-  getFlushedData(index: number): StreamData[keyof StreamData]
+  getFlushedKey(index: number): string
+  getFlushedData(index: number): unknown
 }

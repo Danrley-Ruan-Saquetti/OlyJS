@@ -1,17 +1,17 @@
-import { EventMap } from '../../runtime/contracts/event'
+import { EventName } from '../../runtime/contracts/event'
 import { BufferedEventQueue } from './buffered-event-queue'
 import { IBufferedEventBus, IBufferedEventQueue, IEventBusPriority } from './types'
 
-export class BufferedEventBus<Events extends EventMap = {}> implements IBufferedEventBus<Events> {
+export class BufferedEventBus implements IBufferedEventBus {
 
-  protected eventQueue: IBufferedEventQueue<Events> = new BufferedEventQueue<Events>()
+  protected eventQueue: IBufferedEventQueue = new BufferedEventQueue()
 
   constructor(
-    protected emitter: IEventBusPriority<Events>
+    protected emitter: IEventBusPriority
   ) { }
 
-  send<E extends keyof Events>(event: E, data: Events[E]) {
-    this.eventQueue.send(event as keyof Events, data as any)
+  send(event: EventName, data: unknown) {
+    this.eventQueue.send(event, data)
   }
 
   execute() {

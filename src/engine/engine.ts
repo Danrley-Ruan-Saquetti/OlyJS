@@ -1,18 +1,18 @@
 import { ISystem } from '../ecs/system'
 import { EngineContext, EngineStartContext } from '../runtime/contracts/engine-context'
-import { EventMap, EventPriority, ListenerHandler } from '../runtime/contracts/event'
+import { EventName, EventPriority, ListenerHandler } from '../runtime/contracts/event'
 import { SystemContext } from '../runtime/contracts/system-context'
 import { BufferedEventBus } from './events/buffered-event-bus'
 import { EventBusPriority } from './events/event-bus-priority'
 import { IBufferedEventBus } from './events/types'
 import { IEngine } from './types'
 
-export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
+export class Engine implements IEngine {
 
   protected readonly systems: ISystem[] = []
 
-  protected eventBus = new EventBusPriority<Events>()
-  protected readonly bufferedEmitter: IBufferedEventBus<Events> = new BufferedEventBus<Events>(this.eventBus)
+  protected eventBus = new EventBusPriority()
+  protected readonly bufferedEmitter: IBufferedEventBus = new BufferedEventBus(this.eventBus)
 
   private _isRunning = false
 
@@ -60,7 +60,7 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
     this.bufferedEmitter.execute()
   }
 
-  protected createEngineContext(context: EngineStartContext): EngineContext<Events> {
+  protected createEngineContext(context: EngineStartContext): EngineContext {
     return {
       world: context.world,
       events: {
@@ -72,7 +72,7 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
     }
   }
 
-  registerSystem(system: ISystem<Events>) {
+  registerSystem(system: ISystem) {
     this.systems.push(system)
   }
 
@@ -80,19 +80,19 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
     return this._isRunning
   }
 
-  on<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>, priority?: EventPriority) {
+  on(event: EventName, listener: ListenerHandler, priority?: EventPriority) {
     this.eventBus.on(event, listener, priority)
   }
 
-  send<E extends keyof Events>(event: E, data: Events[E]) {
-    this.bufferedEmitter.send(event as keyof Events, data as any)
+  send(event: EventName, data: unknown) {
+    this.bufferedEmitter.send(event, data as any)
   }
 
-  off<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
+  off(event: EventName, listener: ListenerHandler) {
     this.eventBus.off(event, listener)
   }
 
-  clear(event?: keyof Events) {
+  clear(event?: EventName) {
     this.eventBus.clear(event)
   }
 }

@@ -1,14 +1,14 @@
-import { IBufferStream, StreamDataMap } from './type'
+import { IBufferStream } from './type'
 
-export class BufferStream<StreamData extends StreamDataMap = {}> implements IBufferStream<StreamData> {
+export class BufferStream implements IBufferStream {
 
-  private bufferKey: (keyof StreamData)[] = []
-  private bufferData: StreamData[keyof StreamData][] = []
+  private bufferKey: string[] = []
+  private bufferData: unknown[] = []
 
-  private swapKey: (keyof StreamData)[] = []
-  private swapData: StreamData[keyof StreamData][] = []
+  private swapKey: string[] = []
+  private swapData: unknown[] = []
 
-  send<E extends keyof StreamData>(key: E, data: StreamData[E]) {
+  send(key: string, data: unknown) {
     this.bufferKey.push(key)
     this.bufferData.push(data)
   }

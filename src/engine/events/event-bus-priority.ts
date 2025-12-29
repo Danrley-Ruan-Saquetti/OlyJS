@@ -1,11 +1,11 @@
-import { EventMap, EventPriority, ListenerHandler } from '../../runtime/contracts/event'
+import { EventName, EventPriority, ListenerHandler } from '../../runtime/contracts/event'
 import { IEventBusPriority, ListenersPriorityMap } from './types'
 
-export class EventBusPriority<Events extends EventMap = {}> implements IEventBusPriority<Events> {
+export class EventBusPriority implements IEventBusPriority {
 
-  protected listeners: ListenersPriorityMap<Events> = Object.create(null)
+  protected listeners: ListenersPriorityMap = Object.create(null)
 
-  on<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>, priority = EventPriority.NORMAL) {
+  on(event: EventName, listener: ListenerHandler, priority = EventPriority.NORMAL) {
     let buckets = this.listeners[event]
 
     if (!buckets) {
@@ -17,7 +17,7 @@ export class EventBusPriority<Events extends EventMap = {}> implements IEventBus
     buckets[priority].push(listener)
   }
 
-  emit<E extends keyof Events>(event: E, data: Events[E]) {
+  emit(event: EventName, data: unknown) {
     const buckets = this.listeners[event]
 
     if (!buckets) {
@@ -35,7 +35,7 @@ export class EventBusPriority<Events extends EventMap = {}> implements IEventBus
     }
   }
 
-  off<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
+  off(event: EventName, listener: ListenerHandler) {
     const buckets = this.listeners[event]
 
     if (!buckets) {
@@ -55,7 +55,7 @@ export class EventBusPriority<Events extends EventMap = {}> implements IEventBus
     }
   }
 
-  clear(event?: keyof Events) {
+  clear(event?: EventName) {
     if (event) {
       delete this.listeners[event]
     } else {

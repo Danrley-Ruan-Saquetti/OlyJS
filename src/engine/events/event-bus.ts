@@ -1,11 +1,11 @@
-import { EventMap, ListenerHandler } from '../../runtime/contracts/event'
+import { EventName, ListenerHandler } from '../../runtime/contracts/event'
 import { IEventBus, ListenersMap } from './types'
 
-export class EventBus<Events extends EventMap = {}> implements IEventBus<Events> {
+export class EventBus implements IEventBus {
 
-  protected listeners: ListenersMap<Events> = Object.create(null)
+  protected listeners: ListenersMap = Object.create(null)
 
-  on<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
+  on(event: EventName, listener: ListenerHandler) {
     const listeners = this.listeners[event]
 
     if (listeners) {
@@ -15,7 +15,7 @@ export class EventBus<Events extends EventMap = {}> implements IEventBus<Events>
     }
   }
 
-  emit<E extends keyof Events>(event: E, data: Events[E]) {
+  emit(event: EventName, data: unknown) {
     const listeners = this.listeners[event]
 
     if (!listeners) {
@@ -27,7 +27,7 @@ export class EventBus<Events extends EventMap = {}> implements IEventBus<Events>
     }
   }
 
-  off<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
+  off(event: EventName, listener: ListenerHandler) {
     const listeners = this.listeners[event]
 
     if (!listeners) {
@@ -46,7 +46,7 @@ export class EventBus<Events extends EventMap = {}> implements IEventBus<Events>
     }
   }
 
-  clear(event?: keyof Events) {
+  clear(event?: EventName) {
     if (event) {
       delete this.listeners[event]
     } else {

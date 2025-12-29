@@ -1,12 +1,12 @@
 import { ISystem } from '../ecs/system'
-import { EventMap, SystemContext } from '../runtime'
+import { SystemContext } from '../runtime'
 import { EngineContext } from '../runtime/contracts/engine-context'
 
-export abstract class EngineSystem<Events extends EventMap = {}> implements ISystem<Events> {
+export abstract class EngineSystem implements ISystem {
 
-  start(context: EngineContext<Events>) { }
+  start(context: EngineContext) { }
 
   stop() { }
 
-  update(context: SystemContext<Events>) { }
+  update(context: SystemContext) { }
 }
