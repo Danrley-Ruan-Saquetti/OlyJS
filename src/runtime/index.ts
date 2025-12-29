@@ -1,4 +1,5 @@
 export * from './buffer/buffer-stream'
+export * from './buffer/buffer-stream-consumer'
 export * from './buffer/type'
 export * from './contracts/engine-context'
 export * from './contracts/event'
