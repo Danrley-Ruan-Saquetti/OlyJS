@@ -1,4 +1,4 @@
-export type StreamDataMap = Record<string | symbol, unknown>
+export type StreamDataMap = Record<string, unknown>
 
 export interface IBufferStream<StreamData extends StreamDataMap = {}> {
   send<E extends keyof StreamData>(key: E, data: StreamData[E]): void

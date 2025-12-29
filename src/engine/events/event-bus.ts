@@ -1,57 +1,48 @@
-import { EventMap, EventPriority, ListenerHandler } from '../../runtime/contracts/event'
-import { IEventBusPriority, ListenersMap } from './types'
+import { EventMap, ListenerHandler } from '../../runtime/contracts/event'
+import { IEventBus, ListenersMap } from './types'
 
-export class EventBus<Events extends EventMap = {}> implements IEventBusPriority<Events> {
+export class EventBus<Events extends EventMap = {}> implements IEventBus<Events> {
 
   protected listeners: ListenersMap<Events> = Object.create(null)
 
-  on<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>, priority = EventPriority.NORMAL) {
-    let buckets = this.listeners[event]
+  on<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
+    const listeners = this.listeners[event]
 
-    if (!buckets) {
-      buckets = [[], [], []]
-
-      this.listeners[event] = buckets
+    if (listeners) {
+      listeners.push(listener)
+    } else {
+      this.listeners[event] = [listener]
     }
-
-    buckets[priority].push(listener)
   }
 
   emit<E extends keyof Events>(event: E, data: Events[E]) {
-    const buckets = this.listeners[event]
+    const listeners = this.listeners[event]
 
-    if (!buckets) {
+    if (!listeners) {
       return
     }
 
-    for (let i = 0, lengthBuckets = buckets.length; i < lengthBuckets; i++) {
-      const bucket = buckets[i]
-
-      for (let j = 0, lengthBucket = bucket.length; j < lengthBucket; j++) {
-        if (bucket[j](data) === false) {
-          return
-        }
-      }
+    for (let i = 0, length = listeners.length; i < length; i++) {
+      listeners[i](data)
     }
   }
 
   off<E extends keyof Events>(event: E, listener: ListenerHandler<Events[E]>) {
-    const buckets = this.listeners[event]
+    const listeners = this.listeners[event]
 
-    if (!buckets) {
+    if (!listeners) {
       return
     }
 
-    for (let i = 0, lengthBuckets = buckets.length; i < lengthBuckets; i++) {
-      const bucket = buckets[i]
+    const index = listeners.indexOf(listener)
 
-      for (let j = 0, lengthBucket = bucket.length; j < lengthBucket; j++) {
-        if (bucket[j] === listener) {
-          bucket[j] = bucket[bucket.length - 1]
-          bucket.pop()
-          return
-        }
-      }
+    if (index !== -1) {
+      listeners[index] = listeners[listeners.length - 1]
+      listeners.pop()
+    }
+
+    if (!listeners.length) {
+      delete this.listeners[event]
     }
   }
 

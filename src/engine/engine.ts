@@ -3,7 +3,7 @@ import { EngineContext, EngineStartContext } from '../runtime/contracts/engine-c
 import { EventMap, EventPriority, ListenerHandler } from '../runtime/contracts/event'
 import { SystemContext } from '../runtime/contracts/system-context'
 import { BufferedEventBus } from './events/buffered-event-bus'
-import { EventBus } from './events/event-bus'
+import { EventBusPriority } from './events/event-bus-priority'
 import { IBufferedEventBus } from './events/types'
 import { IEngine } from './types'
 
@@ -11,7 +11,7 @@ export class Engine<Events extends EventMap = {}> implements IEngine<Events> {
 
   protected readonly systems: ISystem[] = []
 
-  protected eventBus = new EventBus<Events>()
+  protected eventBus = new EventBusPriority<Events>()
   protected readonly bufferedEmitter: IBufferedEventBus<Events> = new BufferedEventBus<Events>(this.eventBus)
 
   private _isRunning = false

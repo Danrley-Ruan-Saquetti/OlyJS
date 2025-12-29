@@ -10,8 +10,12 @@ import {
 
 export type PriorityBucket<T = any> = ListenerHandler<T>[][]
 
-export type ListenersMap<Events extends EventMap = {}> = {
+export type ListenersPriorityMap<Events extends EventMap = {}> = {
   [KEvent in keyof Events]?: PriorityBucket<Events[KEvent]>
+}
+
+export type ListenersMap<Events extends EventMap = {}> = {
+  [KEvent in keyof Events]?: ListenerHandler<Events[KEvent]>[]
 }
 
 export interface IEventBus<Events extends EventMap = {}> extends
