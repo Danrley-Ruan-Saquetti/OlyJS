@@ -83,12 +83,14 @@ export class Engine implements IEngine {
 
   registerSystem(system: ISystem) {
     this.systems.push(system)
+
+    system.initialize(this._context)
   }
 
   private startSystems() {
     let i = 0, length = this.systems.length
     while (i < length) {
-      this.systems[i].start(this._context)
+      this.systems[i].start()
       i++
     }
   }

@@ -4,7 +4,9 @@ import { EngineContext } from '../runtime/contracts/engine-context'
 
 export abstract class EngineSystem implements ISystem {
 
-  start(context: EngineContext) { }
+  initialize(context: EngineContext) { }
+
+  start() { }
 
   stop() { }
 
