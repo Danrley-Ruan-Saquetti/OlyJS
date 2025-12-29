@@ -8,4 +8,4 @@ export interface IActor {
   stop?(): void
 }
 
-export type ActorInstance<ActorClass extends IActor = IActor> = new (id: EntityId, world: IWorld) => ActorClass
+export type ActorClass<ActorInstance extends IActor = IActor> = new (id: EntityId, world: IWorld) => ActorInstance

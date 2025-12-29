@@ -8,4 +8,4 @@ export interface IComponent {
   update?(): void
 }
 
-export type ComponentInstance<ComponentClass extends IComponent = IComponent> = new (owner: IActor) => ComponentClass
+export type ComponentClass<ComponentInstance extends IComponent = IComponent> = new (owner: IActor) => ComponentInstance
