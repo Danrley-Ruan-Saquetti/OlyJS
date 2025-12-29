@@ -4,5 +4,6 @@ export * from './engine'
 export * from './game'
 export * from './gameplay'
 export * from './runtime'
+export * from './structures'
 export * from './systems'
 
