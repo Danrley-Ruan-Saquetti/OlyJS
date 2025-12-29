@@ -1,23 +1,30 @@
+import { ComponentClass, IComponent } from '../ecs/component'
+import { EntityId } from '../ecs/entity'
 import { ISystem } from '../ecs/system'
 import { Engine } from '../engine/engine'
 import { IEngine } from '../engine/types'
-import { EventMap } from '../runtime/contracts/event'
+import { ActorWorld } from '../gameplay/actor/actor-world'
+import { ActorClass, IActor } from '../gameplay/actor/type'
+import { ActorSystem } from '../gameplay/systems/actor.system'
 import { DefaultWorld } from '../runtime/world/default-world'
 import { InputSystem } from '../systems/input.system'
 import { MutableSystemContext } from './mutable-system-context'
 import { TimeTracker } from './time/time-tracker'
 import { ITimerTracker } from './time/types'
 
-export class Game<Events extends EventMap = {}> {
+export class Game {
 
-  protected engine: IEngine<Events> = new Engine<Events>()
+  protected engine: IEngine = new Engine()
 
   protected readonly world = new DefaultWorld()
+  protected readonly actorWorld = new ActorWorld()
+
+  protected readonly actorSystem = new ActorSystem(this.actorWorld)
+  protected readonly inputSystem = new InputSystem()
 
   protected readonly clock: ITimerTracker = new TimeTracker()
-  protected readonly input = new InputSystem()
 
-  protected readonly systemContext = new MutableSystemContext<Events>()
+  protected readonly systemContext = new MutableSystemContext()
 
   private timeout: number
   private lastTime = 0
@@ -25,9 +32,9 @@ export class Game<Events extends EventMap = {}> {
   constructor() {
     this.systemContext.world = this.world
     this.systemContext.time = this.clock.time
-    this.systemContext.input = this.input.state
+    this.systemContext.input = this.inputSystem.state
     this.systemContext.events = {
-      send: this.engine.send.bind(this.engine),
+      send: this.engine.context.events.send.bind(this.engine),
     }
   }
 
@@ -44,7 +51,8 @@ export class Game<Events extends EventMap = {}> {
   }
 
   protected initialize() {
-    this.registerSystem(this.input)
+    this.registerSystem(this.actorSystem)
+    this.registerSystem(this.inputSystem)
   }
 
   stop() {
@@ -71,7 +79,15 @@ export class Game<Events extends EventMap = {}> {
     this.lastTime = timestamp
   }
 
-  registerSystem(system: ISystem<Events>) {
+  registerSystem(system: ISystem) {
     this.engine.registerSystem(system)
+  }
+
+  instantiate<ActorInstance extends IActor = IActor>(ActorClass: ActorClass<ActorInstance>) {
+    return this.actorSystem.instantiate(ActorClass)
+  }
+
+  addComponent<ComponentInstance extends IComponent = IComponent>(entityId: EntityId, ComponentClass: ComponentClass<ComponentInstance>) {
+    return this.actorSystem.addComponent(entityId, ComponentClass)
   }
 }
