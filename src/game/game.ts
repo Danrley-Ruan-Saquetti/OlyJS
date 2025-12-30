@@ -6,8 +6,10 @@ import { IEngine } from '../engine/types'
 import { ActorWorld } from '../gameplay/actor/actor-world'
 import { ActorClass, IActor } from '../gameplay/actor/type'
 import { ActorSystem } from '../gameplay/systems/actor.system'
+import { ScheduleCallback } from '../runtime/time/schedule/timer-scheduler'
 import { DefaultWorld } from '../runtime/world/default-world'
 import { InputSystem } from '../systems/input.system'
+import { SchedulerSystem } from '../systems/scheduler.system'
 import { MutableSystemContext } from './mutable-system-context'
 import { TimeTracker } from './time/time-tracker'
 import { ITimerTracker } from './time/types'
@@ -21,6 +23,7 @@ export class Game {
 
   protected readonly actorSystem = new ActorSystem(this.actorWorld)
   protected readonly inputSystem = new InputSystem()
+  protected readonly schedulerSystem = new SchedulerSystem()
 
   protected readonly clock: ITimerTracker = new TimeTracker()
 
@@ -53,6 +56,7 @@ export class Game {
   protected initialize() {
     this.registerSystem(this.actorSystem)
     this.registerSystem(this.inputSystem)
+    this.registerSystem(this.schedulerSystem)
   }
 
   stop() {
@@ -89,5 +93,9 @@ export class Game {
 
   addComponent<ComponentInstance extends IComponent = IComponent>(entityId: EntityId, ComponentClass: ComponentClass<ComponentInstance>) {
     return this.actorSystem.addComponent(entityId, ComponentClass)
+  }
+
+  schedule(callback: ScheduleCallback, delay: number) {
+    this.schedulerSystem.schedule(callback, delay)
   }
 }
