@@ -1,15 +1,9 @@
-export type MapKey = Record<string, unknown>
-
-export interface IBufferSender {
-  send(key: string, data: unknown): void
+export interface IBuffer<T = any> {
+  send(item: T): void
+  flush(): T[]
+  size(): number
 }
 
-export interface IBufferStream extends IBufferSender {
-  flush(): number
-  getFlushedKey(index: number): string
-  getFlushedData(index: number): unknown
-}
-
-export interface IDispatcher {
-  dispatch(key: string, data: unknown): void
+export interface IDispatcher<T = any> {
+  dispatch(item: T): void
 }

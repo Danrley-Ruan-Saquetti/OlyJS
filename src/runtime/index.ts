@@ -1,5 +1,5 @@
-export * from './buffer/buffer-stream'
-export * from './buffer/buffer-stream-consumer'
+export * from './buffer/buffer-consumer'
+export * from './buffer/double-buffering'
 export * from './buffer/type'
 export * from './contracts/context/engine.context'
 export * from './contracts/context/system.context'
