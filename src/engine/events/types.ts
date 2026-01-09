@@ -1,4 +1,4 @@
-import { IBufferStream } from '../../runtime/buffer/type'
+import { IBuffer } from '../../runtime/buffer/type'
 import {
   IEventEmitter,
   IEventListenerRegistryPriority,
@@ -24,4 +24,4 @@ export interface IBufferedEventBus extends
   IEventSender,
   IEventQueueExecuter { }
 
-export type IBufferedEventQueue = IBufferStream
+export type IBufferedEventQueue = IBuffer

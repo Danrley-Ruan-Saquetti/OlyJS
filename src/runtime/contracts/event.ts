@@ -32,3 +32,5 @@ export interface IEventPublisher extends
   IEventListenerRegistryPriority { }
 
 export type IEventSink = IEventSender
+
+export type EventTuple = [string, unknown]

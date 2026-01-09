@@ -1,11 +1,11 @@
 import { ISystem } from '../ecs/system'
 import { IWorld } from '../ecs/world'
-import { BufferStream } from '../runtime/buffer/buffer-stream'
-import { BufferStreamConsumer } from '../runtime/buffer/buffer-stream-consumer'
+import { BufferConsumer } from '../runtime/buffer/buffer-consumer'
+import { DoubleBuffering } from '../runtime/buffer/double-buffering'
 import { ICommandPublisher } from '../runtime/contracts/command'
 import { EngineContext, EngineStartContext } from '../runtime/contracts/context/engine.context'
 import { SystemContext } from '../runtime/contracts/context/system.context'
-import { IEventPublisher } from '../runtime/contracts/event'
+import { EventTuple, IEventPublisher } from '../runtime/contracts/event'
 import { CommandDispatcher } from './command/command-dispatcher'
 import { EventBusPriority } from './events/event-bus-priority'
 import { EventDispatcher } from './events/event-dispatcher'
@@ -22,13 +22,13 @@ export class Engine implements IEngine {
   protected readonly systems: ISystem[] = []
 
   protected readonly eventBus = new EventBusPriority()
-  protected readonly eventStream = new BufferStream()
+  protected readonly eventStream = new DoubleBuffering()
   protected readonly eventDispatcher = new EventDispatcher(this.eventBus)
-  protected readonly eventConsumer = new BufferStreamConsumer(this.eventStream, this.eventDispatcher)
+  protected readonly eventConsumer = new BufferConsumer<EventTuple>(this.eventStream, this.eventDispatcher)
 
   protected readonly commandDispatcher = new CommandDispatcher()
-  protected readonly commandStream = new BufferStream()
-  protected readonly commandConsumer = new BufferStreamConsumer(this.commandStream, this.commandDispatcher)
+  protected readonly commandStream = new DoubleBuffering()
+  protected readonly commandConsumer = new BufferConsumer<EventTuple>(this.commandStream, this.commandDispatcher)
 
   private _isRunning = false
 
@@ -41,13 +41,13 @@ export class Engine implements IEngine {
       world: null! as IWorld,
       events: {
         on: this.eventDispatcher.on.bind(this.eventDispatcher),
-        send: this.eventConsumer.send.bind(this.eventConsumer),
+        send: (event: string, data: unknown) => this.eventConsumer.send([event, data]),
         off: this.eventDispatcher.off.bind(this.eventDispatcher),
         clear: this.eventDispatcher.clear.bind(this.eventDispatcher),
       },
       commands: {
         register: this.commandDispatcher.register.bind(this.commandDispatcher),
-        send: this.commandConsumer.send.bind(this.commandConsumer),
+        send: (event: string, data: unknown) => this.commandConsumer.send([event, data]),
       },
     }
   }
