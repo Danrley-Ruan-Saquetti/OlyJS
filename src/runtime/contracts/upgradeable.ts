@@ -1,4 +1,4 @@
-import { SystemContext } from './system-context'
+import { SystemContext } from './context/system.context'
 
 export interface IUpgradeable {
   update(context: SystemContext): void
