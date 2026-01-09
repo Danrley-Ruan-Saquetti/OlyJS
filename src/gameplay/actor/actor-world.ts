@@ -1,36 +1,33 @@
-import { ComponentClass, IComponent, } from '../../ecs/component'
-import { EntityId, } from '../../ecs/entity'
-import { IWorld } from '../../ecs/world'
-import { EngineContext } from '../../runtime/contracts/engine-context'
-import { SystemContext } from '../../runtime/contracts/system-context'
+import { ComponentClass, IComponent } from '../../ecs/component'
+import { EntityId } from '../../ecs/entity'
+import { ActorContext } from '../../runtime/contracts/context/actor.context'
+import { SystemContext } from '../../runtime/contracts/context/system.context'
 import { IUpgradeable } from '../../runtime/contracts/upgradeable'
 import { ActorClass, IActor } from './type'
 
 export class ActorWorld {
 
-  private world: IWorld
+  private readonly actors = new Map<EntityId, IActor>()
+  private readonly components = new Map<EntityId, Map<ComponentClass, IComponent>>()
 
-  private actors = new Map<EntityId, IActor>()
-  private components = new Map<EntityId, Map<ComponentClass, IComponent>>()
+  private readonly actorsToAdd = new Map<EntityId, IActor>()
+  private readonly actorsToDestroy = new Set<EntityId>()
+  private readonly componentsToAdd: IComponent[] = []
 
-  private pendingActors = new Map<EntityId, IActor>()
-  private pendingComponents: IComponent[] = []
+  private readonly actorsToStart: IActor[] = []
+  private readonly componentsToUpgrade = new Set<IUpgradeable>()
+
+  private readonly actorContext: ActorContext = {
+    instantiate: this.instantiate.bind(this),
+    destroy: this.destroy.bind(this),
+    addComponent: this.addComponent.bind(this),
+    addComponents: this.addComponents.bind(this),
+    getComponent: this.getComponent.bind(this),
+  }
 
   private nextId = 1
 
-  private requestedFlushActor = false
-  private requestedFlushComponent = false
-
-  private componentsToUpgrade: IUpgradeable[] = []
-
-  initialize(context: EngineContext) {
-    this.world = context.world
-  }
-
-  start() {
-    this.requestedFlushActor = false
-    this.requestedFlushComponent = false
-  }
+  start() { }
 
   updateComponents(context: SystemContext) {
     for (const handler of this.componentsToUpgrade) {
@@ -39,16 +36,16 @@ export class ActorWorld {
   }
 
   instantiate<ActorInstance extends IActor = IActor>(ActorClass: ActorClass<ActorInstance>) {
-    const actor = new ActorClass(this.nextId++, this.world)
+    const actor = new ActorClass(this.nextId++, this.actorContext)
 
-    this.pendingActors.set(actor.id, actor)
-    this.requestedFlushActor = true
+    this.actorsToAdd.set(actor.id, actor)
+    actor.init?.()
 
     return actor
   }
 
   addComponent<ComponentInstance extends IComponent = IComponent>(entityId: EntityId, ComponentClass: ComponentClass<ComponentInstance>): ComponentInstance {
-    const actor = this.actors.get(entityId) ?? this.pendingActors.get(entityId)
+    const actor = this.actors.get(entityId) ?? this.actorsToAdd.get(entityId)
 
     if (!actor) {
       return undefined as any as ComponentInstance
@@ -56,10 +53,29 @@ export class ActorWorld {
 
     const component = new ComponentClass(actor)
 
-    this.pendingComponents.push(component)
-    this.requestedFlushComponent = true
+    this.componentsToAdd.push(component)
 
     return component
+  }
+
+  addComponents(entityId: EntityId, ComponentClasses: ComponentClass[]) {
+    if (ComponentClasses.length == 0) {
+      return
+    }
+
+    const actor = this.actors.get(entityId) ?? this.actorsToAdd.get(entityId)
+
+    if (!actor) {
+      return
+    }
+
+    let i = 0, length = ComponentClasses.length
+    while (i < length) {
+      const component = new ComponentClasses[i](actor)
+
+      this.componentsToAdd.push(component)
+      i++
+    }
   }
 
   getComponent<ComponentInstance extends IComponent = IComponent>(entityId: EntityId, ComponentClass: ComponentClass<ComponentInstance>) {
@@ -67,34 +83,74 @@ export class ActorWorld {
   }
 
   destroy(entityId: EntityId) {
-    this.actors.delete(entityId)
-    this.components.delete(entityId)
-  }
+    const actor = this.actors.get(entityId)
 
-  flushActors() {
-    if (!this.requestedFlushActor) {
+    if (!actor) {
       return
     }
 
-    for (const actor of this.pendingActors.values()) {
-      this.actors.set(actor.id, actor)
-      this.components.set(actor.id, new Map())
-    }
-
-    this.pendingActors.clear()
-    this.requestedFlushActor = false
+    this.actorsToDestroy.add(actor.id)
   }
 
-  flushComponents() {
-    if (!this.requestedFlushComponent) {
+  flush() {
+    this.flushActors()
+    this.flushComponents()
+    this.flushActorsToStart()
+  }
+
+  protected flushActors() {
+    if (this.actorsToAdd.size > 0) {
+      for (const actor of this.actorsToAdd.values()) {
+        this.actors.set(actor.id, actor)
+        this.components.set(actor.id, new Map())
+
+        if (actor.start) {
+          this.actorsToStart.push(actor)
+        }
+      }
+
+      this.actorsToAdd.clear()
+    }
+
+    if (this.actorsToDestroy) {
+      for (const entityId of this.actorsToDestroy) {
+        for (const component of this.components.get(entityId)!.values()) {
+          this.componentsToUpgrade.delete(component as IUpgradeable)
+        }
+
+        this.actors.delete(entityId)
+        this.components.delete(entityId)
+      }
+
+      this.actorsToDestroy.clear()
+    }
+  }
+
+  protected flushComponents() {
+    if (this.componentsToAdd.length > 0) {
+      for (const component of this.componentsToAdd) {
+        this.components.get(component.owner.id)?.set((component as any).constructor, component)
+
+        if (component.update) {
+          this.componentsToUpgrade.add(component as IUpgradeable)
+        }
+      }
+
+      this.componentsToAdd.length = 0
+    }
+  }
+
+  protected flushActorsToStart() {
+    if (this.actorsToStart.length == 0) {
       return
     }
 
-    for (const component of this.pendingComponents) {
-      this.components.get(component.owner.id)?.set((component as any).constructor, component)
+    let i = 0, length = this.actorsToStart.length
+    while (i < length) {
+      this.actorsToStart[i].start!()
+      i++
     }
 
-    this.pendingComponents.length = 0
-    this.requestedFlushComponent = false
+    this.actorsToStart.length = 0
   }
 }
