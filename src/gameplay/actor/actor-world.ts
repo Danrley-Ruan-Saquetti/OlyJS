@@ -12,10 +12,10 @@ export class ActorWorld {
 
   private readonly actorsToAdd = new Map<EntityId, IActor>()
   private readonly actorsToDestroy = new Set<EntityId>()
-  private readonly componentsToAdd: IComponent[] = []
-
   private readonly actorsToStart: IActor[] = []
-  private readonly componentsToUpgrade = new Set<IUpgradeable>()
+
+  private readonly componentsToAdd: IComponent[] = []
+  private readonly componentsToUpdate = new Set<IUpgradeable>()
 
   private readonly actorContext: ActorContext = {
     instantiate: this.instantiate.bind(this),
@@ -30,7 +30,7 @@ export class ActorWorld {
   start() { }
 
   updateComponents(context: SystemContext) {
-    for (const handler of this.componentsToUpgrade) {
+    for (const handler of this.componentsToUpdate) {
       handler.update(context)
     }
   }
@@ -93,51 +93,44 @@ export class ActorWorld {
   }
 
   flush() {
-    this.flushActors()
-    this.flushComponents()
+    this.flushActorsToAdd()
+    this.flushActorsToDestroy()
+    this.flushComponentsToUpdate()
     this.flushActorsToStart()
   }
 
-  protected flushActors() {
-    if (this.actorsToAdd.size > 0) {
-      for (const actor of this.actorsToAdd.values()) {
-        this.actors.set(actor.id, actor)
-        this.components.set(actor.id, new Map())
-
-        if (actor.start) {
-          this.actorsToStart.push(actor)
-        }
-      }
-
-      this.actorsToAdd.clear()
+  protected flushActorsToAdd() {
+    if (this.actorsToAdd.size == 0) {
+      return
     }
 
-    if (this.actorsToDestroy) {
-      for (const entityId of this.actorsToDestroy) {
-        for (const component of this.components.get(entityId)!.values()) {
-          this.componentsToUpgrade.delete(component as IUpgradeable)
-        }
+    for (const actor of this.actorsToAdd.values()) {
+      this.actors.set(actor.id, actor)
+      this.components.set(actor.id, new Map())
 
-        this.actors.delete(entityId)
-        this.components.delete(entityId)
+      if (actor.start) {
+        this.actorsToStart.push(actor)
       }
-
-      this.actorsToDestroy.clear()
     }
+
+    this.actorsToAdd.clear()
   }
 
-  protected flushComponents() {
-    if (this.componentsToAdd.length > 0) {
-      for (const component of this.componentsToAdd) {
-        this.components.get(component.owner.id)?.set((component as any).constructor, component)
+  protected flushActorsToDestroy() {
+    if (this.actorsToDestroy.size == 0) {
+      return
+    }
 
-        if (component.update) {
-          this.componentsToUpgrade.add(component as IUpgradeable)
-        }
+    for (const entityId of this.actorsToDestroy) {
+      for (const component of this.components.get(entityId)!.values()) {
+        this.componentsToUpdate.delete(component as IUpgradeable)
       }
 
-      this.componentsToAdd.length = 0
+      this.actors.delete(entityId)
+      this.components.delete(entityId)
     }
+
+    this.actorsToDestroy.clear()
   }
 
   protected flushActorsToStart() {
@@ -152,5 +145,21 @@ export class ActorWorld {
     }
 
     this.actorsToStart.length = 0
+  }
+
+  protected flushComponentsToUpdate() {
+    if (this.componentsToAdd.length == 0) {
+      return
+    }
+
+    for (const component of this.componentsToAdd) {
+      this.components.get(component.owner.id)?.set((component as any).constructor, component)
+
+      if (component.update) {
+        this.componentsToUpdate.add(component as IUpgradeable)
+      }
+    }
+
+    this.componentsToAdd.length = 0
   }
 }
