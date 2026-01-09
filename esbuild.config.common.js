@@ -1,6 +1,6 @@
 export default {
   entryPoints: ['./src/index.ts'],
-  outfile: './dist/index.js',
+  outfile: './dist/engine/index.js',
   bundle: true,
   platform: 'browser',
   format: 'esm',

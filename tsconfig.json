@@ -9,18 +9,19 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "outDir": "dist",
+    "outDir": "dist/engine",
     "sourceMap": true,
     "declaration": true,
     "removeComments": true,
-    "declarationDir": "dist",
+    "declarationDir": "dist/engine",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strictPropertyInitialization": false,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "baseUrl": "."
+    "baseUrl": "./src",
+    "rootDir": "./src"
   },
   "include": [
     "src"
