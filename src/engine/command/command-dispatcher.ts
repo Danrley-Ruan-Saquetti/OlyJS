@@ -1,6 +1,8 @@
+import { IDispatcher } from '../../runtime/buffer/type'
 import { CommandHandler } from '../../runtime/contracts/command'
+import { EventTuple } from '../../runtime/contracts/event'
 
-export class CommandDispatcher {
+export class CommandDispatcher implements IDispatcher<EventTuple> {
 
   private handlers: Record<string, CommandHandler> = Object.create(null)
 
@@ -12,14 +14,14 @@ export class CommandDispatcher {
     this.handlers[event] = handler
   }
 
-  dispatch(event: string, data: unknown) {
-    const handler = this.handlers[event]
+  dispatch(event: EventTuple) {
+    const handler = this.handlers[event[0]]
 
     if (!handler) {
       return
     }
 
-    return handler(data)
+    return handler(event[1])
   }
 
   clear(event?: string) {

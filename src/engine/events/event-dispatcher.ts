@@ -1,7 +1,8 @@
-import { EventPriority, ListenerHandler } from '../../runtime/contracts/event'
+import { IDispatcher } from '../../runtime/buffer/type'
+import { EventPriority, EventTuple, ListenerHandler } from '../../runtime/contracts/event'
 import { IEventBusPriority } from './types'
 
-export class EventDispatcher {
+export class EventDispatcher implements IDispatcher<EventTuple> {
 
   constructor(
     private bus: IEventBusPriority
@@ -19,7 +20,7 @@ export class EventDispatcher {
     this.bus.clear(event)
   }
 
-  dispatch(event: string, data: unknown) {
-    this.bus.emit(event, data)
+  dispatch(event: EventTuple) {
+    this.bus.emit(event[0], event[1])
   }
 }
