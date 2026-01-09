@@ -1,5 +1,5 @@
 import { EntityId } from '../../ecs/entity'
-import { IWorld } from '../../ecs/world'
+import { ActorContext } from '../../runtime/contracts/context/actor.context'
 
 export interface IActor {
   readonly id: EntityId
@@ -8,4 +8,4 @@ export interface IActor {
   stop?(): void
 }
 
-export type ActorClass<ActorInstance extends IActor = IActor> = new (id: EntityId, world: IWorld) => ActorInstance
+export type ActorClass<ActorInstance extends IActor = IActor> = new (id: EntityId, context: ActorContext) => ActorInstance
