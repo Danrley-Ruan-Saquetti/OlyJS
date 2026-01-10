@@ -3,6 +3,7 @@ import { IActor } from '../gameplay/actor/type'
 export interface IComponent {
   readonly owner: IActor
 
+  init?(): void
   start?(): void
   stop?(): void
   update?(): void

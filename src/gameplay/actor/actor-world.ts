@@ -55,6 +55,7 @@ export class ActorWorld {
     const component = new ComponentClass(actor)
 
     this.componentsToAdd.push(component)
+    component.init?.()
 
     if (component.start) {
       this.componentsToStart.push(component)
@@ -79,6 +80,7 @@ export class ActorWorld {
       const component = new ComponentClasses[i](actor)
 
       this.componentsToAdd.push(component)
+      component.init?.()
 
       if (component.start) {
         this.componentsToStart.push(component)
