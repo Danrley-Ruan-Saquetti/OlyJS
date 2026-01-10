@@ -29,7 +29,7 @@ export class Engine implements IEngine {
       clear: this.eventDispatcher.clear.bind(this.eventDispatcher),
     },
     commands: {
-      register: this.commandScheduler.register.bind(this.eventDispatcher),
+      register: this.commandScheduler.register.bind(this.commandScheduler),
     },
   }
 
@@ -74,8 +74,6 @@ export class Engine implements IEngine {
 
   registerSystem(system: ISystem) {
     this.systemScheduler.register(system)
-
-    system.initialize(this._context)
   }
 
   registerCommandDomain(domain: ICommandDomain) {
