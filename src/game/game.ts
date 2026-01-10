@@ -49,6 +49,7 @@ export class Game {
       return
     }
 
+    this.initializeEngine()
     this.clock.reset()
     this.engine.start({ world: this.world })
     this.initialize()
@@ -56,11 +57,13 @@ export class Game {
     this.update(0)
   }
 
-  protected initialize() {
+  protected initializeEngine() {
     this.registerSystem(this.actorSystem)
     this.registerSystem(this.inputSystem)
     this.registerSystem(this.schedulerSystem)
   }
+
+  protected initialize() { }
 
   stop() {
     if (!this.engine.isRunning()) {
