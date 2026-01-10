@@ -1,6 +1,7 @@
 import { ComponentClass, IComponent } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { CommandDomain } from '../../runtime/commands/command-domain'
+import { ICommandDomain } from '../../runtime/contracts/command'
 import { ActorContext } from '../../runtime/contracts/context/actor.context'
 import { DeltaTime } from '../../runtime/contracts/time'
 import { ActorClass, IActor } from './type'
@@ -21,12 +22,12 @@ export enum ActorWorldCommandPhase {
   COMPONENT_START
 }
 
-export class ActorWorld {
+export class ActorWorld implements ICommandDomain {
 
   private readonly actors = new Map<EntityId, IActor>()
   private readonly components = new Map<EntityId, Map<ComponentClass, IComponent>>()
 
-  protected readonly commandDomain = new CommandDomain()
+  protected readonly commandDomain = new CommandDomain(Object.keys(ActorWorldCommandPhase).length)
 
   private readonly actorsToAdd = new Map<EntityId, IActor>()
   private readonly componentsToUpdate = new Set<IComponent>()
@@ -57,17 +58,21 @@ export class ActorWorld {
     }
   }
 
+  flush() {
+    this.commandDomain.flush()
+  }
+
   instantiate<ActorInstance extends IActor = IActor>(ActorClass: ActorClass<ActorInstance>) {
     const actor = new ActorClass(this.nextId++, this.actorContext)
 
     this.commandDomain.send(ActorWorldCommand.ACTOR_ADD, actor)
-    actor.init?.()
 
     if (actor.start) {
       this.commandDomain.send(ActorWorldCommand.ACTOR_START, actor)
     }
 
     this.actorsToAdd.set(actor.id, actor)
+    actor.init?.()
 
     return actor
   }

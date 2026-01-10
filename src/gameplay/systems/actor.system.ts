@@ -1,5 +1,6 @@
 import { ComponentClass, IComponent } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
+import { EngineContext } from '../../runtime/contracts/context/engine.context'
 import { SystemContext } from '../../runtime/contracts/context/system.context'
 import { EngineSystem } from '../../systems/system'
 import { ActorWorld } from '../actor/actor-world'
@@ -11,6 +12,10 @@ export class ActorSystem extends EngineSystem {
     private readonly actorWorld: ActorWorld
   ) {
     super()
+  }
+
+  initialize(context: EngineContext) {
+    context.commands.register(this.actorWorld)
   }
 
   start() {
