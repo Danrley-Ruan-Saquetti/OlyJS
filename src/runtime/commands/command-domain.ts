@@ -18,6 +18,15 @@ export class CommandDomain implements ICommandDomain {
     return this.buffers[this.activeBuffer ^ 1]
   }
 
+  constructor(maxPriority = 8) {
+    for (let b = 0; b < 2; b++) {
+      this.buffers[b] = []
+      for (let p = 0; p < maxPriority; p++) {
+        this.buffers[b][p] = []
+      }
+    }
+  }
+
   register(command: string, handler: CommandListener, priority = 0) {
     if (this.handlers.has(command)) {
       throw new CommandListenerAlreadyRegisteredException(command)
