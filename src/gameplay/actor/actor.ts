@@ -6,6 +6,6 @@ export class Actor implements IActor {
 
   constructor(
     readonly id: EntityId,
-    protected readonly context: ActorContext
+    readonly context: ActorContext
   ) { }
 }

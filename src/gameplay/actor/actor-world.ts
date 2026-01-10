@@ -3,7 +3,7 @@ import { EntityId } from '../../ecs/entity'
 import { CommandDomain } from '../../runtime/commands/command-domain'
 import { ICommandDomain } from '../../runtime/contracts/command'
 import { ActorContext } from '../../runtime/contracts/context/actor.context'
-import { DeltaTime } from '../../runtime/contracts/time'
+import { ComponentContext } from '../../runtime/contracts/context/component.context'
 import { ActorClass, IActor } from './type'
 
 export enum ActorWorldCommand {
@@ -50,11 +50,9 @@ export class ActorWorld implements ICommandDomain {
 
   private nextId = 1
 
-  start() { }
-
-  update(deltaTime: DeltaTime) {
+  update(componentContext: ComponentContext) {
     for (const handler of this.componentsToUpdate) {
-      handler.update!(deltaTime)
+      handler.update!(componentContext)
     }
   }
 

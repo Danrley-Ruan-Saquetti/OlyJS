@@ -18,12 +18,8 @@ export class ActorSystem extends EngineSystem {
     context.commands.register(this.actorWorld)
   }
 
-  start() {
-    this.actorWorld.start()
-  }
-
   update(context: SystemContext) {
-    this.actorWorld.update(context.time)
+    this.actorWorld.update(context)
   }
 
   instantiate<ActorInstance extends IActor = IActor>(ActorClass: ActorClass<ActorInstance>) {

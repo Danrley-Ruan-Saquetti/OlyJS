@@ -1,5 +1,5 @@
 import { IActor } from '../gameplay/actor/type'
-import { DeltaTime } from '../runtime/contracts/time'
+import { ComponentContext } from '../runtime/contracts/context/component.context'
 
 export interface IComponent {
   readonly owner: IActor
@@ -7,7 +7,7 @@ export interface IComponent {
   init?(): void
   start?(): void
   stop?(): void
-  update?(deltaTime: DeltaTime): void
+  update?(context: ComponentContext): void
 }
 
 export type ComponentClass<ComponentInstance extends IComponent = IComponent> = new (owner: IActor) => ComponentInstance

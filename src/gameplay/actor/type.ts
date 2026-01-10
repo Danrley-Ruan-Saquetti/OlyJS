@@ -3,6 +3,7 @@ import { ActorContext } from '../../runtime/contracts/context/actor.context'
 
 export interface IActor {
   readonly id: EntityId
+  readonly context: ActorContext
 
   init?(): void
   start?(): void
