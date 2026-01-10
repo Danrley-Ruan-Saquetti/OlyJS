@@ -1,22 +1,35 @@
 import { ComponentClass, IComponent } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
+import { CommandDomain } from '../../runtime/commands/command-domain'
 import { ActorContext } from '../../runtime/contracts/context/actor.context'
-import { SystemContext } from '../../runtime/contracts/context/system.context'
-import { IUpgradeable } from '../../runtime/contracts/upgradeable'
+import { DeltaTime } from '../../runtime/contracts/time'
 import { ActorClass, IActor } from './type'
+
+export enum ActorWorldCommand {
+  ACTOR_ADD = 'actor:add',
+  ACTOR_DESTROY = 'actor:destroy',
+  ACTOR_START = 'actor:start',
+  COMPONENT_ADD = 'component:add',
+  COMPONENT_START = 'component:start'
+}
+
+export enum ActorWorldCommandPhase {
+  ACTOR_ADD,
+  ACTOR_DESTROY,
+  COMPONENT_ADD,
+  ACTOR_START,
+  COMPONENT_START
+}
 
 export class ActorWorld {
 
   private readonly actors = new Map<EntityId, IActor>()
   private readonly components = new Map<EntityId, Map<ComponentClass, IComponent>>()
 
-  private readonly actorsToAdd = new Map<EntityId, IActor>()
-  private readonly actorsToDestroy = new Set<EntityId>()
-  private readonly actorsToStart: IActor[] = []
+  protected readonly commandDomain = new CommandDomain()
 
-  private readonly componentsToAdd: IComponent[] = []
-  private readonly componentsToStart: IComponent[] = []
-  private readonly componentsToUpdate = new Set<IUpgradeable>()
+  private readonly actorsToAdd = new Map<EntityId, IActor>()
+  private readonly componentsToUpdate = new Set<IComponent>()
 
   private readonly actorContext: ActorContext = {
     instantiate: this.instantiate.bind(this),
@@ -26,23 +39,47 @@ export class ActorWorld {
     getComponent: this.getComponent.bind(this),
   }
 
+  constructor() {
+    this.commandDomain.register(ActorWorldCommand.ACTOR_ADD, this.performActorAdd.bind(this), ActorWorldCommandPhase.ACTOR_ADD)
+    this.commandDomain.register(ActorWorldCommand.ACTOR_DESTROY, this.performActorDestroy.bind(this), ActorWorldCommandPhase.ACTOR_DESTROY)
+    this.commandDomain.register(ActorWorldCommand.ACTOR_START, this.performActorStart.bind(this), ActorWorldCommandPhase.ACTOR_START)
+    this.commandDomain.register(ActorWorldCommand.COMPONENT_ADD, this.performComponentAdd.bind(this), ActorWorldCommandPhase.COMPONENT_ADD)
+    this.commandDomain.register(ActorWorldCommand.COMPONENT_START, this.performComponentStart.bind(this), ActorWorldCommandPhase.COMPONENT_START)
+  }
+
   private nextId = 1
 
   start() { }
 
-  updateComponents(context: SystemContext) {
+  update(deltaTime: DeltaTime) {
     for (const handler of this.componentsToUpdate) {
-      handler.update(context)
+      handler.update!(deltaTime)
     }
   }
 
   instantiate<ActorInstance extends IActor = IActor>(ActorClass: ActorClass<ActorInstance>) {
     const actor = new ActorClass(this.nextId++, this.actorContext)
 
-    this.actorsToAdd.set(actor.id, actor)
+    this.commandDomain.send(ActorWorldCommand.ACTOR_ADD, actor)
     actor.init?.()
 
+    if (actor.start) {
+      this.commandDomain.send(ActorWorldCommand.ACTOR_START, actor)
+    }
+
+    this.actorsToAdd.set(actor.id, actor)
+
     return actor
+  }
+
+  destroy(entityId: EntityId) {
+    const actor = this.actors.get(entityId)
+
+    if (!actor) {
+      return
+    }
+
+    this.commandDomain.send(ActorWorldCommand.ACTOR_DESTROY, actor.id)
   }
 
   addComponent<ComponentInstance extends IComponent = IComponent>(entityId: EntityId, ComponentClass: ComponentClass<ComponentInstance>): ComponentInstance {
@@ -54,11 +91,11 @@ export class ActorWorld {
 
     const component = new ComponentClass(actor)
 
-    this.componentsToAdd.push(component)
+    this.commandDomain.send(ActorWorldCommand.COMPONENT_ADD, component)
     component.init?.()
 
     if (component.start) {
-      this.componentsToStart.push(component)
+      this.commandDomain.send(ActorWorldCommand.COMPONENT_START, component)
     }
 
     return component
@@ -79,11 +116,11 @@ export class ActorWorld {
     while (i < length) {
       const component = new ComponentClasses[i](actor)
 
-      this.componentsToAdd.push(component)
+      this.commandDomain.send(ActorWorldCommand.COMPONENT_ADD, component)
       component.init?.()
 
       if (component.start) {
-        this.componentsToStart.push(component)
+        this.commandDomain.send(ActorWorldCommand.COMPONENT_START, component)
       }
       i++
     }
@@ -93,99 +130,35 @@ export class ActorWorld {
     return this.components.get(entityId)?.get(ComponentClass) as ComponentInstance
   }
 
-  destroy(entityId: EntityId) {
-    const actor = this.actors.get(entityId)
+  protected performActorAdd(actor: IActor) {
+    this.actors.set(actor.id, actor)
+    this.components.set(actor.id, new Map())
 
-    if (!actor) {
-      return
-    }
-
-    this.actorsToDestroy.add(actor.id)
+    this.actorsToAdd.delete(actor.id)
   }
 
-  flush() {
-    this.flushActorsToAdd()
-    this.flushActorsToDestroy()
-    this.flushComponentsToUpdate()
-    this.flushActorsToStart()
-    this.flushComponentsToStart()
+  protected performActorDestroy(entityId: EntityId) {
+    for (const component of this.components.get(entityId)!.values()) {
+      this.componentsToUpdate.delete(component)
+    }
+
+    this.actors.delete(entityId)
+    this.components.delete(entityId)
   }
 
-  protected flushActorsToAdd() {
-    if (this.actorsToAdd.size == 0) {
-      return
-    }
-
-    for (const actor of this.actorsToAdd.values()) {
-      this.actors.set(actor.id, actor)
-      this.components.set(actor.id, new Map())
-
-      if (actor.start) {
-        this.actorsToStart.push(actor)
-      }
-    }
-
-    this.actorsToAdd.clear()
+  protected performActorStart(actor: IActor) {
+    actor.start!()
   }
 
-  protected flushActorsToDestroy() {
-    if (this.actorsToDestroy.size == 0) {
-      return
+  protected performComponentAdd(component: IComponent) {
+    this.components.get(component.owner.id)?.set((component as any).constructor, component)
+
+    if (component.update) {
+      this.componentsToUpdate.add(component)
     }
-
-    for (const entityId of this.actorsToDestroy) {
-      for (const component of this.components.get(entityId)!.values()) {
-        this.componentsToUpdate.delete(component as IUpgradeable)
-      }
-
-      this.actors.delete(entityId)
-      this.components.delete(entityId)
-    }
-
-    this.actorsToDestroy.clear()
   }
 
-  protected flushActorsToStart() {
-    if (this.actorsToStart.length == 0) {
-      return
-    }
-
-    let i = 0, length = this.actorsToStart.length
-    while (i < length) {
-      this.actorsToStart[i].start!()
-      i++
-    }
-
-    this.actorsToStart.length = 0
-  }
-
-  protected flushComponentsToUpdate() {
-    if (this.componentsToAdd.length == 0) {
-      return
-    }
-
-    for (const component of this.componentsToAdd) {
-      this.components.get(component.owner.id)?.set((component as any).constructor, component)
-
-      if (component.update) {
-        this.componentsToUpdate.add(component as IUpgradeable)
-      }
-    }
-
-    this.componentsToAdd.length = 0
-  }
-
-  protected flushComponentsToStart() {
-    if (this.componentsToStart.length == 0) {
-      return
-    }
-
-    let i = 0, length = this.componentsToStart.length
-    while (i < length) {
-      this.componentsToStart[i].start!()
-      i++
-    }
-
-    this.componentsToStart.length = 0
+  protected performComponentStart(component: IComponent) {
+    component.start!()
   }
 }

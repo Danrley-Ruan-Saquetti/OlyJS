@@ -18,8 +18,7 @@ export class ActorSystem extends EngineSystem {
   }
 
   update(context: SystemContext) {
-    this.actorWorld.updateComponents(context)
-    this.actorWorld.flush()
+    this.actorWorld.update(context.time)
   }
 
   instantiate<ActorInstance extends IActor = IActor>(ActorClass: ActorClass<ActorInstance>) {
