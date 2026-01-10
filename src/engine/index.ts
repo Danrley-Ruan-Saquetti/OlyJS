@@ -1,4 +1,4 @@
-export * from './command/command-dispatcher'
+export * from './command/command-scheduler'
 export * from './engine'
 export * from './events/event-bus-priority'
 export * from './events/types'
