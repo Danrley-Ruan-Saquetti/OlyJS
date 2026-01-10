@@ -1,7 +1,6 @@
 import { ISystem } from '../ecs/system'
 import { IWorld } from '../ecs/world'
 import { DoubleBufferingConsumer } from '../runtime/buffer/double-buffering-consumer'
-import { ICommandPublisher } from '../runtime/contracts/command'
 import { EngineContext, EngineStartContext } from '../runtime/contracts/context/engine.context'
 import { SystemContext } from '../runtime/contracts/context/system.context'
 import { EventTuple, IEventPublisher } from '../runtime/contracts/event'
@@ -15,7 +14,6 @@ export class Engine implements IEngine {
   private _context: {
     world: IWorld
     events: IEventPublisher
-    commands: ICommandPublisher
   }
 
   protected readonly systems: ISystem[] = []
@@ -41,10 +39,6 @@ export class Engine implements IEngine {
         send: (event: string, data: unknown) => this.eventConsumer.send([event, data]),
         off: this.eventDispatcher.off.bind(this.eventDispatcher),
         clear: this.eventDispatcher.clear.bind(this.eventDispatcher),
-      },
-      commands: {
-        register: this.commandDispatcher.register.bind(this.commandDispatcher),
-        send: (event: string, data: unknown) => this.commandConsumer.send([event, data]),
       },
     }
   }
