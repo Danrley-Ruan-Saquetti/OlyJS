@@ -1,8 +1,8 @@
-import { SystemContext } from '../contracts/context/system.context'
-import { ScheduleCallback, TimerScheduler } from '../runtime/time/schedule/timer-scheduler'
-import { EngineSystem } from './system'
+import { SystemContext } from '../../contracts/context/system.context'
+import { ScheduleCallback, TimerScheduler } from '../../runtime/time/schedule/timer-scheduler'
+import { System } from '../../systems/system'
 
-export class SchedulerSystem extends EngineSystem {
+export class SchedulerSystem extends System {
 
   private scheduler = new TimerScheduler()
 

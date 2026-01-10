@@ -1,8 +1,8 @@
-import { IInputSource, Input, Keys } from '../contracts/input'
-import { InputState } from '../engine/input/input-state'
-import { EngineSystem } from './system'
+import { IInputSource, Input, Keys } from '../../contracts/input'
+import { InputState } from '../../engine/input/input-state'
+import { System } from '../../systems/system'
 
-export class InputSystem extends EngineSystem implements IInputSource {
+export class InputSystem extends System implements IInputSource {
 
   private readonly _state = new InputState({ mouseSensitivity: .002 })
 

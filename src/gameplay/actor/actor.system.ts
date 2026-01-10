@@ -2,11 +2,11 @@ import { EngineContext } from '../../contracts/context/engine.context'
 import { SystemContext } from '../../contracts/context/system.context'
 import { ComponentClass, IComponent } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
-import { EngineSystem } from '../../systems/system'
+import { System } from '../../systems/system'
 import { ActorWorld } from '../actor/actor-world'
 import { ActorClass, IActor } from '../actor/type'
 
-export class ActorSystem extends EngineSystem {
+export class ActorSystem extends System {
 
   constructor(
     private readonly actorWorld: ActorWorld
