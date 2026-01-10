@@ -49,9 +49,9 @@ export class Game {
       return
     }
 
-    this.initialize()
     this.clock.reset()
     this.engine.start({ world: this.world })
+    this.initialize()
 
     this.update(0)
   }
