@@ -9,7 +9,7 @@ export class CommandScheduler {
   }
 
   flushAll() {
-    let i = 0, length = 0
+    let i = 0, length = this.domains.length
     while (i < length) {
       this.domains[i].flush()
       i++
