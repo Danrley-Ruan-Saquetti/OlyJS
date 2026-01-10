@@ -15,6 +15,7 @@ export class ActorWorld {
   private readonly actorsToStart: IActor[] = []
 
   private readonly componentsToAdd: IComponent[] = []
+  private readonly componentsToStart: IComponent[] = []
   private readonly componentsToUpdate = new Set<IUpgradeable>()
 
   private readonly actorContext: ActorContext = {
@@ -55,6 +56,10 @@ export class ActorWorld {
 
     this.componentsToAdd.push(component)
 
+    if (component.start) {
+      this.componentsToStart.push(component)
+    }
+
     return component
   }
 
@@ -74,6 +79,10 @@ export class ActorWorld {
       const component = new ComponentClasses[i](actor)
 
       this.componentsToAdd.push(component)
+
+      if (component.start) {
+        this.componentsToStart.push(component)
+      }
       i++
     }
   }
@@ -97,6 +106,7 @@ export class ActorWorld {
     this.flushActorsToDestroy()
     this.flushComponentsToUpdate()
     this.flushActorsToStart()
+    this.flushComponentsToStart()
   }
 
   protected flushActorsToAdd() {
@@ -161,5 +171,19 @@ export class ActorWorld {
     }
 
     this.componentsToAdd.length = 0
+  }
+
+  protected flushComponentsToStart() {
+    if (this.componentsToStart.length == 0) {
+      return
+    }
+
+    let i = 0, length = this.componentsToStart.length
+    while (i < length) {
+      this.componentsToStart[i].start!()
+      i++
+    }
+
+    this.componentsToStart.length = 0
   }
 }
