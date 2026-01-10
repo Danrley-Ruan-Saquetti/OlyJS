@@ -39,6 +39,9 @@ export class Game {
     this.systemContext.events = {
       send: this.engine.context.events.send.bind(this.engine),
     }
+    this.systemContext.commands = {
+      register: this.engine.context.commands.register.bind(this.engine),
+    }
   }
 
   start() {

@@ -1,7 +1,8 @@
 import { IWorld } from '../ecs/world'
-import { Input } from '../runtime'
+import { ICommandDomainRegister } from '../runtime/contracts/command'
 import { SystemContext } from '../runtime/contracts/context/system.context'
 import { IEventSink } from '../runtime/contracts/event'
+import { Input } from '../runtime/contracts/input'
 import { DeltaTime } from '../runtime/contracts/time'
 
 export class MutableSystemContext implements SystemContext {
@@ -9,4 +10,5 @@ export class MutableSystemContext implements SystemContext {
   time: DeltaTime
   input: Input
   events: IEventSink
+  commands: ICommandDomainRegister
 }

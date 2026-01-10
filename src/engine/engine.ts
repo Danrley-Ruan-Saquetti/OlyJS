@@ -28,6 +28,9 @@ export class Engine implements IEngine {
       off: this.eventDispatcher.off.bind(this.eventDispatcher),
       clear: this.eventDispatcher.clear.bind(this.eventDispatcher),
     },
+    commands: {
+      register: this.commandScheduler.register.bind(this.eventDispatcher),
+    },
   }
 
   private _isRunning = false
