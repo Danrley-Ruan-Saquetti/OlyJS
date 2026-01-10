@@ -1,4 +1,4 @@
-import { EntityId } from '../../ecs'
+import { EntityId } from '../../ecs/entity'
 import { IComponentStorage } from './types'
 
 export class ComponentStorage<T = unknown> implements IComponentStorage<T> {

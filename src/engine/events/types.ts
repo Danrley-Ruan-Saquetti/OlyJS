@@ -1,10 +1,10 @@
-import { IBuffer } from '../../runtime/buffer/type'
 import {
   IEventEmitter,
   IEventListenerRegistryPriority,
   IEventSender,
   ListenerHandler
-} from '../../runtime/contracts/event'
+} from '../../contracts/event'
+import { IBuffer } from '../../runtime/buffer/type'
 
 export type PriorityBucket<T = unknown> = ListenerHandler<T>[][]
 

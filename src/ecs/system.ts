@@ -1,5 +1,5 @@
-import { EngineContext } from '../runtime/contracts/context/engine.context'
-import { SystemContext } from '../runtime/contracts/context/system.context'
+import { EngineContext } from '../contracts/context/engine.context'
+import { SystemContext } from '../contracts/context/system.context'
 
 export interface ISystem {
   initialize(context: EngineContext): void

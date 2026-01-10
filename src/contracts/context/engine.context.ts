@@ -1,4 +1,4 @@
-import { IWorld } from '../../../ecs/world'
+import { IWorld } from '../../ecs/world'
 import { ICommandDomainRegister } from '../command'
 import { IEventPublisher } from '../event'
 

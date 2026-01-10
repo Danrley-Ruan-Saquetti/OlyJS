@@ -1,6 +1,6 @@
+import { EngineContext, EngineStartContext } from '../contracts/context/engine.context'
+import { SystemContext } from '../contracts/context/system.context'
 import { ISystem } from '../ecs/system'
-import { EngineContext, EngineStartContext } from '../runtime/contracts/context/engine.context'
-import { SystemContext } from '../runtime/contracts/context/system.context'
 
 export interface IEngineController {
   start(context: EngineStartContext): void

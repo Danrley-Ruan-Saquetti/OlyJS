@@ -1,5 +1,5 @@
-import { CommandListener, ICommandDomain } from '../contracts/command'
-import { EventTuple } from '../contracts/event'
+import { CommandListener, ICommandDomain } from '../../contracts/command'
+import { EventTuple } from '../../contracts/event'
 import { CommandListenerAlreadyRegisteredException } from './exceptions/command-listener-already-registered.exception'
 
 export class CommandDomain implements ICommandDomain {

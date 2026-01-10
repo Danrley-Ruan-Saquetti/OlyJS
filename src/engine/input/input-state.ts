@@ -1,4 +1,4 @@
-import { Input, Keys } from '../../runtime/contracts/input'
+import { Input, Keys } from '../../contracts/input'
 
 export type InputStateConfig = {
   mouseSensitivity: number

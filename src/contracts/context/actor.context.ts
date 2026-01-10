@@ -1,6 +1,6 @@
-import { ComponentClass, IComponent } from '../../../ecs/component'
-import { EntityId } from '../../../ecs/entity'
-import { ActorClass, IActor } from '../../../gameplay/actor/type'
+import { ComponentClass, IComponent } from '../../ecs/component'
+import { EntityId } from '../../ecs/entity'
+import { ActorClass, IActor } from '../../gameplay/actor/type'
 
 export interface ActorContext {
   instantiate<ActorInstance extends IActor = IActor>(ActorClass: ActorClass<ActorInstance>): void

@@ -1,5 +1,5 @@
+import { ComponentContext } from '../contracts/context/component.context'
 import { IActor } from '../gameplay/actor/type'
-import { ComponentContext } from '../runtime/contracts/context/component.context'
 
 export interface IComponent {
   readonly owner: IActor

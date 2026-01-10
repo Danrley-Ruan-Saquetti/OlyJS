@@ -1,4 +1,4 @@
-import { ICommandDomain } from '../../runtime/contracts/command'
+import { ICommandDomain } from '../../contracts/command'
 
 export class CommandScheduler {
 

@@ -1,4 +1,4 @@
-import { SystemContext } from '../runtime/contracts/context/system.context'
+import { SystemContext } from '../contracts/context/system.context'
 import { ScheduleCallback, TimerScheduler } from '../runtime/time/schedule/timer-scheduler'
 import { EngineSystem } from './system'
 

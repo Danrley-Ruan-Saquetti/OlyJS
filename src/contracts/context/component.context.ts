@@ -1,4 +1,4 @@
-import { IWorld } from '../../../ecs/world'
+import { IWorld } from '../../ecs/world'
 import { IEventSink } from '../event'
 import { Input } from '../input'
 import { DeltaTime } from '../time'

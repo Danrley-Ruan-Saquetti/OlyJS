@@ -1,5 +1,5 @@
-import { EntityId } from '../../ecs'
-import { ActorContext } from '../../runtime/contracts/context/actor.context'
+import { ActorContext } from '../../contracts/context/actor.context'
+import { EntityId } from '../../ecs/entity'
 import { IActor } from './type'
 
 export class Actor implements IActor {

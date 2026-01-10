@@ -1,5 +1,5 @@
+import { EventPriority, EventTuple, ListenerHandler } from '../../contracts/event'
 import { IDispatcher } from '../../runtime/buffer/type'
-import { EventPriority, EventTuple, ListenerHandler } from '../../runtime/contracts/event'
 import { IEventBusPriority } from './types'
 
 export class EventDispatcher implements IDispatcher<EventTuple> {

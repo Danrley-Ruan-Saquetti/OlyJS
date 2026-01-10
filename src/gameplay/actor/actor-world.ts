@@ -1,9 +1,9 @@
+import { ICommandDomain } from '../../contracts/command'
+import { ActorContext } from '../../contracts/context/actor.context'
+import { ComponentContext } from '../../contracts/context/component.context'
 import { ComponentClass, IComponent } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { CommandDomain } from '../../runtime/commands/command-domain'
-import { ICommandDomain } from '../../runtime/contracts/command'
-import { ActorContext } from '../../runtime/contracts/context/actor.context'
-import { ComponentContext } from '../../runtime/contracts/context/component.context'
 import { ActorClass, IActor } from './type'
 
 export enum ActorWorldCommand {

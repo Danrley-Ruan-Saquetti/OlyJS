@@ -1,6 +1,6 @@
+import { EngineContext } from '../contracts/context/engine.context'
+import { SystemContext } from '../contracts/context/system.context'
 import { ISystem } from '../ecs/system'
-import { SystemContext } from '../runtime'
-import { EngineContext } from '../runtime/contracts/context/engine.context'
 
 export abstract class EngineSystem implements ISystem {
 
