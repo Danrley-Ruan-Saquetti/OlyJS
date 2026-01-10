@@ -1,29 +1,34 @@
 import { ISystem } from '../ecs/system'
 import { IWorld } from '../ecs/world'
 import { DoubleBufferingConsumer } from '../runtime/buffer/double-buffering-consumer'
+import { ICommandDomain } from '../runtime/contracts/command'
 import { EngineContext, EngineStartContext } from '../runtime/contracts/context/engine.context'
 import { SystemContext } from '../runtime/contracts/context/system.context'
-import { EventTuple, IEventPublisher } from '../runtime/contracts/event'
-import { CommandDispatcher } from './command/command-dispatcher'
+import { EventTuple } from '../runtime/contracts/event'
+import { CommandScheduler } from './command/command-scheduler'
 import { EventBusPriority } from './events/event-bus-priority'
 import { EventDispatcher } from './events/event-dispatcher'
+import { SystemScheduler } from './system/system-scheduler'
 import { IEngine } from './types'
 
 export class Engine implements IEngine {
 
-  private _context: {
-    world: IWorld
-    events: IEventPublisher
-  }
-
-  protected readonly systems: ISystem[] = []
+  protected readonly systemScheduler: SystemScheduler
+  protected readonly commandScheduler = new CommandScheduler()
 
   protected readonly eventBus = new EventBusPriority()
   protected readonly eventDispatcher = new EventDispatcher(this.eventBus)
   protected readonly eventConsumer = new DoubleBufferingConsumer<EventTuple>(this.eventDispatcher)
 
-  protected readonly commandDispatcher = new CommandDispatcher()
-  protected readonly commandConsumer = new DoubleBufferingConsumer<EventTuple>(this.commandDispatcher)
+  private _context = {
+    world: null! as IWorld,
+    events: {
+      on: this.eventDispatcher.on.bind(this.eventDispatcher),
+      send: (event: string, data: unknown) => this.eventConsumer.send([event, data]),
+      off: this.eventDispatcher.off.bind(this.eventDispatcher),
+      clear: this.eventDispatcher.clear.bind(this.eventDispatcher),
+    },
+  }
 
   private _isRunning = false
 
@@ -32,15 +37,7 @@ export class Engine implements IEngine {
   }
 
   constructor() {
-    this._context = {
-      world: null! as IWorld,
-      events: {
-        on: this.eventDispatcher.on.bind(this.eventDispatcher),
-        send: (event: string, data: unknown) => this.eventConsumer.send([event, data]),
-        off: this.eventDispatcher.off.bind(this.eventDispatcher),
-        clear: this.eventDispatcher.clear.bind(this.eventDispatcher),
-      },
-    }
+    this.systemScheduler = new SystemScheduler(this._context)
   }
 
   start(context: EngineStartContext) {
@@ -50,7 +47,7 @@ export class Engine implements IEngine {
 
     this._context.world = context.world
     this._isRunning = true
-    this.startSystems()
+    this.systemScheduler.startAll()
   }
 
   stop() {
@@ -59,7 +56,7 @@ export class Engine implements IEngine {
     }
 
     this._isRunning = false
-    this.stopSystems()
+    this.systemScheduler.stopAll()
   }
 
   tick(context: SystemContext) {
@@ -67,39 +64,19 @@ export class Engine implements IEngine {
       return
     }
 
-    this.tickSystems(context)
+    this.systemScheduler.tickAll(context)
     this.eventConsumer.execute()
-    this.commandConsumer.execute()
+    this.commandScheduler.flushAll()
   }
 
   registerSystem(system: ISystem) {
-    this.systems.push(system)
+    this.systemScheduler.register(system)
 
     system.initialize(this._context)
   }
 
-  private startSystems() {
-    let i = 0, length = this.systems.length
-    while (i < length) {
-      this.systems[i].start()
-      i++
-    }
-  }
-
-  private stopSystems() {
-    let i = 0, length = this.systems.length
-    while (i < length) {
-      this.systems[i].stop()
-      i++
-    }
-  }
-
-  private tickSystems(context: SystemContext) {
-    let i = 0, length = this.systems.length
-    while (i < length) {
-      this.systems[i].update(context)
-      i++
-    }
+  registerCommandDomain(domain: ICommandDomain) {
+    this.commandScheduler.register(domain)
   }
 
   isRunning() {
