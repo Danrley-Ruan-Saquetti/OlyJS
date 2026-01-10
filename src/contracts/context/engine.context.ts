@@ -1,6 +1,6 @@
 import { IWorld } from '../../ecs/world'
-import { ICommandDomainRegister } from '../command'
-import { IEventPublisher } from '../event'
+import { ICommandDomainRegister } from '../engine/command'
+import { IEventPublisher } from '../engine/event'
 
 export interface EngineContext {
   readonly world: IWorld

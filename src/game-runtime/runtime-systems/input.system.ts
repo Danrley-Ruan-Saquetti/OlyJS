@@ -1,4 +1,4 @@
-import { IInputSource, Input, Keys } from '../../contracts/input'
+import { IInputSource, Input, Keys } from '../../contracts/engine/input'
 import { InputState } from '../../engine/input/input-state'
 import { System } from '../../systems/system'
 

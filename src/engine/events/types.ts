@@ -3,7 +3,7 @@ import {
   IEventListenerRegistryPriority,
   IEventSender,
   ListenerHandler
-} from '../../contracts/event'
+} from '../../contracts/engine/event'
 import { IBuffer } from '../../runtime/buffer/type'
 
 export type PriorityBucket<T = unknown> = ListenerHandler<T>[][]

@@ -1,7 +1,7 @@
 import { IWorld } from '../../ecs/world'
-import { IEventSink } from '../event'
-import { Input } from '../input'
-import { DeltaTime } from '../time'
+import { IEventSink } from '../engine/event'
+import { Input } from '../engine/input'
+import { DeltaTime } from '../engine/time'
 
 export interface ComponentContext {
   readonly world: IWorld

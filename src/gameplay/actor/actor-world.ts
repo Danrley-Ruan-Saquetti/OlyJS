@@ -1,6 +1,6 @@
-import { ICommandDomain } from '../../contracts/command'
 import { ActorContext } from '../../contracts/context/actor.context'
 import { ComponentContext } from '../../contracts/context/component.context'
+import { ICommandDomain } from '../../contracts/engine/command'
 import { ComponentClass, IComponent } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { CommandDomain } from '../../runtime/commands/command-domain'

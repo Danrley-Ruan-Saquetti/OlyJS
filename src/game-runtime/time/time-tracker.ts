@@ -1,4 +1,4 @@
-import { DeltaTime } from '../../contracts/time'
+import { DeltaTime } from '../../contracts/engine/time'
 import { ITimerTracker } from './types'
 
 export class TimeTracker implements ITimerTracker {

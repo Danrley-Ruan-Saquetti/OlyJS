@@ -1,4 +1,4 @@
-import { EventPriority, ListenerHandler } from '../../contracts/event'
+import { EventPriority, ListenerHandler } from '../../contracts/engine/event'
 import { IEventBusPriority, ListenersPriorityMap } from './types'
 
 export class EventBusPriority implements IEventBusPriority {

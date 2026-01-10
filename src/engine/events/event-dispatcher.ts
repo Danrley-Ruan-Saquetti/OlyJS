@@ -1,4 +1,4 @@
-import { EventPriority, EventTuple, ListenerHandler } from '../../contracts/event'
+import { EventPriority, EventTuple, ListenerHandler } from '../../contracts/engine/event'
 import { IDispatcher } from '../../runtime/buffer/type'
 import { IEventBusPriority } from './types'
 
