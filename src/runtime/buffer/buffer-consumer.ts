@@ -1,16 +1,11 @@
-import { DoubleBuffering } from './double-buffering'
 import { IBuffer, IDispatcher } from './type'
 
 export class BufferConsumer<T = any> {
 
-  protected buffer: IBuffer<T>
-
   constructor(
-    stream?: IBuffer<T>,
+    protected buffer: IBuffer<T>,
     protected dispatcher?: IDispatcher<T>
-  ) {
-    this.buffer = stream ?? new DoubleBuffering()
-  }
+  ) { }
 
   send(item: T) {
     this.buffer.send(item)
