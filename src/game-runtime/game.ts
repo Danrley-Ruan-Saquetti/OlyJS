@@ -1,13 +1,7 @@
-import { ComponentClass, IComponent } from '../ecs/component'
-import { EntityId } from '../ecs/entity'
 import { ISystem } from '../ecs/system'
 import { Engine } from '../engine/engine'
 import { IEngine } from '../engine/types'
-import { ActorWorld } from '../gameplay/actor/actor-world'
-import { ActorSystem } from '../gameplay/actor/actor.system'
-import { ActorClass, IActor } from '../gameplay/actor/type'
-import { ScheduleCallback } from '../runtime/time/schedule/timer-scheduler'
-import { DefaultWorld } from '../runtime/world/default-world'
+import { GameWorld } from '../runtime/world/game.world'
 import { MutableSystemContext } from './mutable-system-context'
 import { InputSystem } from './runtime-systems/input.system'
 import { SchedulerSystem } from './runtime-systems/scheduler.system'
@@ -18,10 +12,8 @@ export class Game {
 
   protected engine: IEngine = new Engine()
 
-  protected readonly world = new DefaultWorld()
-  protected readonly actorWorld = new ActorWorld()
+  protected readonly world = new GameWorld()
 
-  protected readonly actorSystem = new ActorSystem(this.actorWorld)
   protected readonly inputSystem = new InputSystem()
   protected readonly schedulerSystem = new SchedulerSystem()
 
@@ -58,7 +50,6 @@ export class Game {
   }
 
   protected initializeEngine() {
-    this.registerSystem(this.actorSystem)
     this.registerSystem(this.inputSystem)
     this.registerSystem(this.schedulerSystem)
   }
@@ -91,17 +82,5 @@ export class Game {
 
   registerSystem(system: ISystem) {
     this.engine.registerSystem(system)
-  }
-
-  instantiate<ActorInstance extends IActor = IActor>(ActorClass: ActorClass<ActorInstance>) {
-    return this.actorSystem.instantiate(ActorClass)
-  }
-
-  addComponent<ComponentInstance extends IComponent = IComponent>(entityId: EntityId, ComponentClass: ComponentClass<ComponentInstance>) {
-    return this.actorSystem.addComponent(entityId, ComponentClass)
-  }
-
-  schedule(callback: ScheduleCallback, delay: number) {
-    this.schedulerSystem.schedule(callback, delay)
   }
 }
