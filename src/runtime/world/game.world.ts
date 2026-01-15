@@ -1,4 +1,3 @@
-import { ActorContext } from '../../contracts/context/actor.context'
 import { EntityId } from '../../ecs/entity'
 import { IWorld } from '../../ecs/world'
 import { CommandDomain } from '../../runtime/commands/command-domain'
@@ -19,11 +18,7 @@ export class GameWorld implements IWorld {
 
   protected readonly commandDomain = new CommandDomain(Object.keys(GameWorldCommandPhase).length)
 
-  private readonly actorContext: ActorContext = {
-    instantiate: this.instantiate.bind(this),
-    destroy: this.destroy.bind(this),
-    addComponent: this.addComponent.bind(this),
-  }
+  private nextEntityId = 1
 
   constructor() {
     this.commandDomain.register(GameWorldCommand.ENTITY_ADD, this.performActorAdd.bind(this), GameWorldCommandPhase.ENTITY_ADD)
