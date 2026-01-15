@@ -1,6 +1,5 @@
 import { CommandListener, ICommandDomain } from '../../contracts/engine/command'
 import { EventTuple } from '../../contracts/engine/event'
-import { CommandListenerAlreadyRegisteredException } from './exceptions/command-listener-already-registered.exception'
 
 export class CommandDomain implements ICommandDomain {
 
@@ -29,7 +28,7 @@ export class CommandDomain implements ICommandDomain {
 
   register(command: string, handler: CommandListener, priority = 0) {
     if (this.handlers.has(command)) {
-      throw new CommandListenerAlreadyRegisteredException(command)
+      throw new Error(`Event "${command}" already registered for this command domain`)
     }
 
     this.handlers.set(command, handler)
