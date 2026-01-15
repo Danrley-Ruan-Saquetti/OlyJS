@@ -147,15 +147,14 @@ export class GameWorld implements IWorld {
       col.pushDefault()
     }
 
-    for (const col of from.columns) {
-      if (!col) {
-        continue
-      }
+    for (let i = 0; i < from.columns.length; i++) {
+      const fromCol = from.columns[i]
+      const componentId = from.columnIds[i]
+      const toColIdx = to.columnIds.indexOf(componentId)
 
-      const target = to.columns[(col.id ?? -1) as any]
-
-      if (target) {
-        target.copyFrom(col, loc.index)
+      if (toColIdx >= 0) {
+        const toCol = to.columns[toColIdx]
+        toCol.copyFrom(fromCol, loc.index)
       }
     }
 

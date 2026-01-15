@@ -1,15 +1,20 @@
 import { ComponentSchema } from './component'
 
-export class Column<T = any> {
+export interface IColumn {
+  pushDefault(): void
+  pop(): void
+  swap(indexA: number, indexB: number): void
+  copyFrom(other: IColumn, index: number): void
+  view(index: number): any
+}
 
-  readonly id: bigint
+export class Column<T = any> implements IColumn {
 
   private data: T[] = []
   private schema: ComponentSchema<T>
 
-  constructor(schema: ComponentSchema<T>, id: bigint) {
+  constructor(schema: ComponentSchema<T>) {
     this.schema = schema
-    this.id = id
   }
 
   pushDefault() {
@@ -26,8 +31,15 @@ export class Column<T = any> {
     this.data[indexB] = temp
   }
 
-  copyFrom(other: Column<T>, index: number) {
-    this.data.push(other.data[index])
+  copyFrom(other: IColumn, index: number) {
+    const otherCol = other as Column<T>
+    const value = otherCol.data[index]
+
+    const copied = this.schema.clone
+      ? this.schema.clone(value)
+      : value
+
+    this.data.push(copied)
   }
 
   view(index: number) {

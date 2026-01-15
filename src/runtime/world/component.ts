@@ -1,8 +1,8 @@
 import { ComponentId } from '../../ecs/component'
 
 export interface ComponentSchema<T = any> {
-  size: number
   construct: () => T
+  clone?: (value: T) => T
 }
 
 export interface ComponentDescriptor {
