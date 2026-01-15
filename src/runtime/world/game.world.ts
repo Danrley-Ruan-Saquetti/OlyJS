@@ -1,56 +1,194 @@
+import { Signature } from '../../ecs/archetype'
+import { ComponentId } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { IWorld } from '../../ecs/world'
 import { CommandDomain } from '../../runtime/commands/command-domain'
+import { Archetype } from './archetype'
+import { ComponentDescriptor } from './component'
+import { ComponentRegistry } from './component-registry'
+import { EntityLocation } from './entity-location'
+import { QueryResult } from './query'
 
 export enum GameWorldCommand {
-  ENTITY_ADD = 'entity:add',
-  ENTITY_DESTROY = 'entity:destroy',
-  COMPONENT_ADD = 'component:add'
+  CREATE_ENTITY = 'entity:create',
+  DESTROY_ENTITY = 'entity:destroy',
+  ADD_COMPONENT = 'component:add'
 }
 
 export enum GameWorldCommandPhase {
-  ENTITY_ADD,
-  ENTITY_DESTROY,
-  COMPONENT_ADD
+  CREATE_ENTITY,
+  DESTROY_ENTITY,
+  ADD_COMPONENT
+}
+
+interface AddComponentPayload {
+  entityId: EntityId
+  componentId: ComponentId
 }
 
 export class GameWorld implements IWorld {
 
   protected readonly commandDomain = new CommandDomain(Object.keys(GameWorldCommandPhase).length)
+  protected readonly componentRegistry = new ComponentRegistry()
 
   private nextEntityId = 1
+  private archetypes = new Map<string, Archetype>()
+  private entityLocation = new Map<EntityId, EntityLocation>()
 
   constructor() {
-    this.commandDomain.register(GameWorldCommand.ENTITY_ADD, this.performActorAdd.bind(this), GameWorldCommandPhase.ENTITY_ADD)
-    this.commandDomain.register(GameWorldCommand.ENTITY_DESTROY, this.performActorDestroy.bind(this), GameWorldCommandPhase.ENTITY_DESTROY)
-    this.commandDomain.register(GameWorldCommand.COMPONENT_ADD, this.performComponentAdd.bind(this), GameWorldCommandPhase.COMPONENT_ADD)
+    this.commandDomain.register(
+      GameWorldCommand.CREATE_ENTITY,
+      this.performCreateEntity.bind(this),
+      GameWorldCommandPhase.CREATE_ENTITY
+    )
+    this.commandDomain.register(
+      GameWorldCommand.DESTROY_ENTITY,
+      this.performDestroyEntity.bind(this),
+      GameWorldCommandPhase.DESTROY_ENTITY
+    )
+    this.commandDomain.register(
+      GameWorldCommand.ADD_COMPONENT,
+      this.performAddComponent.bind(this),
+      GameWorldCommandPhase.ADD_COMPONENT
+    )
+  }
+
+  registerComponent(descriptor: ComponentDescriptor) {
+    this.componentRegistry.register(descriptor)
   }
 
   flush() {
     this.commandDomain.flush()
   }
 
-  instantiate() {
-
+  instantiate(): EntityId {
+    const id = this.nextEntityId++
+    this.commandDomain.send(GameWorldCommand.CREATE_ENTITY, id)
+    return id
   }
 
   destroy(entityId: EntityId) {
-    this.commandDomain.send(GameWorldCommand.ENTITY_DESTROY, entityId)
+    this.commandDomain.send(GameWorldCommand.DESTROY_ENTITY, entityId)
   }
 
-  addComponent(entityId: EntityId, ComponentClass: any) {
-
+  addComponent(entityId: EntityId, component: ComponentDescriptor) {
+    this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entity: entityId, component: component.id })
   }
 
-  protected performActorAdd() {
+  query(...components: ComponentDescriptor[]): QueryResult {
+    const ids = components.map(c => c.id)
+    const mask = ids.reduce((m, id) => (m | (1n << id)), 0n)
 
+    return new QueryResult(this.archetypes, ids, mask)
   }
 
-  protected performActorDestroy(entityId: EntityId) {
+  private performCreateEntity(id: EntityId) {
+    const empty = this.getOrCreateArchetype(0n)
 
+    empty.entities.push(id)
+    this.entityLocation.set(id, {
+      archetype: empty,
+      index: empty.size - 1
+    })
   }
 
-  protected performComponentAdd() {
+  private performDestroyEntity(entity: EntityId) {
+    const loc = this.entityLocation.get(entity)
 
+    if (!loc) {
+      return
+    }
+
+    const { archetype, index } = loc
+    const last = archetype.size - 1
+    const lastEntity = archetype.entities[last]
+
+    archetype.entities[index] = lastEntity
+
+    for (const col of archetype.columns) {
+      col.swap(index, last)
+    }
+
+    this.entityLocation.set(lastEntity, { archetype, index })
+
+    archetype.entities.pop()
+
+    for (const col of archetype.columns) {
+      col.pop()
+    }
+
+    this.entityLocation.delete(entity)
+  }
+
+  private performAddComponent({ entityId: entity, componentId: component }: AddComponentPayload) {
+    const loc = this.entityLocation.get(entity)
+
+    if (!loc) {
+      return
+    }
+
+    const oldArch = loc.archetype
+    const newSig = oldArch.signature | (1n << component)
+
+    if (newSig === oldArch.signature) {
+      return
+    }
+
+    const newArch = this.getOrCreateArchetype(newSig)
+
+    this.moveEntity(entity, loc, oldArch, newArch)
+  }
+
+  private moveEntity(entity: EntityId, loc: EntityLocation, from: Archetype, to: Archetype) {
+    const newIndex = to.size
+    to.entities.push(entity)
+
+    for (const col of to.columns) {
+      col.pushDefault()
+    }
+
+    for (const col of from.columns) {
+      if (!col) {
+        continue
+      }
+
+      const target = to.columns[(col.id ?? -1) as any]
+
+      if (target) {
+        target.copyFrom(col, loc.index)
+      }
+    }
+
+    this.removeFromArchetype(loc, from)
+
+    this.entityLocation.set(entity, { archetype: to, index: newIndex })
+  }
+
+  private removeFromArchetype(loc: EntityLocation, arch: Archetype) {
+    const { index } = loc
+    const last = arch.size - 1
+    const lastEntity = arch.entities[last]
+
+    arch.entities[index] = lastEntity
+    this.entityLocation.set(lastEntity, { archetype: arch, index })
+
+    arch.entities.pop()
+
+    for (const col of arch.columns) {
+      col.swap(index, last)
+      col.pop()
+    }
+  }
+
+  private getOrCreateArchetype(signature: Signature) {
+    const key = signature.toString()
+    let archetype = this.archetypes.get(key)
+
+    if (!archetype) {
+      archetype = new Archetype(signature, this.componentRegistry)
+      this.archetypes.set(key, archetype)
+    }
+
+    return archetype
   }
 }
