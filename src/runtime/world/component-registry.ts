@@ -31,8 +31,8 @@ export class ComponentRegistry {
     }
 
     ids = []
-    let bit = 0n
 
+    let bit = 0n
     while (sig > 0n) {
       if ((sig & 1n) !== 0n) {
         ids.push(bit as ComponentId)

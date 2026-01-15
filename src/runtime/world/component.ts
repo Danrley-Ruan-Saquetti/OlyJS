@@ -5,7 +5,7 @@ export interface ComponentSchema<T = any> {
   clone?: (value: T) => T
 }
 
-export interface ComponentDescriptor {
+export interface ComponentDescriptor<T = any> {
   id: ComponentId
-  schema: ComponentSchema
+  schema: ComponentSchema<T>
 }

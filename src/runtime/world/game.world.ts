@@ -86,6 +86,7 @@ export class GameWorld implements IWorld {
     const empty = this.getOrCreateArchetype(0n)
 
     empty.entities.push(id)
+
     this.entityLocation.set(id, {
       archetype: empty,
       index: empty.size - 1
@@ -100,35 +101,25 @@ export class GameWorld implements IWorld {
     }
 
     const { archetype, index } = loc
+
     const last = archetype.size - 1
     const lastEntity = archetype.entities[last]
 
-    archetype.entities[index] = lastEntity
+    archetype.removeEntity(index)
 
-    for (const col of archetype.columns) {
-      col.swap(index, last)
-    }
-
-    this.entityLocation.set(lastEntity, { archetype, index })
-
-    archetype.entities.pop()
-
-    for (const col of archetype.columns) {
-      col.pop()
-    }
-
+    this.entityLocation.get(lastEntity)!.index = index
     this.entityLocation.delete(entity)
   }
 
-  private performAddComponent({ entityId: entity, componentId: component }: AddComponentPayload) {
-    const loc = this.entityLocation.get(entity)
+  private performAddComponent({ entityId, componentId }: AddComponentPayload) {
+    const loc = this.entityLocation.get(entityId)
 
     if (!loc) {
       return
     }
 
     const oldArch = loc.archetype
-    const newSig = oldArch.signature | (1n << component)
+    const newSig = oldArch.signature | (1n << componentId)
 
     if (newSig === oldArch.signature) {
       return
@@ -136,7 +127,7 @@ export class GameWorld implements IWorld {
 
     const newArch = this.getOrCreateArchetype(newSig)
 
-    this.moveEntity(entity, loc, oldArch, newArch)
+    this.moveEntity(entityId, loc, oldArch, newArch)
   }
 
   private moveEntity(entity: EntityId, loc: EntityLocation, from: Archetype, to: Archetype) {
@@ -168,15 +159,8 @@ export class GameWorld implements IWorld {
     const last = arch.size - 1
     const lastEntity = arch.entities[last]
 
-    arch.entities[index] = lastEntity
-    this.entityLocation.set(lastEntity, { archetype: arch, index })
-
-    arch.entities.pop()
-
-    for (const col of arch.columns) {
-      col.swap(index, last)
-      col.pop()
-    }
+    arch.removeEntity(index)
+    this.entityLocation.get(lastEntity)!.index = index
   }
 
   private getOrCreateArchetype(signature: Signature) {

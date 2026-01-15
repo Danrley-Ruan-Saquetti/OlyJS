@@ -7,9 +7,14 @@ import { ComponentRegistry } from './component-registry'
 export class Archetype {
 
   readonly entities: EntityId[] = []
+
   readonly columns: IColumn[] = []
   readonly columnIds: ComponentId[] = []
   private readonly columnIndex = new Map<ComponentId, number>()
+
+  get size() {
+    return this.entities.length
+  }
 
   constructor(
     readonly signature: Signature,
@@ -25,8 +30,17 @@ export class Archetype {
     }
   }
 
-  get size() {
-    return this.entities.length
+  removeEntity(index: number) {
+    const last = this.entities.length - 1
+    const lastEntity = this.entities[last]
+
+    this.entities[index] = lastEntity
+    this.entities.pop()
+
+    for (const col of this.columns) {
+      col.swap(index, last)
+      col.pop()
+    }
   }
 
   getColumnIndex(componentId: ComponentId) {
