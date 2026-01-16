@@ -7,7 +7,7 @@ import { Archetype } from './archetype'
 import { ComponentDescriptor } from './component'
 import { ComponentRegistry } from './component-registry'
 import { EntityLocation } from './entity-location'
-import { QueryResult } from './query'
+import { QueryBuilder } from './query'
 
 export enum GameWorldCommand {
   CREATE_ENTITY = 'entity:create',
@@ -75,11 +75,8 @@ export class GameWorld implements IWorld {
     this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entity: entityId, component: component.id })
   }
 
-  query(...components: ComponentDescriptor[]): QueryResult {
-    const ids = components.map(c => c.id)
-    const mask = ids.reduce((m, id) => (m | (1n << id)), 0n)
-
-    return new QueryResult(this.archetypes, ids, mask)
+  query() {
+    return new QueryBuilder(this.archetypes)
   }
 
   private performCreateEntity(id: EntityId) {
