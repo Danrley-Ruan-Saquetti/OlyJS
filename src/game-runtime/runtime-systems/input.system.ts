@@ -1,6 +1,6 @@
 import { IInputSource, Input, Keys } from '../../contracts/engine/input'
 import { InputState } from '../../engine/input/input-state'
-import { System } from '../../systems/system'
+import { System } from '../../runtime/systems/system'
 
 export class InputSystem extends System implements IInputSource {
 

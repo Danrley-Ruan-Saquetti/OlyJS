@@ -1,6 +1,6 @@
 import { SystemContext } from '../../contracts/context/system.context'
+import { System } from '../../runtime/systems/system'
 import { ScheduleCallback, TimerScheduler } from '../../runtime/time/schedule/timer-scheduler'
-import { System } from '../../systems/system'
 
 export class SchedulerSystem extends System {
 
