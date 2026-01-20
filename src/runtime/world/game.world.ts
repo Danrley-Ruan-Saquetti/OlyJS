@@ -131,11 +131,15 @@ export class GameWorld implements IWorld {
     const newIndex = to.size
     to.entities.push(entity)
 
-    for (const col of to.columns) {
-      col.pushDefault()
+    let i = 0, length = to.columns.length
+    while (i < length) {
+      to.columns[i].pushDefault()
+      i++
     }
 
-    for (let i = 0; i < from.columns.length; i++) {
+    i = 0
+    length = from.columns.length
+    while (i < length) {
       const fromCol = from.columns[i]
       const componentId = from.columnIds[i]
       const toColIdx = to.columnIds.indexOf(componentId)
@@ -144,10 +148,11 @@ export class GameWorld implements IWorld {
         const toCol = to.columns[toColIdx]
         toCol.copyFrom(fromCol, loc.index)
       }
+
+      i++
     }
 
     this.removeFromArchetype(loc, from)
-
     this.entityLocation.set(entity, { archetype: to, index: newIndex })
   }
 

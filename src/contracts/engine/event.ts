@@ -4,7 +4,7 @@ export enum EventPriority {
   LOW = 2
 }
 
-export type ListenerHandler<T = unknown> = (data: T) => void | boolean
+export type ListenerHandler<T = unknown> = (data: T) => void
 
 export interface IEventSender {
   send(event: string, data: unknown): void

@@ -22,11 +22,13 @@ export class Archetype {
   ) {
     const ids = registry.idsFromSignature(signature)
 
-    for (const id of ids) {
-      this.columnIds.push(id)
-      this.columns.push(registry.createColumn(id))
+    let i = 0, length = ids.length
+    while (i < length) {
+      this.columnIds.push(ids[i])
+      this.columns.push(registry.createColumn(ids[i]))
+      this.columnIndex.set(ids[i], this.columns.length - 1)
 
-      this.columnIndex.set(id, this.columns.length - 1)
+      i++
     }
   }
 
@@ -37,9 +39,12 @@ export class Archetype {
     this.entities[index] = lastEntity
     this.entities.pop()
 
-    for (const col of this.columns) {
-      col.swap(index, last)
-      col.pop()
+    let i = 0, length = this.columns.length
+    while (i < length) {
+      this.columns[i].swap(index, last)
+      this.columns[i].pop()
+
+      i++
     }
   }
 

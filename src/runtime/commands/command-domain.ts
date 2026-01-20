@@ -45,15 +45,20 @@ export class CommandDomain implements ICommandDomain {
 
     const buckets = this.readBuffer
 
-    for (let p = 0; p < buckets.length; p++) {
+    let p = 0, bucketLength = buckets.length
+    while (p < bucketLength) {
       const queue = buckets[p]
 
-      for (let i = 0; i < queue.length; i++) {
-        const [command, data] = queue[i]
-        this.handlers.get(command)!(data)
+      let i = 0, queueLength = queue.length
+      while (i < queueLength) {
+        const command = queue[i]
+        this.handlers.get(command[0])!(command[1])
+
+        i++
       }
 
       queue.length = 0
+      p++
     }
   }
 }

@@ -24,14 +24,18 @@ export class EventBusPriority implements IEventBusPriority {
       return
     }
 
-    for (let i = 0, lengthBuckets = buckets.length; i < lengthBuckets; i++) {
+    let i = 0, lengthBuckets = buckets.length
+    while (i < lengthBuckets) {
       const bucket = buckets[i]
 
-      for (let j = 0, lengthBucket = bucket.length; j < lengthBucket; j++) {
-        if (bucket[j](data) === false) {
-          return
-        }
+      let j = 0, lengthBucket = bucket.length
+      while (j < lengthBucket) {
+        bucket[j](data)
+
+        j++
       }
+
+      i++
     }
   }
 
@@ -42,16 +46,22 @@ export class EventBusPriority implements IEventBusPriority {
       return
     }
 
-    for (let i = 0, lengthBuckets = buckets.length; i < lengthBuckets; i++) {
+    let i = 0, lengthBuckets = buckets.length
+    while (i < lengthBuckets) {
       const bucket = buckets[i]
 
-      for (let j = 0, lengthBucket = bucket.length; j < lengthBucket; j++) {
+      let j = 0, lengthBucket = bucket.length
+      while (j < lengthBucket) {
         if (bucket[j] === listener) {
           bucket[j] = bucket[bucket.length - 1]
           bucket.pop()
           return
         }
+
+        j++
       }
+
+      i++
     }
   }
 
