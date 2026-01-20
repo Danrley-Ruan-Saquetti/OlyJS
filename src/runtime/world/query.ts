@@ -10,7 +10,7 @@ type CompiledQuery = {
   exec: (fn: (...components: unknown[]) => void) => void
 }
 
-export class QueryBuilder {
+export class Query {
 
   private ids: ComponentId[] = []
   private mask: Signature = 0n
@@ -18,14 +18,42 @@ export class QueryBuilder {
   private compiled: CompiledQuery[] = []
 
   constructor(
-    private archetypes: Map<string, Archetype>
-  ) { }
+    private archetypes: Map<string, Archetype>,
+    components: ComponentDescriptor[] = []
+  ) {
+    let i = 0, length = components.length
+    while (i < length) {
+      this.ids.push(components[i].id)
+      this.mask |= 1n << components[i].id
+      i++
+    }
 
-  with(component: ComponentDescriptor) {
-    this.ids.push(component.id)
-    this.mask |= 1n << component.id
+    this.build()
+  }
 
-    return this
+  onArchetypeAdded(archetype: Archetype) {
+    if ((archetype.signature & this.mask) !== this.mask) {
+      return
+    }
+
+    const columns: IColumn[] = []
+
+    let i = 0, length = this.ids.length
+    while (i < length) {
+      const column = archetype.getColumn(this.ids[i])
+
+      if (column) {
+        columns.push(column)
+      }
+
+      i++
+    }
+
+    const exec = this.compileExecutor(archetype, columns)
+
+    if (exec) {
+      this.compiled.push({ archetype, columns, exec })
+    }
   }
 
   build() {

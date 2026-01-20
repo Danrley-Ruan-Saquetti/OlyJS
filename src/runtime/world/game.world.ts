@@ -7,7 +7,7 @@ import { Archetype } from './archetype'
 import { ComponentDescriptor } from './component'
 import { ComponentRegistry } from './component-registry'
 import { EntityLocation } from './entity-location'
-import { QueryBuilder } from './query'
+import { Query } from './query'
 
 export enum GameWorldCommand {
   CREATE_ENTITY = 'entity:create',
@@ -32,8 +32,10 @@ export class GameWorld implements IWorld {
   protected readonly componentRegistry = new ComponentRegistry()
 
   private nextEntityId = 1
-  private archetypes = new Map<string, Archetype>()
-  private entityLocation = new Map<EntityId, EntityLocation>()
+  private readonly archetypes = new Map<string, Archetype>()
+  private readonly entityLocation = new Map<EntityId, EntityLocation>()
+
+  private readonly queries: Query[] = []
 
   constructor() {
     this.commandDomain.register(
@@ -75,8 +77,11 @@ export class GameWorld implements IWorld {
     this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entity: entityId, component: component.id })
   }
 
-  query() {
-    return new QueryBuilder(this.archetypes)
+  createQuery(components: ComponentDescriptor[]) {
+    const query = new Query(this.archetypes, components)
+    this.queries.push(query)
+
+    return query
   }
 
   private performCreateEntity(id: EntityId) {
@@ -172,6 +177,12 @@ export class GameWorld implements IWorld {
     if (!archetype) {
       archetype = new Archetype(signature, this.componentRegistry)
       this.archetypes.set(key, archetype)
+
+      let i = 0, length = this.queries.length
+      while (i < length) {
+        this.queries[i].onArchetypeAdded(archetype)
+        i++
+      }
     }
 
     return archetype
