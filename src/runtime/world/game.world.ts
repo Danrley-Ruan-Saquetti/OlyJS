@@ -1,4 +1,4 @@
-import { Signature } from '../../ecs/archetype'
+import { IArchetype, Signature } from '../../ecs/archetype'
 import { ComponentId } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { IWorld } from '../../ecs/world'
@@ -32,7 +32,7 @@ export class GameWorld implements IWorld {
   protected readonly componentRegistry = new ComponentRegistry()
 
   private nextEntityId = 1
-  private readonly archetypes = new Map<string, Archetype>()
+  private readonly archetypes = new Map<string, IArchetype>()
   private readonly entityLocation = new Map<EntityId, EntityLocation>()
 
   private readonly queries: Query[] = []
@@ -133,14 +133,14 @@ export class GameWorld implements IWorld {
     this.moveEntity(entityId, location, oldArchetype, newArch)
   }
 
-  private moveEntity(entity: EntityId, location: EntityLocation, from: Archetype, to: Archetype) {
+  private moveEntity(entity: EntityId, location: EntityLocation, from: IArchetype, to: IArchetype) {
     to.addEntityFrom(entity, location.index, to)
     this.removeFromArchetype(location, from)
 
     this.entityLocation.set(entity, { archetype: to, index: to.size - 1 })
   }
 
-  private removeFromArchetype(location: EntityLocation, archetype: Archetype) {
+  private removeFromArchetype(location: EntityLocation, archetype: IArchetype) {
     const { index } = location
     const lastEntity = archetype.lastEntity
 
@@ -162,7 +162,7 @@ export class GameWorld implements IWorld {
     return archetype
   }
 
-  private onArchetypeCreated(archetype: Archetype) {
+  private onArchetypeCreated(archetype: IArchetype) {
     let i = 0, length = this.queries.length
     while (i < length) {
       this.queries[i].onArchetypeAdded(archetype)

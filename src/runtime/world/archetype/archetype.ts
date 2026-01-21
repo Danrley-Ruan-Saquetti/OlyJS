@@ -1,15 +1,15 @@
-import { Signature } from '../../../ecs/archetype'
+import { IArchetype, Signature } from '../../../ecs/archetype'
 import { ComponentId } from '../../../ecs/component'
 import { EntityId } from '../../../ecs/entity'
 import { ComponentRegistry } from '../component-registry'
 import { IColumn } from './column'
 
-export class Archetype {
+export class Archetype implements IArchetype {
 
-  readonly entities: EntityId[] = []
+  private readonly entities: EntityId[] = []
 
-  readonly columns: IColumn[] = []
-  readonly columnIds: ComponentId[] = []
+  private readonly columns: IColumn[] = []
+  private readonly columnIds: ComponentId[] = []
   private readonly columnIndex = new Map<ComponentId, number>()
 
   get lastEntity() {

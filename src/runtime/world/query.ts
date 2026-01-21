@@ -1,6 +1,5 @@
-import { Signature } from '../../ecs/archetype'
+import { IArchetype, Signature } from '../../ecs/archetype'
 import { ComponentId } from '../../ecs/component'
-import { Archetype } from './archetype/archetype'
 import { ComponentDescriptor } from './component'
 
 export class Query {
@@ -8,10 +7,10 @@ export class Query {
   private ids: ComponentId[] = []
   private mask: Signature = 0n
 
-  private readonly matched: Archetype[] = []
+  private readonly matched: IArchetype[] = []
 
   constructor(
-    private archetypes: Map<string, Archetype>,
+    private archetypes: Map<string, IArchetype>,
     components: ComponentDescriptor[] = []
   ) {
     let i = 0, length = components.length
@@ -22,7 +21,7 @@ export class Query {
     }
   }
 
-  onArchetypeAdded(archetype: Archetype) {
+  onArchetypeAdded(archetype: IArchetype) {
     if ((archetype.signature & this.mask) !== this.mask) {
       return
     }
@@ -42,7 +41,7 @@ export class Query {
     }
   }
 
-  getArchetypes(): readonly Archetype[] {
+  getArchetypes(): readonly IArchetype[] {
     return this.archetypes as any
   }
 }

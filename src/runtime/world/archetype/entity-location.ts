@@ -1,6 +1,6 @@
-import { Archetype } from './archetype'
+import { IArchetype } from '../../../ecs/archetype'
 
 export type EntityLocation = {
-  archetype: Archetype
+  archetype: IArchetype
   index: number
 }
