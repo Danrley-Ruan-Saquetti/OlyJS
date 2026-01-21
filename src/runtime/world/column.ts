@@ -1,14 +1,14 @@
 import { ComponentSchema } from './component'
 
-export interface IColumn {
+export interface IColumn<T = any> {
   pushDefault(): void
   pop(): void
   swap(indexA: number, indexB: number): void
   copyFrom(other: IColumn, index: number): void
-  view(index: number): any
+  view(index: number): T
 }
 
-export class Column<T = any> implements IColumn {
+export class Column<T = any> implements IColumn<T> {
 
   private data: T[] = []
   private schema: ComponentSchema<T>

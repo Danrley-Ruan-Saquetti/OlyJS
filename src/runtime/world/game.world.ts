@@ -63,9 +63,10 @@ export class GameWorld implements IWorld {
     this.commandDomain.flush()
   }
 
-  instantiate(): EntityId {
+  instantiate() {
     const id = this.nextEntityId++
     this.commandDomain.send(GameWorldCommand.CREATE_ENTITY, id)
+
     return id
   }
 
@@ -80,6 +81,8 @@ export class GameWorld implements IWorld {
   createQuery(components: ComponentDescriptor[]) {
     const query = new Query(this.archetypes, components)
     this.queries.push(query)
+
+    query.build()
 
     return query
   }
