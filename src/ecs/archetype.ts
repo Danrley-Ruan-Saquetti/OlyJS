@@ -11,8 +11,7 @@ export interface IArchetype {
   addEntity(entityId: EntityId): void
   addEntityFrom(entityId: EntityId, entityIndex: number, from: IArchetype): void
   removeEntity(index: number): void
-  getColumnIndex(componentId: ComponentId): void
-  getColumn(componentId: ComponentId): void
+  getColumn(componentId: ComponentId): IColumn
 }
 
 export interface IColumn<T = any> {

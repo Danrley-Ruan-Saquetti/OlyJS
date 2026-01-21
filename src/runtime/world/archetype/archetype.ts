@@ -77,12 +77,7 @@ export class Archetype implements IArchetype {
     }
   }
 
-  getColumnIndex(componentId: ComponentId) {
-    return this.columnIndex.get(componentId) ?? -1
-  }
-
   getColumn(componentId: ComponentId) {
-    const idx = this.getColumnIndex(componentId)
-    return idx >= 0 ? this.columns[idx] : undefined
+    return this.columns[this.columnIndex.get(componentId)!]
   }
 }
