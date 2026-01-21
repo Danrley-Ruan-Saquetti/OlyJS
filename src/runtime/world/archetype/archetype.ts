@@ -1,8 +1,8 @@
-import { Signature } from '../../ecs/archetype'
-import { ComponentId } from '../../ecs/component'
-import { EntityId } from '../../ecs/entity'
+import { Signature } from '../../../ecs/archetype'
+import { ComponentId } from '../../../ecs/component'
+import { EntityId } from '../../../ecs/entity'
+import { ComponentRegistry } from '../component-registry'
 import { IColumn } from './column'
-import { ComponentRegistry } from './component-registry'
 
 export class Archetype {
 

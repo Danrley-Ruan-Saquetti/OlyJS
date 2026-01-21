@@ -1,6 +1,6 @@
 import { Signature } from '../../ecs/archetype'
 import { ComponentId } from '../../ecs/component'
-import { Archetype } from './archetype'
+import { Archetype } from './archetype/archetype'
 import { ComponentDescriptor } from './component'
 
 export class Query {

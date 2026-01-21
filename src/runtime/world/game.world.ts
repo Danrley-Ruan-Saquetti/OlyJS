@@ -3,10 +3,10 @@ import { ComponentId } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { IWorld } from '../../ecs/world'
 import { CommandDomain } from '../../runtime/commands/command-domain'
-import { Archetype } from './archetype'
+import { Archetype } from './archetype/archetype'
+import { EntityLocation } from './archetype/entity-location'
 import { ComponentDescriptor } from './component'
 import { ComponentRegistry } from './component-registry'
-import { EntityLocation } from './entity-location'
 import { Query } from './query'
 
 export enum GameWorldCommand {

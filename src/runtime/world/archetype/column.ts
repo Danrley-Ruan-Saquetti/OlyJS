@@ -1,4 +1,4 @@
-import { ComponentSchema } from './component'
+import { ComponentSchema } from '../component'
 
 export interface IColumn<T = any> {
   pushDefault(): void
