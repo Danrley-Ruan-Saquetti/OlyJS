@@ -1,12 +1,5 @@
+import { IColumn } from '../../../ecs/archetype'
 import { ComponentSchema } from '../component'
-
-export interface IColumn<T = any> {
-  pushDefault(): void
-  pop(): void
-  swap(indexA: number, indexB: number): void
-  copyFrom(other: IColumn, index: number): void
-  view(index: number): T
-}
 
 export class Column<T = any> implements IColumn<T> {
 

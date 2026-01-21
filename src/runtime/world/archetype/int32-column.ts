@@ -1,4 +1,4 @@
-import { IColumn } from './column'
+import { IColumn } from '../../../ecs/archetype'
 
 export class Int32Column implements IColumn {
 

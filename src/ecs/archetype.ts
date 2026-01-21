@@ -14,3 +14,11 @@ export interface IArchetype {
   getColumnIndex(componentId: ComponentId): void
   getColumn(componentId: ComponentId): void
 }
+
+export interface IColumn<T = any> {
+  pushDefault(): void
+  pop(): void
+  swap(indexA: number, indexB: number): void
+  copyFrom(other: IColumn, index: number): void
+  view(index: number): T
+}
