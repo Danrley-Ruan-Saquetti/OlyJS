@@ -12,6 +12,10 @@ export class Archetype {
   readonly columnIds: ComponentId[] = []
   private readonly columnIndex = new Map<ComponentId, number>()
 
+  get lastEntity() {
+    return this.entities[this.entities.length]
+  }
+
   get size() {
     return this.entities.length
   }
@@ -32,16 +36,42 @@ export class Archetype {
     }
   }
 
+  addEntity(entityId: EntityId) {
+    this.entities.push(entityId)
+
+    let i = 0, length = this.columns.length
+    while (i < length) {
+      this.columns[i].pushDefault()
+      i++
+    }
+  }
+
+  addEntityFrom(entityId: EntityId, entityIndex: number, from: Archetype) {
+    this.entities.push(entityId)
+
+    let i = 0, length = from.columns.length
+    while (i < length) {
+      const componentId = from.columnIds[i]
+      const toColumnIndex = this.columnIndex.get(componentId)
+
+      if (toColumnIndex) {
+        this.columns[toColumnIndex].copyFrom(from.columns[i], entityIndex)
+      }
+
+      i++
+    }
+  }
+
   removeEntity(index: number) {
-    const last = this.entities.length - 1
-    const lastEntity = this.entities[last]
+    const lastIndex = this.entities.length - 1
+    const lastEntity = this.entities[lastIndex]
 
     this.entities[index] = lastEntity
     this.entities.pop()
 
     let i = 0, length = this.columns.length
     while (i < length) {
-      this.columns[i].swap(index, last)
+      this.columns[i].swap(index, lastIndex)
       this.columns[i].pop()
 
       i++

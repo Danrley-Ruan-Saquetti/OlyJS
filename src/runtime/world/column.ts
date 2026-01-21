@@ -32,8 +32,8 @@ export class Column<T = any> implements IColumn<T> {
   }
 
   copyFrom(other: IColumn, index: number) {
-    const otherCol = other as Column<T>
-    const value = otherCol.data[index]
+    const otherColumn = other as Column<T>
+    const value = otherColumn.data[index]
 
     const copied = this.schema.clone
       ? this.schema.clone(value)

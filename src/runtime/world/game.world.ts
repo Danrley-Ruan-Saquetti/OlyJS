@@ -87,28 +87,26 @@ export class GameWorld implements IWorld {
     return query
   }
 
-  private performCreateEntity(id: EntityId) {
-    const empty = this.getOrCreateArchetype(0n)
+  private performCreateEntity(entityId: EntityId) {
+    const emptyArchetype = this.getOrCreateArchetype(0n)
 
-    empty.entities.push(id)
+    emptyArchetype.addEntity(entityId)
 
-    this.entityLocation.set(id, {
-      archetype: empty,
-      index: empty.size - 1
+    this.entityLocation.set(entityId, {
+      archetype: emptyArchetype,
+      index: emptyArchetype.size - 1
     })
   }
 
   private performDestroyEntity(entity: EntityId) {
-    const loc = this.entityLocation.get(entity)
+    const location = this.entityLocation.get(entity)
 
-    if (!loc) {
+    if (!location) {
       return
     }
 
-    const { archetype, index } = loc
-
-    const last = archetype.size - 1
-    const lastEntity = archetype.entities[last]
+    const { archetype, index } = location
+    const lastEntity = archetype.lastEntity
 
     archetype.removeEntity(index)
 
@@ -117,59 +115,36 @@ export class GameWorld implements IWorld {
   }
 
   private performAddComponent({ entityId, componentId }: AddComponentPayload) {
-    const loc = this.entityLocation.get(entityId)
+    const location = this.entityLocation.get(entityId)
 
-    if (!loc) {
+    if (!location) {
       return
     }
 
-    const oldArch = loc.archetype
-    const newSig = oldArch.signature | (1n << componentId)
+    const oldArchetype = location.archetype
+    const newSignature = oldArchetype.signature | (1n << componentId)
 
-    if (newSig === oldArch.signature) {
+    if (newSignature === oldArchetype.signature) {
       return
     }
 
-    const newArch = this.getOrCreateArchetype(newSig)
+    const newArch = this.getOrCreateArchetype(newSignature)
 
-    this.moveEntity(entityId, loc, oldArch, newArch)
+    this.moveEntity(entityId, location, oldArchetype, newArch)
   }
 
-  private moveEntity(entity: EntityId, loc: EntityLocation, from: Archetype, to: Archetype) {
-    const newIndex = to.size
-    to.entities.push(entity)
+  private moveEntity(entity: EntityId, location: EntityLocation, from: Archetype, to: Archetype) {
+    to.addEntityFrom(entity, location.index, to)
+    this.removeFromArchetype(location, from)
 
-    let i = 0, length = to.columns.length
-    while (i < length) {
-      to.columns[i].pushDefault()
-      i++
-    }
-
-    i = 0
-    length = from.columns.length
-    while (i < length) {
-      const fromCol = from.columns[i]
-      const componentId = from.columnIds[i]
-      const toColIdx = to.columnIds.indexOf(componentId)
-
-      if (toColIdx >= 0) {
-        const toCol = to.columns[toColIdx]
-        toCol.copyFrom(fromCol, loc.index)
-      }
-
-      i++
-    }
-
-    this.removeFromArchetype(loc, from)
-    this.entityLocation.set(entity, { archetype: to, index: newIndex })
+    this.entityLocation.set(entity, { archetype: to, index: to.size - 1 })
   }
 
-  private removeFromArchetype(loc: EntityLocation, arch: Archetype) {
-    const { index } = loc
-    const last = arch.size - 1
-    const lastEntity = arch.entities[last]
+  private removeFromArchetype(location: EntityLocation, archetype: Archetype) {
+    const { index } = location
+    const lastEntity = archetype.lastEntity
 
-    arch.removeEntity(index)
+    archetype.removeEntity(index)
     this.entityLocation.get(lastEntity)!.index = index
   }
 
@@ -179,15 +154,19 @@ export class GameWorld implements IWorld {
 
     if (!archetype) {
       archetype = new Archetype(signature, this.componentRegistry)
-      this.archetypes.set(key, archetype)
 
-      let i = 0, length = this.queries.length
-      while (i < length) {
-        this.queries[i].onArchetypeAdded(archetype)
-        i++
-      }
+      this.archetypes.set(key, archetype)
+      this.onArchetypeCreated(archetype)
     }
 
     return archetype
+  }
+
+  private onArchetypeCreated(archetype: Archetype) {
+    let i = 0, length = this.queries.length
+    while (i < length) {
+      this.queries[i].onArchetypeAdded(archetype)
+      i++
+    }
   }
 }
