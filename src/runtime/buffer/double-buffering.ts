@@ -20,6 +20,6 @@ export class DoubleBuffering<T = any> implements IBuffer<T> {
   }
 
   size() {
-    return this.swap.length
+    return this.buffer.length
   }
 }
