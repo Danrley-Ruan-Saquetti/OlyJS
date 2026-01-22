@@ -226,9 +226,9 @@ describe('Runtime: CommandDomain', () => {
     it('deve processar comandos em ordem de prioridade', () => {
       const callOrder: string[] = []
 
-      const handler1 = vi.fn(() => callOrder.push('p0'))
-      const handler2 = vi.fn(() => callOrder.push('p1'))
-      const handler3 = vi.fn(() => callOrder.push('p2'))
+      const handler1 = vi.fn(() => callOrder.push('low'))
+      const handler2 = vi.fn(() => callOrder.push('mid'))
+      const handler3 = vi.fn(() => callOrder.push('high'))
 
       domain.register('low', handler1, 2)
       domain.register('mid', handler2, 1)
