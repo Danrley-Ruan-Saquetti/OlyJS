@@ -22,4 +22,8 @@ dev:
 	docker compose up dev serve -d
 .PHONY: dev
 
+test:
+	docker compose up test -d
+.PHONY: test
+
 all: build

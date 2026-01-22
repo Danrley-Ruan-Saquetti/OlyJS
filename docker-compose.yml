@@ -19,6 +19,17 @@ services:
       - .:/app
       - /app/node_modules
 
+  test:
+    build: .
+    container_name: test
+    command: npm run test
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - .:/app
+      - /app/node_modules
+
   serve:
     image: node:20-alpine
     container_name: serve
@@ -26,6 +37,5 @@ services:
     command: npx live-server --port=4200
     volumes:
       - ./dist:/app/dist
-      - ./tests:/app/tests
     ports:
       - 4200:4200
