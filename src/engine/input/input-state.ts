@@ -104,6 +104,12 @@ export class InputState implements Input {
     this.buttonsToRemove.clear()
     this.bufferMouseDelta.x = 0
     this.bufferMouseDelta.y = 0
+    this.bufferMousePosition.x = 0
+    this.bufferMousePosition.y = 0
+    this.mouseDelta.x = 0
+    this.mouseDelta.y = 0
+    this.mousePosition.x = 0
+    this.mousePosition.y = 0
   }
 
   keyDown(key: Keys) {
