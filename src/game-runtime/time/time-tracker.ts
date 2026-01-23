@@ -20,6 +20,11 @@ export class TimeTracker implements ITimerTracker {
   reset() {
     this.deltaTime = 0
     this.totalElapsedTime = 0
+
+    this._time.deltaTime = 0
+    this._time.deltaTimeMilliseconds = 0
+    this._time.totalElapsedTime = 0
+    this._time.totalElapsedTimeMilliseconds = 0
   }
 
   advance(milliseconds: number) {
