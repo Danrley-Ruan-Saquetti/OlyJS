@@ -141,10 +141,6 @@ export class InputState implements Input {
   }
 
   mouseMove(deltaX: number, deltaY: number) {
-    if (document.pointerLockElement === null) {
-      return
-    }
-
     this.bufferMouseDelta.x += deltaX
     this.bufferMouseDelta.y += deltaY
   }
