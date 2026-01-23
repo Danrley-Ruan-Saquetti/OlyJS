@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { TimerScheduler } from '../../../../src/runtime/time/schedule/timer-scheduler'
 
 describe('Runtime: TimerScheduler', () => {

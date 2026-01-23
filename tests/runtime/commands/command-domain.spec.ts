@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { CommandDomain } from './../../../src/runtime/commands/command-domain'
 
 describe('Runtime: CommandDomain', () => {

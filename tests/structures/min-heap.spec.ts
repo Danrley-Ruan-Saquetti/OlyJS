@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+
 import { MinHeap } from './../../src/structures/min-heap'
 
 describe('Structure: MinHeap', () => {
