@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { TimeTracker } from './../../../src/game-runtime/time/time-tracker'
+import { TimeTracker } from './../../../../src/game-runtime/time/time-tracker'
 
 describe('TimeTracker', () => {
   let timeTracker: TimeTracker

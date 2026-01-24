@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { Keys } from '../../../src/contracts/engine/input'
-import { InputState, InputStateConfig } from '../../../src/engine/input/input-state'
+import { Keys } from '../../../../src/contracts/engine/input'
+import { InputState, InputStateConfig } from '../../../../src/engine/input/input-state'
 
 describe('Engine: InputState', () => {
   let inputState: InputState

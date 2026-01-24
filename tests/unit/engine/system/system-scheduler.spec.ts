@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { EngineContext } from '../../../src/contracts/context/engine.context'
-import { SystemContext } from '../../../src/contracts/context/system.context'
-import { SystemScheduler } from '../../../src/engine/system/system-scheduler'
+import { EngineContext } from '../../../../src/contracts/context/engine.context'
+import { SystemContext } from '../../../../src/contracts/context/system.context'
+import { SystemScheduler } from '../../../../src/engine/system/system-scheduler'
 
 describe('Engine: SystemScheduler', () => {
   let scheduler: SystemScheduler

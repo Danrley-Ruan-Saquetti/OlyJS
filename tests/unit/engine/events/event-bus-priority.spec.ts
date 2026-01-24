@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { EventPriority } from '../../../src/contracts/engine/event'
-import { EventBusPriority } from './../../../src/engine/events/event-bus-priority'
+import { EventPriority } from '../../../../src/contracts/engine/event'
+import { EventBusPriority } from './../../../../src/engine/events/event-bus-priority'
 
 describe('Engine: EventBusPriority', () => {
   let bus: EventBusPriority

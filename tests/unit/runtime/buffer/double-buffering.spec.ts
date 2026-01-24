@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { DoubleBuffering } from './../../../src/runtime/buffer/double-buffering'
+import { DoubleBuffering } from './../../../../src/runtime/buffer/double-buffering'
 
 describe('Runtime: DoubleBuffering', () => {
   let buffer: DoubleBuffering<number>

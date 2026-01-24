@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { EventPriority } from '../../../src/contracts/engine/event'
-import { EventDispatcher } from '../../../src/engine/events/event-dispatcher'
-import { IEventBusPriority } from '../../../src/engine/events/types'
+import { EventPriority } from '../../../../src/contracts/engine/event'
+import { EventDispatcher } from '../../../../src/engine/events/event-dispatcher'
+import { IEventBusPriority } from '../../../../src/engine/events/types'
 
 describe('Engine: EventDispatcher', () => {
   let mockBus: IEventBusPriority

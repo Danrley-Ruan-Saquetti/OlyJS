@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { CommandScheduler } from '../../../src/engine/command/command-scheduler'
+import { CommandScheduler } from '../../../../src/engine/command/command-scheduler'
 
 describe('Engine: CommandScheduler', () => {
   let scheduler: CommandScheduler

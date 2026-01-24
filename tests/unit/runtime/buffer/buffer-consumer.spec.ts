@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { IBuffer, IDispatcher } from '../../../src/runtime/buffer/type'
-import { BufferConsumer } from './../../../src/runtime/buffer/buffer-consumer'
+import { IBuffer, IDispatcher } from '../../../../src/runtime/buffer/type'
+import { BufferConsumer } from './../../../../src/runtime/buffer/buffer-consumer'
 
 describe('Runtime: BufferConsumer', () => {
   let mockBuffer: IBuffer<number>

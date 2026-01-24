@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { TimerScheduler } from '../../../../src/runtime/time/schedule/timer-scheduler'
+import { TimerScheduler } from './../../../../../src/runtime/time/schedule/timer-scheduler'
 
 describe('Runtime: TimerScheduler', () => {
   let now: number

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { CommandScheduler } from '../../src/engine/command/command-scheduler'
-import { Engine } from '../../src/engine/engine'
-import { SystemScheduler } from '../../src/engine/system/system-scheduler'
-import { DoubleBufferingConsumer } from '../../src/runtime/buffer/double-buffering-consumer'
+import { CommandScheduler } from '../../../src/engine/command/command-scheduler'
+import { Engine } from '../../../src/engine/engine'
+import { SystemScheduler } from '../../../src/engine/system/system-scheduler'
+import { DoubleBufferingConsumer } from '../../../src/runtime/buffer/double-buffering-consumer'
 
 describe('Engine', () => {
   let engine: Engine
