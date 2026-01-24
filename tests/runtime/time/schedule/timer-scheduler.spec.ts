@@ -144,4 +144,38 @@ describe('Runtime: TimerScheduler', () => {
 
     expect(calls).toEqual([2, 1])
   })
+
+  it('insere tarefas em ordem correta no array active durante busca binária entre os frames', () => {
+    const calls: number[] = []
+
+    const scheduler = new TimerScheduler(20)
+
+    const callable1 = vi.fn(() => calls.push(1))
+    const callable2 = vi.fn(() => calls.push(2))
+    const callable3 = vi.fn(() => calls.push(3))
+    const callable4 = vi.fn(() => calls.push(4))
+
+    scheduler.schedule(callable2, 15, now)
+    scheduler.schedule(callable4, 2, now)
+
+    scheduler.update(now)
+
+    expect(calls).toEqual([])
+
+    scheduler.schedule(callable1, 5, now)
+
+    scheduler.update(now + 2)
+
+    expect(calls).toEqual([4])
+
+    scheduler.schedule(callable3, 10, now)
+
+    scheduler.update(now + 10)
+
+    expect(calls).toEqual([4, 1, 3])
+
+    scheduler.update(now + 15)
+
+    expect(calls).toEqual([4, 1, 3, 2])
+  })
 })
