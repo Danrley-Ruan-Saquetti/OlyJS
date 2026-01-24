@@ -71,6 +71,20 @@ describe('Engine: InputState', () => {
       expect(inputState.isKeyDown(Keys.KeyA)).toBe(true)
     })
 
+    it('não deve registrar key down duas vezes para a mesma tecla em frames seguidos', () => {
+      inputState.keyDown(Keys.KeyA)
+      inputState.update()
+
+      expect(inputState.isKeyHeld(Keys.KeyA)).toBe(true)
+      expect(inputState.isKeyDown(Keys.KeyA)).toBe(true)
+
+      inputState.keyDown(Keys.KeyA)
+      inputState.update()
+
+      expect(inputState.isKeyHeld(Keys.KeyA)).toBe(true)
+      expect(inputState.isKeyDown(Keys.KeyA)).toBe(false)
+    })
+
     it('deve registrar múltiplas teclas pressionadas simultaneamente', () => {
       inputState.keyDown(Keys.KeyA)
       inputState.keyDown(Keys.KeyB)
@@ -206,6 +220,20 @@ describe('Engine: InputState', () => {
 
       expect(inputState.isMouseButtonHeld(0)).toBe(true)
       expect(inputState.isMouseButtonDown(0)).toBe(true)
+    })
+
+    it('não deve registrar mouseDown duas vezes para o mesmo botão em frames seguidos', () => {
+      inputState.mouseDown(0)
+      inputState.update()
+
+      expect(inputState.isMouseButtonHeld(0)).toBe(true)
+      expect(inputState.isMouseButtonDown(0)).toBe(true)
+
+      inputState.mouseDown(0)
+      inputState.update()
+
+      expect(inputState.isMouseButtonHeld(0)).toBe(true)
+      expect(inputState.isMouseButtonDown(0)).toBe(false)
     })
 
     it('deve registrar múltiplos botões do mouse simultaneamente', () => {
