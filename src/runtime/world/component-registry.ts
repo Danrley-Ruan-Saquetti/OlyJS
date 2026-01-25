@@ -1,25 +1,30 @@
-import { IColumn, Signature } from '../../ecs/archetype'
-import { ComponentId } from '../../ecs/component'
-import { Column } from './archetype/column'
-import { ComponentDescriptor, ComponentSchema } from './component'
+import { IComponentData, Signature } from '../../ecs/archetype'
+import { ComponentDescriptor, ComponentId, ComponentSchema } from '../../ecs/component'
+import { ComponentData } from './archetype/components/component-data'
 
 export class ComponentRegistry {
 
   private schemas = new Map<ComponentId, ComponentSchema>()
   private signatureCache = new Map<string, ComponentId[]>()
 
-  register(descriptor: ComponentDescriptor): void {
-    this.schemas.set(descriptor.id, descriptor.schema)
+  private nextId: ComponentId = 1n
+
+  register<TSchema extends ComponentSchema>(schema: TSchema): ComponentDescriptor<TSchema> {
+    const id = this.nextId++
+
+    this.schemas.set(id, schema)
+
+    return { id, schema }
   }
 
-  createColumn(id: ComponentId): IColumn {
+  createComponent(id: ComponentId): IComponentData {
     const schema = this.schemas.get(id)
 
     if (!schema) {
       throw new Error(`Component schema not found for id: ${id}`)
     }
 
-    return new Column(schema)
+    return new ComponentData(schema)
   }
 
   idsFromSignature(sig: Signature) {

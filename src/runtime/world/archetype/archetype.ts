@@ -1,4 +1,4 @@
-import { IArchetype, IColumn, Signature } from '../../../ecs/archetype'
+import { IArchetype, IComponentData, Signature } from '../../../ecs/archetype'
 import { ComponentId } from '../../../ecs/component'
 import { EntityId } from '../../../ecs/entity'
 import { ComponentRegistry } from '../component-registry'
@@ -7,9 +7,9 @@ export class Archetype implements IArchetype {
 
   private readonly entities: EntityId[] = []
 
-  private readonly columns: IColumn[] = []
-  private readonly columnIds: ComponentId[] = []
-  private readonly columnIndex = new Map<ComponentId, number>()
+  private readonly components: IComponentData[] = []
+  private readonly componentIds: ComponentId[] = []
+  private readonly componentIndex = new Map<ComponentId, number>()
 
   get lastEntity() {
     return this.entities[this.entities.length]
@@ -27,9 +27,9 @@ export class Archetype implements IArchetype {
 
     let i = 0, length = ids.length
     while (i < length) {
-      this.columnIds.push(ids[i])
-      this.columns.push(registry.createColumn(ids[i]))
-      this.columnIndex.set(ids[i], this.columns.length - 1)
+      this.componentIds.push(ids[i])
+      this.components.push(registry.createComponent(ids[i]))
+      this.componentIndex.set(ids[i], this.components.length - 1)
 
       i++
     }
@@ -38,9 +38,9 @@ export class Archetype implements IArchetype {
   addEntity(entityId: EntityId) {
     this.entities.push(entityId)
 
-    let i = 0, length = this.columns.length
+    let i = 0, length = this.components.length
     while (i < length) {
-      this.columns[i].pushDefault()
+      this.components[i].pushDefault()
       i++
     }
   }
@@ -48,13 +48,13 @@ export class Archetype implements IArchetype {
   addEntityFrom(entityId: EntityId, entityIndex: number, from: Archetype) {
     this.entities.push(entityId)
 
-    let i = 0, length = from.columns.length
+    let i = 0, length = from.components.length
     while (i < length) {
-      const componentId = from.columnIds[i]
-      const toColumnIndex = this.columnIndex.get(componentId)
+      const componentId = from.componentIds[i]
+      const toIndex = this.componentIndex.get(componentId)
 
-      if (toColumnIndex) {
-        this.columns[toColumnIndex].copyFrom(from.columns[i], entityIndex)
+      if (toIndex !== undefined) {
+        this.components[toIndex].copyFrom(from.components[i], entityIndex)
       }
 
       i++
@@ -68,16 +68,16 @@ export class Archetype implements IArchetype {
     this.entities[index] = lastEntity
     this.entities.pop()
 
-    let i = 0, length = this.columns.length
+    let i = 0, length = this.components.length
     while (i < length) {
-      this.columns[i].swap(index, lastIndex)
-      this.columns[i].pop()
+      this.components[i].swap(index, lastIndex)
+      this.components[i].pop()
 
       i++
     }
   }
 
-  getColumn(componentId: ComponentId) {
-    return this.columns[this.columnIndex.get(componentId)!]
+  component(componentId: ComponentId) {
+    return this.components[this.componentIndex.get(componentId)!]
   }
 }

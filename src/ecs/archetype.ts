@@ -1,6 +1,34 @@
 import { ComponentId } from './component'
 import { EntityId } from './entity'
 
+export enum ComponentFieldType {
+  F32,
+  F64,
+  I32,
+  U32,
+  I16,
+  U8,
+  BOOL
+}
+export type TypedArray =
+  | Float32Array
+  | Float64Array
+  | Int32Array
+  | Uint32Array
+  | Int16Array
+  | Uint8Array
+
+export const FieldArrayConstructor: Record<ComponentFieldType, new (initialCapacity?: number) => TypedArray> = {
+  [ComponentFieldType.F32]: Float32Array,
+  [ComponentFieldType.F64]: Float64Array,
+  [ComponentFieldType.I32]: Int32Array,
+  [ComponentFieldType.U32]: Uint32Array,
+  [ComponentFieldType.I16]: Int16Array,
+  [ComponentFieldType.U8]: Uint8Array,
+  [ComponentFieldType.BOOL]: Uint8Array
+}
+
+
 export type Signature = bigint
 
 export interface IArchetype {
@@ -11,13 +39,17 @@ export interface IArchetype {
   addEntity(entityId: EntityId): void
   addEntityFrom(entityId: EntityId, entityIndex: number, from: IArchetype): void
   removeEntity(index: number): void
-  getColumn(componentId: ComponentId): IColumn
+  component(componentId: ComponentId): IComponentData
 }
 
-export interface IColumn<T = any> {
+export interface IComponentData<TShape extends Record<string, TypedArray> = {}> {
+  readonly size: number
+  readonly isFull: boolean
+  readonly data: Readonly<TShape>
+
   pushDefault(): void
   pop(): void
   swap(indexA: number, indexB: number): void
-  copyFrom(other: IColumn, index: number): void
-  view(index: number): T
+  copyFrom(other: IComponentData<TShape>, index: number): void
+  field<Field extends keyof TShape>(field: Field): TypedArray
 }

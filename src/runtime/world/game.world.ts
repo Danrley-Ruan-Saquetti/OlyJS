@@ -1,11 +1,10 @@
 import { IArchetype, Signature } from '../../ecs/archetype'
-import { ComponentId } from '../../ecs/component'
+import { ComponentDescriptor, ComponentId, ComponentSchema } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { IWorld } from '../../ecs/world'
 import { CommandDomain } from '../../runtime/commands/command-domain'
 import { Archetype } from './archetype/archetype'
 import { EntityLocation } from './archetype/entity-location'
-import { ComponentDescriptor } from './component'
 import { ComponentRegistry } from './component-registry'
 import { Query } from './query'
 
@@ -55,8 +54,8 @@ export class GameWorld implements IWorld {
     )
   }
 
-  registerComponent(descriptor: ComponentDescriptor) {
-    this.componentRegistry.register(descriptor)
+  registerComponent<TSchema extends ComponentSchema>(schema: TSchema): ComponentDescriptor<TSchema> {
+    return this.componentRegistry.register(schema)
   }
 
   flush() {
@@ -74,11 +73,11 @@ export class GameWorld implements IWorld {
     this.commandDomain.send(GameWorldCommand.DESTROY_ENTITY, entityId)
   }
 
-  addComponent(entityId: EntityId, component: ComponentDescriptor) {
-    this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entity: entityId, component: component.id })
+  addComponent(entityId: EntityId, componentId: ComponentId) {
+    this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entity: entityId, component: componentId })
   }
 
-  createQuery(components: ComponentDescriptor[]) {
+  createQuery(components: ComponentId[]) {
     const query = new Query(this.archetypes, components)
     this.queries.push(query)
 

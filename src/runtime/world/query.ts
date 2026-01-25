@@ -1,5 +1,5 @@
 import { IArchetype, Signature } from '../../ecs/archetype'
-import { ComponentDescriptor } from './component'
+import { ComponentId } from '../../ecs/component'
 
 export class Query {
 
@@ -9,11 +9,11 @@ export class Query {
 
   constructor(
     private readonly archetypes: Map<string, IArchetype>,
-    components: ComponentDescriptor[] = []
+    components: ComponentId[] = []
   ) {
     let i = 0, length = components.length
     while (i < length) {
-      this.mask |= 1n << components[i].id
+      this.mask |= 1n << components[i]
       i++
     }
   }
