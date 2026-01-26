@@ -1,7 +1,7 @@
-import { FieldArrayConstructor, IComponentData, TypedArray } from '../../../../ecs/archetype'
+import { ComponentDataSchema, FieldArrayConstructor, IComponentData } from '../../../../ecs/archetype'
 import { ComponentSchema } from '../../../../ecs/component'
 
-export class ComponentData<TShape extends Record<string, TypedArray> = {}> implements IComponentData<TShape> {
+export class ComponentData<TShape extends ComponentDataSchema = ComponentDataSchema> implements IComponentData<TShape> {
 
   private readonly fields: TShape
 

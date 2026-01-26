@@ -42,7 +42,9 @@ export interface IArchetype {
   component(componentId: ComponentId): IComponentData
 }
 
-export interface IComponentData<TShape extends Record<string, TypedArray> = {}> {
+export type ComponentDataSchema = Record<string, TypedArray>
+
+export interface IComponentData<TShape extends ComponentDataSchema = ComponentDataSchema> {
   readonly size: number
   readonly isFull: boolean
   readonly data: Readonly<TShape>
