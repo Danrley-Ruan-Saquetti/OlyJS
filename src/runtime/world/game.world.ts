@@ -1,11 +1,11 @@
 import { IArchetype, Signature } from '../../ecs/archetype'
-import { ComponentDescriptor, ComponentId, ComponentSchema } from '../../ecs/component'
+import { ComponentId } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { IWorld } from '../../ecs/world'
 import { CommandDomain } from '../../runtime/commands/command-domain'
 import { Archetype } from './archetype/archetype'
 import { EntityLocation } from './archetype/entity-location'
-import { ComponentRegistry } from './component-registry'
+import { GlobalComponentRegistry } from './component-registry'
 import { Query } from './query'
 
 export enum GameWorldCommand {
@@ -28,7 +28,6 @@ interface AddComponentPayload {
 export class GameWorld implements IWorld {
 
   protected readonly commandDomain = new CommandDomain(Object.keys(GameWorldCommandPhase).length)
-  protected readonly componentRegistry = new ComponentRegistry()
 
   private nextEntityId = 1
   private readonly archetypes = new Map<string, IArchetype>()
@@ -52,10 +51,6 @@ export class GameWorld implements IWorld {
       this.performAddComponent.bind(this),
       GameWorldCommandPhase.ADD_COMPONENT
     )
-  }
-
-  registerComponent<TSchema extends ComponentSchema>(schema: TSchema): ComponentDescriptor<TSchema> {
-    return this.componentRegistry.register(schema)
   }
 
   flush() {
@@ -152,7 +147,7 @@ export class GameWorld implements IWorld {
     let archetype = this.archetypes.get(key)
 
     if (!archetype) {
-      archetype = new Archetype(signature, this.componentRegistry)
+      archetype = new Archetype(signature, GlobalComponentRegistry)
 
       this.archetypes.set(key, archetype)
       this.onArchetypeCreated(archetype)

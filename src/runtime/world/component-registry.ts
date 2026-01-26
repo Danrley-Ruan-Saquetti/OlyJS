@@ -52,3 +52,9 @@ export class ComponentRegistry {
     return ids
   }
 }
+
+export const GlobalComponentRegistry = new ComponentRegistry()
+
+export function createComponent<TSchema extends ComponentSchema>(schema: TSchema) {
+  return GlobalComponentRegistry.register(schema)
+}
