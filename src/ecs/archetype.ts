@@ -26,8 +26,17 @@ export const FieldArrayConstructor: Record<ComponentFieldType, new (initialCapac
   [ComponentFieldType.I16]: Int16Array,
   [ComponentFieldType.U8]: Uint8Array,
   [ComponentFieldType.BOOL]: Uint8Array
-}
+} as const
 
+export type FieldTypeToArray = {
+  [ComponentFieldType.F32]: Float32Array
+  [ComponentFieldType.F64]: Float64Array
+  [ComponentFieldType.I32]: Int32Array
+  [ComponentFieldType.U32]: Uint32Array
+  [ComponentFieldType.I16]: Int16Array
+  [ComponentFieldType.U8]: Uint8Array
+  [ComponentFieldType.BOOL]: Uint8Array
+}
 
 export type Signature = bigint
 

@@ -1,7 +1,11 @@
-import { ComponentDataSchema, FieldArrayConstructor, IComponentData } from '../../../../ecs/archetype'
+import { ComponentDataSchema, FieldArrayConstructor, FieldTypeToArray, IComponentData } from '../../../../ecs/archetype'
 import { ComponentSchema } from '../../../../ecs/component'
 
-export class ComponentData<TShape extends ComponentDataSchema = ComponentDataSchema> implements IComponentData<TShape> {
+type SchemaToData<Shape extends ComponentSchema = ComponentSchema> = {
+  [K in keyof Shape]: FieldTypeToArray[Shape[K]]
+}
+
+export class ComponentData<S extends ComponentSchema = ComponentSchema, TShape extends ComponentDataSchema = SchemaToData<S>> implements IComponentData<TShape> {
 
   private readonly fields: TShape
 
@@ -40,7 +44,9 @@ export class ComponentData<TShape extends ComponentDataSchema = ComponentDataSch
   }
 
   pop() {
-    this._size--
+    if (this._size > 0) {
+      this._size--
+    }
   }
 
   swap(indexA: number, indexB: number) {
@@ -64,7 +70,7 @@ export class ComponentData<TShape extends ComponentDataSchema = ComponentDataSch
     this._size++
   }
 
-  field<Field extends keyof TShape = any>(field: Field) {
+  field<Field extends keyof TShape>(field: Field) {
     return this.fields[field]
   }
 
