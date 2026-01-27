@@ -69,7 +69,7 @@ export class GameWorld implements IWorld {
   }
 
   addComponent(entityId: EntityId, componentId: ComponentId) {
-    this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entity: entityId, component: componentId })
+    this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entityId, componentId })
   }
 
   createQuery(components: ComponentId[]) {
@@ -92,8 +92,8 @@ export class GameWorld implements IWorld {
     })
   }
 
-  private performDestroyEntity(entity: EntityId) {
-    const location = this.entityLocation.get(entity)
+  private performDestroyEntity(entityId: EntityId) {
+    const location = this.entityLocation.get(entityId)
 
     if (!location) {
       return
@@ -105,7 +105,7 @@ export class GameWorld implements IWorld {
     archetype.removeEntity(index)
 
     this.entityLocation.get(lastEntity)!.index = index
-    this.entityLocation.delete(entity)
+    this.entityLocation.delete(entityId)
   }
 
   private performAddComponent({ entityId, componentId }: AddComponentPayload) {
@@ -127,11 +127,11 @@ export class GameWorld implements IWorld {
     this.moveEntity(entityId, location, oldArchetype, newArch)
   }
 
-  private moveEntity(entity: EntityId, location: EntityLocation, from: IArchetype, to: IArchetype) {
-    to.addEntityFrom(entity, location.index, to)
+  private moveEntity(entityId: EntityId, location: EntityLocation, from: IArchetype, to: IArchetype) {
+    to.addEntityFrom(entityId, location.index, to)
     this.removeFromArchetype(location, from)
 
-    this.entityLocation.set(entity, { archetype: to, index: to.size - 1 })
+    this.entityLocation.set(entityId, { archetype: to, index: to.size - 1 })
   }
 
   private removeFromArchetype(location: EntityLocation, archetype: IArchetype) {
