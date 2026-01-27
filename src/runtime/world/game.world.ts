@@ -6,6 +6,7 @@ import { CommandDomain } from '../../runtime/commands/command-domain'
 import { Archetype } from './archetype/archetype'
 import { EntityLocation } from './archetype/entity-location'
 import { GlobalComponentRegistry } from './component-registry'
+import { EntityPool } from './entity-pool'
 import { Query } from './query'
 
 export enum GameWorldCommand {
@@ -29,9 +30,9 @@ export class GameWorld implements IWorld {
 
   protected readonly commandDomain = new CommandDomain(Object.keys(GameWorldCommandPhase).length)
 
-  private nextEntityId = 1
   private readonly archetypes = new Map<string, IArchetype>()
   private readonly entityLocation = new Map<EntityId, EntityLocation>()
+  private readonly entityPool = new EntityPool()
 
   private readonly queries: Query[] = []
 
@@ -58,7 +59,7 @@ export class GameWorld implements IWorld {
   }
 
   instantiate() {
-    const id = this.nextEntityId++
+    const id = this.entityPool.create()
     this.commandDomain.send(GameWorldCommand.CREATE_ENTITY, id)
 
     return id
@@ -106,6 +107,7 @@ export class GameWorld implements IWorld {
 
     this.entityLocation.get(lastEntity)!.index = index
     this.entityLocation.delete(entityId)
+    this.entityPool.destroy(entityId)
   }
 
   private performAddComponent({ entityId, componentId }: AddComponentPayload) {
