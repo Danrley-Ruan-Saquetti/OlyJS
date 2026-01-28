@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "type": "module",
   "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && node esbuild.config.build.js && tsc -p tsconfig.build.json --preserveWatchOutput --emitDeclarationOnly",
-    "build:dev": "npm run clean && concurrently \"node esbuild.config.dev.js\" \"tsc -w -p tsconfig.dev.json --preserveWatchOutput --emitDeclarationOnly\"",
+    "build": "npm run clean && tsup",
+    "build:dev": "npm run clean && tsup --watch",
     "test": "vitest"
+  },
+  "exports": {
+    ".": "./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -19,18 +24,17 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/node": "^25.0.10",
-    "@typescript-eslint/eslint-plugin": "^8.53.1",
-    "@typescript-eslint/parser": "^8.53.1",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
     "@vitest/coverage-v8": "^4.0.18",
-    "concurrently": "^9.2.1",
-    "esbuild": "^0.27.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.53.1",
+    "typescript-eslint": "^8.54.0",
     "vitest": "^4.0.18"
   }
 }
