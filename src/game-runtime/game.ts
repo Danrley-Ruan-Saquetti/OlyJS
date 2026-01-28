@@ -43,15 +43,19 @@ export class Game {
 
     this.initializeEngine()
     this.clock.reset()
-    this.engine.start({ world: this.world })
+    this.engine.start()
     this.initialize()
 
     this.update(0)
   }
 
   protected initializeEngine() {
+    this.engine.initialize({ world: this.world })
+
     this.registerSystem(this.inputSystem)
     this.registerSystem(this.schedulerSystem)
+
+    this.engine.registerCommandDomain(this.world)
   }
 
   protected initialize() { }

@@ -1,4 +1,4 @@
-import { EngineContext, EngineStartContext } from '../contracts/context/engine.context'
+import { EngineContext, EngineInitializeContext } from '../contracts/context/engine.context'
 import { SystemContext } from '../contracts/context/system.context'
 import { ICommandDomain } from '../contracts/engine/command'
 import { EventTuple } from '../contracts/engine/event'
@@ -43,12 +43,15 @@ export class Engine implements IEngine {
     this.systemScheduler = new SystemScheduler(this._context)
   }
 
-  start(context: EngineStartContext) {
+  initialize(context: EngineInitializeContext) {
+    this._context.world = context.world
+  }
+
+  start() {
     if (this._isRunning) {
       return
     }
 
-    this._context.world = context.world
     this._isRunning = true
     this.systemScheduler.startAll()
   }

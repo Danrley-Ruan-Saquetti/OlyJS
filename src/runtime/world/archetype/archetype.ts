@@ -12,7 +12,7 @@ export class Archetype implements IArchetype {
   private readonly componentIndex = new Map<ComponentId, number>()
 
   get lastEntity() {
-    return this.entities[this.entities.length]
+    return this.entities[this.entities.length - 1]
   }
 
   get size() {

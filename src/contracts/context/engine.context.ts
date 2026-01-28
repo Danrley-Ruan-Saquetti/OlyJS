@@ -8,6 +8,6 @@ export interface EngineContext {
   readonly commands: ICommandDomainRegister
 }
 
-export interface EngineStartContext {
+export interface EngineInitializeContext {
   readonly world: IWorld
 }
