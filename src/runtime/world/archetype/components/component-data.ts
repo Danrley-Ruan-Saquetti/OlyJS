@@ -1,8 +1,28 @@
-import { ComponentDataSchema, FieldArrayConstructor, FieldTypeToArray, IComponentData } from '../../../../ecs/archetype'
-import { ComponentSchema } from '../../../../ecs/component'
+import { ComponentFieldType, TypedArray } from '../../../../ecs/archetype'
+import { ComponentDataSchema, ComponentSchema, IComponentData } from '../../../../ecs/component'
 
 type SchemaToData<Shape extends ComponentSchema = ComponentSchema> = {
   [K in keyof Shape]: FieldTypeToArray[Shape[K]]
+}
+
+const FieldArrayConstructor: Record<ComponentFieldType, new (initialCapacity?: number) => TypedArray> = {
+  [ComponentFieldType.F32]: Float32Array,
+  [ComponentFieldType.F64]: Float64Array,
+  [ComponentFieldType.I32]: Int32Array,
+  [ComponentFieldType.U32]: Uint32Array,
+  [ComponentFieldType.I16]: Int16Array,
+  [ComponentFieldType.U8]: Uint8Array,
+  [ComponentFieldType.BOOL]: Uint8Array
+} as const
+
+type FieldTypeToArray = {
+  [ComponentFieldType.F32]: Float32Array
+  [ComponentFieldType.F64]: Float64Array
+  [ComponentFieldType.I32]: Int32Array
+  [ComponentFieldType.U32]: Uint32Array
+  [ComponentFieldType.I16]: Int16Array
+  [ComponentFieldType.U8]: Uint8Array
+  [ComponentFieldType.BOOL]: Uint8Array
 }
 
 export class ComponentData<S extends ComponentSchema = ComponentSchema, TShape extends ComponentDataSchema = SchemaToData<S>> implements IComponentData<TShape> {

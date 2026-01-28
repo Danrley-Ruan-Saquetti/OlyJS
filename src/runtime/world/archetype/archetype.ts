@@ -1,5 +1,5 @@
-import { IArchetype, IComponentData, Signature } from '../../../ecs/archetype'
-import { ComponentId } from '../../../ecs/component'
+import { IArchetype, Signature } from '../../../ecs/archetype'
+import { ComponentId, IComponentData } from '../../../ecs/component'
 import { EntityId } from '../../../ecs/entity'
 import { ComponentRegistry } from '../component-registry'
 
