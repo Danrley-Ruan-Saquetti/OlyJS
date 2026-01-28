@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "watchOptions": {
-    "watchFile": "fixedPollingInterval",
-    "watchDirectory": "dynamicPriorityPolling",
-    "fallbackPolling": "dynamicpriority"
-  }
-}
