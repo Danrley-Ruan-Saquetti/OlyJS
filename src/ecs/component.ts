@@ -16,7 +16,7 @@ export interface IComponentData<TShape extends ComponentDataSchema = ComponentDa
   readonly isFull: boolean
   readonly data: Readonly<TShape>
 
-  pushDefault(): void
+  push(initialValues?: Partial<{ [K in keyof TShape]: number }>): void
   pop(): void
   swap(indexA: number, indexB: number): void
   copyFrom(other: IComponentData<TShape>, index: number): void

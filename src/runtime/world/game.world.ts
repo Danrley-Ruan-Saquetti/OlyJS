@@ -1,5 +1,5 @@
 import { IArchetype, Signature } from '../../ecs/archetype'
-import { ComponentId } from '../../ecs/component'
+import { ComponentDescriptor, ComponentId, ComponentSchema } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { IWorld } from '../../ecs/world'
 import { CommandDomain } from '../../runtime/commands/command-domain'
@@ -24,6 +24,7 @@ export enum GameWorldCommandPhase {
 interface AddComponentPayload {
   entityId: EntityId
   componentId: ComponentId
+  data?: any
 }
 
 export class GameWorld implements IWorld {
@@ -69,8 +70,8 @@ export class GameWorld implements IWorld {
     this.commandDomain.send(GameWorldCommand.DESTROY_ENTITY, entityId)
   }
 
-  addComponent(entityId: EntityId, componentId: ComponentId) {
-    this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entityId, componentId })
+  addComponent<TSchema extends ComponentSchema = ComponentSchema>(entityId: EntityId, component: ComponentDescriptor<TSchema>, initialData?: Partial<{ [k in keyof TSchema]: number }>) {
+    this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entityId, componentId: component.id, data: initialData })
   }
 
   createQuery(components: ComponentId[]) {
@@ -110,7 +111,7 @@ export class GameWorld implements IWorld {
     this.entityPool.destroy(entityId)
   }
 
-  private performAddComponent({ entityId, componentId }: AddComponentPayload) {
+  private performAddComponent({ entityId, componentId, data }: AddComponentPayload) {
     const location = this.entityLocation.get(entityId)
 
     if (!location) {
@@ -126,11 +127,13 @@ export class GameWorld implements IWorld {
 
     const newArch = this.getOrCreateArchetype(newSignature)
 
-    this.moveEntity(entityId, location, oldArchetype, newArch)
+    const initialData = data !== undefined ? { [componentId as any]: data } : undefined
+
+    this.moveEntity(entityId, location, oldArchetype, newArch, initialData)
   }
 
-  private moveEntity(entityId: EntityId, location: EntityLocation, from: IArchetype, to: IArchetype) {
-    to.addEntityFrom(entityId, location.index, to)
+  private moveEntity(entityId: EntityId, location: EntityLocation, from: IArchetype, to: IArchetype, initialData?: Record<number, any>) {
+    (to as Archetype).addEntityFrom(entityId, location.index, from as Archetype, initialData)
     this.removeFromArchetype(location, from)
 
     this.entityLocation.set(entityId, { archetype: to, index: to.size - 1 })

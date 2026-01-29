@@ -50,7 +50,7 @@ class MyGame extends Game {
     while (i < 1_000_000) {
       const playerId = this.world.instantiate()
 
-      this.world.addComponent(playerId, Position.id)
+      this.world.addComponent(playerId, Position)
       i++
     }
   }

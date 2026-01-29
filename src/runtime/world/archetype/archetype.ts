@@ -40,21 +40,24 @@ export class Archetype implements IArchetype {
 
     let i = 0, length = this.components.length
     while (i < length) {
-      this.components[i].pushDefault()
+      this.components[i].push()
       i++
     }
   }
 
-  addEntityFrom(entityId: EntityId, entityIndex: number, from: Archetype) {
+  addEntityFrom(entityId: EntityId, entityIndex: number, from: Archetype, initialData?: Record<number, any>) {
     this.entities.push(entityId)
 
-    let i = 0, length = from.components.length
+    let i = 0, length = this.components.length
     while (i < length) {
-      const componentId = from.componentIds[i]
-      const toIndex = this.componentIndex.get(componentId)
+      const componentId = this.componentIds[i]
+      const fromIndex = from.componentIndex.get(componentId)
 
-      if (toIndex !== undefined) {
-        this.components[toIndex].copyFrom(from.components[i], entityIndex)
+      if (fromIndex !== undefined) {
+        this.components[i].copyFrom(from.components[fromIndex], entityIndex)
+      } else {
+        const initial = initialData ? initialData[componentId as any] : undefined
+        this.components[i].push(initial)
       }
 
       i++

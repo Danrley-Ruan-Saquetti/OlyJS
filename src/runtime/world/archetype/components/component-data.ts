@@ -51,13 +51,17 @@ export class ComponentData<S extends ComponentSchema = ComponentSchema, TShape e
     this.fields = fields
   }
 
-  pushDefault() {
+  push(initialValues?: Partial<{ [K in keyof TShape]: number }>) {
     if (this.isFull) {
       this.grow()
     }
 
     for (const field in this.fields) {
-      this.fields[field][this._size] = 0
+      const value = (initialValues && (initialValues as any)[field] !== undefined)
+        ? (initialValues as any)[field]
+        : 0
+
+      this.fields[field][this._size] = value
     }
 
     this._size++

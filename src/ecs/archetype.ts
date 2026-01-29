@@ -25,7 +25,7 @@ export interface IArchetype {
   readonly lastEntity: number
   readonly size: number
 
-  addEntity(entityId: EntityId): void
+  addEntity(entityId: EntityId, initialData?: Record<number, any>): void
   addEntityFrom(entityId: EntityId, entityIndex: number, from: IArchetype): void
   removeEntity(index: number): void
   component(componentId: ComponentId): IComponentData
