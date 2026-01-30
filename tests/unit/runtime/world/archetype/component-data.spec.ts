@@ -25,8 +25,8 @@ describe('Runtime: ComponentData', () => {
       expect(componentData.isFull).toBe(false)
     })
 
-    it('deve inserir um elemento com pushDefault', () => {
-      componentData.pushDefault()
+    it('deve inserir um elemento com push', () => {
+      componentData.push()
 
       expect(componentData.size).toBe(1)
       expect(componentData.field('position')[0]).toBe(0)
@@ -34,16 +34,16 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve inserir múltiplos elementos', () => {
-      componentData.pushDefault()
-      componentData.pushDefault()
-      componentData.pushDefault()
+      componentData.push()
+      componentData.push()
+      componentData.push()
 
       expect(componentData.size).toBe(3)
     })
 
     it('deve remover o último elemento com pop', () => {
-      componentData.pushDefault()
-      componentData.pushDefault()
+      componentData.push()
+      componentData.push()
 
       componentData.pop()
 
@@ -59,7 +59,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve acessar campo específico com field', () => {
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('position')
 
@@ -74,7 +74,7 @@ describe('Runtime: ComponentData', () => {
       const componentData = new ComponentData(schema, 128)
 
       for (let i = 0; i < 128; i++) {
-        componentData.pushDefault()
+        componentData.push()
       }
 
       expect(componentData.size).toBe(128)
@@ -86,7 +86,7 @@ describe('Runtime: ComponentData', () => {
       const componentData = new ComponentData(schema)
 
       for (let i = 0; i < 64; i++) {
-        componentData.pushDefault()
+        componentData.push()
       }
 
       expect(componentData.size).toBe(64)
@@ -99,7 +99,7 @@ describe('Runtime: ComponentData', () => {
       const schema = { value: ComponentFieldType.F32 }
       const componentData = new ComponentData(schema)
 
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('value')
 
@@ -110,7 +110,7 @@ describe('Runtime: ComponentData', () => {
       const schema = { value: ComponentFieldType.F64 }
       const componentData = new ComponentData(schema)
 
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('value')
 
@@ -121,7 +121,7 @@ describe('Runtime: ComponentData', () => {
       const schema = { value: ComponentFieldType.I32 }
       const componentData = new ComponentData(schema)
 
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('value')
 
@@ -132,7 +132,7 @@ describe('Runtime: ComponentData', () => {
       const schema = { value: ComponentFieldType.U32 }
       const componentData = new ComponentData(schema)
 
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('value')
 
@@ -143,7 +143,7 @@ describe('Runtime: ComponentData', () => {
       const schema = { value: ComponentFieldType.I16 }
       const componentData = new ComponentData(schema)
 
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('value')
 
@@ -154,7 +154,7 @@ describe('Runtime: ComponentData', () => {
       const schema = { value: ComponentFieldType.U8 }
       const componentData = new ComponentData(schema)
 
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('value')
 
@@ -165,7 +165,7 @@ describe('Runtime: ComponentData', () => {
       const schema = { active: ComponentFieldType.BOOL }
       const componentData = new ComponentData(schema)
 
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('active')
 
@@ -185,7 +185,7 @@ describe('Runtime: ComponentData', () => {
 
       const componentData = new ComponentData(schema)
 
-      componentData.pushDefault()
+      componentData.push()
 
       expect(componentData.field('float32Val')).toBeInstanceOf(Float32Array)
       expect(componentData.field('float64Val')).toBeInstanceOf(Float64Array)
@@ -206,8 +206,8 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve trocar dois elementos', () => {
-      componentData.pushDefault()
-      componentData.pushDefault()
+      componentData.push()
+      componentData.push()
 
       const field = componentData.field('value')
       field[0] = 10
@@ -223,8 +223,8 @@ describe('Runtime: ComponentData', () => {
       const schema = { x: ComponentFieldType.F32, y: ComponentFieldType.F32 }
       const data = new ComponentData(schema, 10)
 
-      data.pushDefault()
-      data.pushDefault()
+      data.push()
+      data.push()
 
       const xField = data.field('x')
       const yField = data.field('y')
@@ -243,7 +243,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve fazer swap de um elemento consigo mesmo', () => {
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('value')
       field[0] = 42
@@ -254,9 +254,9 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve fazer swap de últimos elementos', () => {
-      componentData.pushDefault()
-      componentData.pushDefault()
-      componentData.pushDefault()
+      componentData.push()
+      componentData.push()
+      componentData.push()
 
       const field = componentData.field('value')
       field[1] = 100
@@ -279,12 +279,12 @@ describe('Runtime: ComponentData', () => {
 
     it('deve crescer a capacidade quando ficar cheio', () => {
       for (let i = 0; i < 10; i++) {
-        componentData.pushDefault()
+        componentData.push()
       }
 
       expect(componentData.isFull).toBe(true)
 
-      componentData.pushDefault()
+      componentData.push()
 
       expect(componentData.size).toBe(11)
       expect(componentData.isFull).toBe(false)
@@ -295,14 +295,14 @@ describe('Runtime: ComponentData', () => {
       const data = new ComponentData(schema, 10)
 
       for (let i = 0; i < 10; i++) {
-        data.pushDefault()
+        data.push()
         data.field('value')[i] = i
       }
 
-      data.pushDefault()
+      data.push()
 
       for (let i = 0; i < 20; i++) {
-        data.pushDefault()
+        data.push()
       }
 
       expect(data.size).toBe(31)
@@ -313,11 +313,11 @@ describe('Runtime: ComponentData', () => {
       const data = new ComponentData(schema, 5)
 
       for (let i = 0; i < 5; i++) {
-        data.pushDefault()
+        data.push()
         data.field('value')[i] = i * 10
       }
 
-      data.pushDefault()
+      data.push()
 
       const field = data.field('value')
 
@@ -332,15 +332,15 @@ describe('Runtime: ComponentData', () => {
       const schema = { num: ComponentFieldType.U32 }
       const data = new ComponentData(schema, 2)
 
-      data.pushDefault()
-      data.pushDefault()
+      data.push()
+      data.push()
 
       for (let i = 0; i < 6; i++) {
-        data.pushDefault()
+        data.push()
       }
 
       for (let i = 0; i < 18; i++) {
-        data.pushDefault()
+        data.push()
       }
 
       expect(data.size).toBe(26)
@@ -359,7 +359,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve copiar um elemento de outro ComponentData', () => {
-      source.pushDefault()
+      source.push()
 
       const field = source.field('value')
       field[0] = 42.5
@@ -371,9 +371,9 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve copiar múltiplos elementos diferentes', () => {
-      source.pushDefault()
-      source.pushDefault()
-      source.pushDefault()
+      source.push()
+      source.push()
+      source.push()
 
       const sourceField = source.field('value')
       sourceField[0] = 10
@@ -391,9 +391,9 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve copiar de índice específico', () => {
-      source.pushDefault()
-      source.pushDefault()
-      source.pushDefault()
+      source.push()
+      source.push()
+      source.push()
 
       const field = source.field('value')
       field[0] = 100
@@ -410,8 +410,8 @@ describe('Runtime: ComponentData', () => {
       const source = new ComponentData(schema, 10)
       const target = new ComponentData(schema, 10)
 
-      source.pushDefault()
-      source.pushDefault()
+      source.push()
+      source.push()
 
       const sourceX = source.field('x')
       const sourceY = source.field('y')
@@ -438,7 +438,7 @@ describe('Runtime: ComponentData', () => {
       const target = new ComponentData(schema, 2)
 
       for (let i = 0; i < 10; i++) {
-        source.pushDefault()
+        source.push()
       }
 
       expect(target.isFull).toBe(false)
@@ -455,12 +455,12 @@ describe('Runtime: ComponentData', () => {
       const source = new ComponentData(schema, 10)
       const target = new ComponentData(schema, 3)
 
-      source.pushDefault()
+      source.push()
       const sourceField = source.field('val')
       sourceField[0] = 99
 
       for (let i = 0; i < 3; i++) {
-        target.pushDefault()
+        target.push()
       }
 
       target.copyFrom(source, 0)
@@ -502,21 +502,21 @@ describe('Runtime: ComponentData', () => {
       componentData = new ComponentData(schema)
     })
 
-    it('deve ter size 1 após um pushDefault', () => {
-      componentData.pushDefault()
+    it('deve ter size 1 após um push', () => {
+      componentData.push()
 
       expect(componentData.size).toBe(1)
     })
 
     it('deve remover o único elemento com pop', () => {
-      componentData.pushDefault()
+      componentData.push()
       componentData.pop()
 
       expect(componentData.size).toBe(0)
     })
 
     it('deve fazer swap consigo mesmo sem erro', () => {
-      componentData.pushDefault()
+      componentData.push()
 
       const field = componentData.field('value')
       field[0] = 42
@@ -529,7 +529,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve copiar de um ComponentData com um elemento', () => {
-      componentData.pushDefault()
+      componentData.push()
       const field = componentData.field('value')
       field[0] = 123
 
@@ -550,9 +550,9 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve fazer pop consecutivamente', () => {
-      componentData.pushDefault()
-      componentData.pushDefault()
-      componentData.pushDefault()
+      componentData.push()
+      componentData.push()
+      componentData.push()
 
       componentData.pop()
       expect(componentData.size).toBe(2)
@@ -581,7 +581,7 @@ describe('Runtime: ComponentData', () => {
 
     it('deve inserir 100 elementos com crescimentos sucessivos', () => {
       for (let i = 0; i < 100; i++) {
-        componentData.pushDefault()
+        componentData.push()
       }
 
       expect(componentData.size).toBe(100)
@@ -592,7 +592,7 @@ describe('Runtime: ComponentData', () => {
       const data = new ComponentData(schema, 5)
 
       for (let i = 0; i < 50; i++) {
-        data.pushDefault()
+        data.push()
         data.field('id')[i] = i * 2
       }
 
@@ -605,7 +605,7 @@ describe('Runtime: ComponentData', () => {
 
     it('deve fazer swap em muitos elementos', () => {
       for (let i = 0; i < 50; i++) {
-        componentData.pushDefault()
+        componentData.push()
         componentData.field('value')[i] = i + 0.5
       }
 
@@ -624,7 +624,7 @@ describe('Runtime: ComponentData', () => {
       const data = new ComponentData(schema, 16)
 
       for (let i = 0; i < 1000; i++) {
-        data.pushDefault()
+        data.push()
       }
 
       expect(data.size).toBe(1000)
@@ -645,11 +645,11 @@ describe('Runtime: ComponentData', () => {
       expect(componentData.isFull).toBe(false)
     })
 
-    it('deve fazer pushDefault em esquema vazio sem erro', () => {
+    it('deve fazer push em esquema vazio sem erro', () => {
       const componentData = new ComponentData({})
 
       expect(() => {
-        componentData.pushDefault()
+        componentData.push()
       }).not.toThrow()
 
       expect(componentData.size).toBe(1)
@@ -658,8 +658,8 @@ describe('Runtime: ComponentData', () => {
     it('deve fazer swap em esquema vazio', () => {
       const componentData = new ComponentData({})
 
-      componentData.pushDefault()
-      componentData.pushDefault()
+      componentData.push()
+      componentData.push()
 
       expect(() => {
         componentData.swap(0, 1)
@@ -676,7 +676,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve retornar os mesmos campos via data getter', () => {
-      componentData.pushDefault()
+      componentData.push()
 
       const data1 = componentData.data
       const data2 = componentData.data
@@ -684,11 +684,11 @@ describe('Runtime: ComponentData', () => {
       expect(data1).toBe(data2)
     })
 
-    it('deve retornar campos atualizados após pushDefault', () => {
+    it('deve retornar campos atualizados após push', () => {
       const data1 = componentData.data
       const size1 = Object.keys(data1).length
 
-      componentData.pushDefault()
+      componentData.push()
 
       const data2 = componentData.data
       const size2 = Object.keys(data2).length

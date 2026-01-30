@@ -4,6 +4,8 @@ export type ComponentId = bigint
 
 export type ComponentSchema = Record<string, ComponentFieldType>
 
+export type ComponentSchemaValueType<Schema extends ComponentSchema> = any
+
 export interface ComponentDescriptor<TSchema extends ComponentSchema = ComponentSchema> {
   id: ComponentId
   schema: TSchema
