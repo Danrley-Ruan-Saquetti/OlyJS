@@ -20,6 +20,9 @@ export class Engine implements IEngine {
   protected readonly eventDispatcher = new EventDispatcher(this.eventBus)
   protected readonly eventConsumer = new DoubleBufferingConsumer<EventTuple>(this.eventDispatcher)
 
+  private _isRunning = false
+  private isInitialized = false
+
   private _context = {
     world: null! as IWorld,
     events: {
@@ -33,8 +36,6 @@ export class Engine implements IEngine {
     },
   }
 
-  private _isRunning = false
-
   get context(): EngineContext {
     return this._context
   }
@@ -44,12 +45,17 @@ export class Engine implements IEngine {
   }
 
   initialize(context: EngineInitializeContext) {
+    if (this.isInitialized) {
+      throw new Error('It is not possible to initialize an engine that has already been initialized')
+    }
+
     this._context.world = context.world
+    this.isInitialized = true
   }
 
   start() {
     if (this._isRunning) {
-      return
+      throw new Error('Engine already started')
     }
 
     this._isRunning = true
@@ -58,7 +64,7 @@ export class Engine implements IEngine {
 
   stop() {
     if (!this._isRunning) {
-      return
+      throw new Error('Engine already stopped')
     }
 
     this._isRunning = false
