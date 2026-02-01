@@ -1,13 +1,3 @@
-import { SystemInitializeContext, SystemUpdateContext } from '../../contracts/context/system.context'
-import { ISystem } from '../../ecs/system'
+import { ISystem } from '../../ecs/system';
 
-export abstract class System implements ISystem {
-
-  initialize(context: SystemInitializeContext) { }
-
-  start() { }
-
-  stop() { }
-
-  update(context: SystemUpdateContext) { }
-}
+export abstract class System implements ISystem { }
