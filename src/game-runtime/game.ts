@@ -10,16 +10,14 @@ import { ITimerTracker } from './time/types'
 
 export class Game {
 
-  protected engine: IEngine = new Engine()
-
+  protected readonly engine: IEngine = new Engine()
   protected readonly world = new GameWorld()
-
-  protected readonly inputSystem = new InputSystem()
-  protected readonly schedulerSystem = new SchedulerSystem()
-
   protected readonly clock: ITimerTracker = new TimeTracker()
 
   protected readonly systemContext = new MutableSystemUpdateContext()
+
+  protected readonly inputSystem = new InputSystem()
+  protected readonly schedulerSystem = new SchedulerSystem()
 
   private timeout: number
   private lastTime = 0
@@ -27,6 +25,8 @@ export class Game {
   constructor() {
     this.systemContext.time = this.clock.time
     this.systemContext.input = this.inputSystem.state
+
+    this.engine.initialize({ world: this.world })
   }
 
   start() {
@@ -43,8 +43,6 @@ export class Game {
   }
 
   protected initializeEngine() {
-    this.engine.initialize({ world: this.world })
-
     this.registerSystem(this.inputSystem)
     this.registerSystem(this.schedulerSystem)
 
