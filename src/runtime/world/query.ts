@@ -38,7 +38,7 @@ export class Query {
     }
   }
 
-  view(): readonly IArchetype[] {
-    return this.archetypes as any
+  view() {
+    return this.matched as readonly IArchetype[]
   }
 }
