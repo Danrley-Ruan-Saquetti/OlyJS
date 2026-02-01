@@ -1,23 +1,25 @@
-import { ComponentFieldType } from '../../ecs'
-import { ComponentDescriptor, ComponentId, ComponentSchema } from '../../ecs/component'
-import { createComponent } from './component-registry'
+import { ComponentDescriptor, ComponentsToObject, InferSchemaValues } from '../../ecs/component'
+import { IWorld } from '../../ecs/world'
+import { PrefabEntity } from './prefab-entity'
 
-export type ComponentMap = Map<ComponentId, unknown>
+export class EntityBuilder<TComponents extends readonly ComponentDescriptor[] = []> {
 
-export class EntityBuilder<TComponents extends {} = {}> {
+  private readonly defaults: Partial<ComponentsToObject<TComponents>> = {}
+  private readonly components: { component: ComponentDescriptor, data?: unknown }[] = []
 
-  private readonly defaults: ComponentMap = new Map()
+  constructor(
+    private readonly world: IWorld
+  ) { }
 
-  with<Schema extends ComponentSchema>(component: ComponentDescriptor<Schema>, defaultValue?: Partial<Record<keyof Schema, number>>): EntityBuilder<TComponents & { [P in keyof any]: Schema }> {
-    this.defaults.set(component.id, defaultValue)
+  with<TComponent extends ComponentDescriptor>(component: TComponent, defaultValue?: InferSchemaValues<TComponent['schema']>) {
+    (this.defaults as any)[component.name] = defaultValue ?? {}
 
-    return this
+    this.components.push({ component, data: defaultValue })
+
+    return this as EntityBuilder<[...TComponents, TComponent]>
+  }
+
+  build() {
+    return new PrefabEntity<TComponents>(this.world, this.components)
   }
 }
-
-const Position = createComponent({ x: ComponentFieldType.F32, y: ComponentFieldType.F32 })
-const Velocity = createComponent({ x: ComponentFieldType.F32, y: ComponentFieldType.F32, z: ComponentFieldType.F32 })
-
-const player = new EntityBuilder()
-  .with(Position, { x: 1, y: 6 })
-  .with(Velocity)
