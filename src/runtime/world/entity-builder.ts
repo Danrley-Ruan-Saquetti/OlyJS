@@ -11,7 +11,7 @@ export class EntityBuilder<TComponents extends readonly ComponentDescriptor[] = 
     private readonly world: IWorld
   ) { }
 
-  with<TComponent extends ComponentDescriptor>(component: TComponent, defaultValue?: InferSchemaValues<TComponent['schema']>) {
+  with<TComponent extends ComponentDescriptor>(component: TComponent, defaultValue?: Partial<InferSchemaValues<TComponent['schema']>>) {
     (this.defaults as any)[component.name] = defaultValue ?? {}
 
     this.components.push({ component, data: defaultValue })
