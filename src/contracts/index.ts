@@ -1,5 +1,5 @@
-export type { EngineContext, EngineInitializeContext as EngineStartContext } from './context/engine.context'
-export type { SystemContext } from './context/system.context'
+export type { EngineInitializeContext } from './context/engine.context'
+export type { SystemContext, SystemInitializeContext } from './context/system.context'
 export type { CommandListener, ICommandDomain, ICommandDomainRegister } from './engine/command'
 export { EventPriority } from './engine/event'
 export type {

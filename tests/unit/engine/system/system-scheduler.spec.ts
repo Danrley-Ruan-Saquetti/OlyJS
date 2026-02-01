@@ -1,12 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { EngineContext } from '../../../../src/contracts/context/engine.context'
-import { SystemContext } from '../../../../src/contracts/context/system.context'
+import { SystemContext, SystemInitializeContext } from '../../../../src/contracts/context/system.context'
 import { SystemScheduler } from '../../../../src/engine/system/system-scheduler'
 
 describe('Engine: SystemScheduler', () => {
   let scheduler: SystemScheduler
-  const ctx = {} as EngineContext
+  const ctx = {} as SystemInitializeContext
 
   beforeEach(() => {
     scheduler = new SystemScheduler(ctx)
@@ -18,7 +17,7 @@ describe('Engine: SystemScheduler', () => {
     expect(() => scheduler.tickAll({} as SystemContext)).not.toThrow()
   })
 
-  it('register chama initialize com o EngineContext', () => {
+  it('register chama initialize com o SystemInitializeContext', () => {
     const system = { initialize: vi.fn(), start: vi.fn(), stop: vi.fn(), update: vi.fn() }
 
     scheduler.register(system as any)

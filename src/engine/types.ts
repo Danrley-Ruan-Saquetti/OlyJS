@@ -1,7 +1,7 @@
 import { ICommandDomain } from '../contracts'
-import { EngineContext, EngineInitializeContext } from '../contracts/context/engine.context'
+import { EngineInitializeContext } from '../contracts/context/engine.context'
 import { SystemContext } from '../contracts/context/system.context'
-import { ISystem } from '../ecs/system'
+import { ISystem, SystemInitializeContext } from '../ecs/system'
 
 export interface IEngineController {
   initialize(context: EngineInitializeContext): void
@@ -14,5 +14,5 @@ export interface IEngineController {
 }
 
 export interface IEngine extends IEngineController {
-  readonly context: EngineContext
+  readonly context: SystemInitializeContext
 }

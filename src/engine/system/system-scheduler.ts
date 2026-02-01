@@ -1,5 +1,4 @@
-import { EngineContext } from '../../contracts/context/engine.context'
-import { SystemContext } from '../../contracts/context/system.context'
+import { SystemContext, SystemInitializeContext } from '../../contracts/context/system.context'
 import { ISystem } from '../../ecs/system'
 
 export class SystemScheduler {
@@ -7,7 +6,7 @@ export class SystemScheduler {
   protected readonly systems: ISystem[] = []
 
   constructor(
-    protected readonly context: EngineContext
+    protected readonly context: SystemInitializeContext
   ) { }
 
   register(system: ISystem) {

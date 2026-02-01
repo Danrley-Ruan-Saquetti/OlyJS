@@ -1,5 +1,5 @@
-import { EngineContext, EngineInitializeContext } from '../contracts/context/engine.context'
-import { SystemContext } from '../contracts/context/system.context'
+import { EngineInitializeContext } from '../contracts/context/engine.context'
+import { SystemContext, SystemInitializeContext } from '../contracts/context/system.context'
 import { ICommandDomain } from '../contracts/engine/command'
 import { EventTuple } from '../contracts/engine/event'
 import { ISystem } from '../ecs/system'
@@ -36,7 +36,7 @@ export class Engine implements IEngine {
     },
   }
 
-  get context(): EngineContext {
+  get context(): SystemInitializeContext {
     return this._context
   }
 
