@@ -204,7 +204,7 @@ var CommandScheduler = class {
   register(domain) {
     this.domains.push(domain);
   }
-  flushAll() {
+  flush() {
     let i = 0, length = this.domains.length;
     while (i < length) {
       this.domains[i].flush();
@@ -290,34 +290,50 @@ var EventDispatcher = class {
   }
 };
 
+// src/engine/mutable-system-initialize-context.ts
+var MutableSystemInitializeContext = class {
+};
+
 // src/engine/system/system-scheduler.ts
 var SystemScheduler = class {
   constructor(context) {
     this.context = context;
     this.systems = [];
+    this.startSystems = [];
+    this.stopSystems = [];
+    this.updateSystems = [];
+    this.isStarted = false;
   }
   register(system) {
+    system.initialize?.(this.context);
     this.systems.push(system);
-    system.initialize(this.context);
+    if (system.start) this.startSystems.push(system);
+    if (system.stop) this.stopSystems.push(system);
+    if (system.update) this.updateSystems.push(system);
+    if (this.isStarted && system.start) {
+      system.start();
+    }
   }
-  startAll() {
-    let i = 0, length = this.systems.length;
+  start() {
+    this.isStarted = true;
+    let i = 0, length = this.startSystems.length;
     while (i < length) {
-      this.systems[i].start();
+      this.startSystems[i].start();
       i++;
     }
   }
-  stopAll() {
-    let i = 0, length = this.systems.length;
+  stop() {
+    this.isStarted = false;
+    let i = 0, length = this.stopSystems.length;
     while (i < length) {
-      this.systems[i].stop();
+      this.stopSystems[i].stop();
       i++;
     }
   }
-  tickAll(context) {
-    let i = 0, length = this.systems.length;
+  tick(context) {
+    let i = 0, length = this.updateSystems.length;
     while (i < length) {
-      this.systems[i].update(context);
+      this.updateSystems[i].update(context);
       i++;
     }
   }
@@ -330,48 +346,48 @@ var Engine = class {
     this.eventBus = new EventBusPriority();
     this.eventDispatcher = new EventDispatcher(this.eventBus);
     this.eventConsumer = new DoubleBufferingConsumer(this.eventDispatcher);
-    this._context = {
-      world: null,
-      events: {
-        on: this.eventDispatcher.on.bind(this.eventDispatcher),
-        send: (event, data) => this.eventConsumer.send([event, data]),
-        off: this.eventDispatcher.off.bind(this.eventDispatcher),
-        clear: this.eventDispatcher.clear.bind(this.eventDispatcher)
-      },
-      commands: {
-        register: this.commandScheduler.register.bind(this.commandScheduler)
-      }
-    };
+    this.systemInitializeContext = new MutableSystemInitializeContext();
     this._isRunning = false;
-    this.systemScheduler = new SystemScheduler(this._context);
-  }
-  get context() {
-    return this._context;
+    this.isInitialized = false;
+    this.systemScheduler = new SystemScheduler(this.systemInitializeContext);
+    this.systemInitializeContext.events = {
+      on: this.eventDispatcher.on.bind(this.eventDispatcher),
+      send: (event, data) => this.eventConsumer.send([event, data]),
+      off: this.eventDispatcher.off.bind(this.eventDispatcher),
+      clear: this.eventDispatcher.clear.bind(this.eventDispatcher)
+    };
+    this.systemInitializeContext.commands = {
+      register: this.commandScheduler.register.bind(this.commandScheduler)
+    };
   }
   initialize(context) {
-    this._context.world = context.world;
+    if (this.isInitialized) {
+      throw new Error("It is not possible to initialize an engine that has already been initialized");
+    }
+    this.systemInitializeContext.world = context.world;
+    this.isInitialized = true;
   }
   start() {
     if (this._isRunning) {
-      return;
+      throw new Error("Engine already started");
     }
     this._isRunning = true;
-    this.systemScheduler.startAll();
+    this.systemScheduler.start();
   }
   stop() {
     if (!this._isRunning) {
-      return;
+      throw new Error("Engine already stopped");
     }
     this._isRunning = false;
-    this.systemScheduler.stopAll();
+    this.systemScheduler.stop();
   }
   tick(context) {
     if (!this._isRunning) {
       return;
     }
-    this.systemScheduler.tickAll(context);
+    this.systemScheduler.tick(context);
     this.eventConsumer.execute();
-    this.commandScheduler.flushAll();
+    this.commandScheduler.flush();
   }
   registerSystem(system) {
     this.systemScheduler.register(system);
@@ -460,18 +476,21 @@ var Archetype = class {
     this.entities.push(entityId);
     let i = 0, length = this.components.length;
     while (i < length) {
-      this.components[i].pushDefault();
+      this.components[i].push();
       i++;
     }
   }
-  addEntityFrom(entityId, entityIndex, from) {
+  addEntityFrom(entityId, entityIndex, from, initialData) {
     this.entities.push(entityId);
-    let i = 0, length = from.components.length;
+    let i = 0, length = this.components.length;
     while (i < length) {
-      const componentId = from.componentIds[i];
-      const toIndex = this.componentIndex.get(componentId);
-      if (toIndex !== void 0) {
-        this.components[toIndex].copyFrom(from.components[i], entityIndex);
+      const componentId = this.componentIds[i];
+      const fromIndex = from.componentIndex.get(componentId);
+      if (fromIndex !== void 0) {
+        this.components[i].copyFrom(from.components[fromIndex], entityIndex);
+      } else {
+        const initial = initialData ? initialData[componentId] : void 0;
+        this.components[i].push(initial);
       }
       i++;
     }
@@ -526,12 +545,13 @@ var ComponentData = class {
   get data() {
     return this.fields;
   }
-  pushDefault() {
+  push(initialValues) {
     if (this.isFull) {
       this.grow();
     }
     for (const field in this.fields) {
-      this.fields[field][this._size] = 0;
+      const value = initialValues && initialValues[field] !== void 0 ? initialValues[field] : 0;
+      this.fields[field][this._size] = value;
     }
     this._size++;
   }
@@ -581,10 +601,10 @@ var ComponentRegistry = class {
     this.signatureCache = /* @__PURE__ */ new Map();
     this.nextId = 1n;
   }
-  register(schema) {
+  register(name, schema) {
     const id = this.nextId++;
     this.schemas.set(id, schema);
-    return { id, schema };
+    return { id, name, schema };
   }
   createComponent(id) {
     const schema = this.schemas.get(id);
@@ -613,9 +633,66 @@ var ComponentRegistry = class {
   }
 };
 var GlobalComponentRegistry = new ComponentRegistry();
-function createComponent(schema) {
-  return GlobalComponentRegistry.register(schema);
+function createComponent(name, schema) {
+  return GlobalComponentRegistry.register(name, schema);
 }
+
+// src/runtime/world/archetype/components/merge-component-data.ts
+function mergeComponentData(defaults, overrides) {
+  if (!defaults && !overrides) {
+    return void 0;
+  }
+  if (!defaults) {
+    return overrides;
+  }
+  if (!overrides) {
+    return defaults;
+  }
+  const result = {};
+  for (const key in defaults) {
+    result[key] = defaults[key];
+  }
+  for (const key in overrides) {
+    result[key] = overrides[key];
+  }
+  return result;
+}
+
+// src/runtime/world/prefab-entity.ts
+var PrefabEntity = class {
+  constructor(world, components = []) {
+    this.world = world;
+    this.components = components;
+  }
+  spawn(overrides) {
+    const components = [];
+    let i = 0, length = this.components.length;
+    while (i < length) {
+      const component = this.components[i];
+      const data = overrides ? mergeComponentData(component.data, overrides[component.component.name]) : component.data;
+      components.push({ component: component.component, data });
+      i++;
+    }
+    return this.world.instantiate(components);
+  }
+};
+
+// src/runtime/world/entity-builder.ts
+var EntityBuilder = class {
+  constructor(world) {
+    this.world = world;
+    this.defaults = {};
+    this.components = [];
+  }
+  with(component, defaultValue) {
+    this.defaults[component.name] = defaultValue ?? {};
+    this.components.push({ component, data: defaultValue });
+    return this;
+  }
+  build() {
+    return new PrefabEntity(this.world, this.components);
+  }
+};
 
 // src/runtime/world/entity-pool.ts
 var EntityPool = class {
@@ -696,16 +773,31 @@ var GameWorld = class {
   flush() {
     this.commandDomain.flush();
   }
-  instantiate() {
+  instantiate(components) {
     const id = this.entityPool.create();
     this.commandDomain.send("entity:create" /* CREATE_ENTITY */, id);
+    if (!components) {
+      return id;
+    }
+    let i = 0, length = components.length;
+    while (i < length) {
+      this.commandDomain.send("component:add" /* ADD_COMPONENT */, {
+        entityId: id,
+        componentId: components[i].component.id,
+        data: components[i].data
+      });
+      i++;
+    }
     return id;
   }
   destroy(entityId) {
     this.commandDomain.send("entity:destroy" /* DESTROY_ENTITY */, entityId);
   }
-  addComponent(entityId, componentId) {
-    this.commandDomain.send("component:add" /* ADD_COMPONENT */, { entityId, componentId });
+  addComponent(entityId, component, initialData) {
+    this.commandDomain.send("component:add" /* ADD_COMPONENT */, { entityId, componentId: component.id, data: initialData });
+  }
+  createPrefab() {
+    return new EntityBuilder(this);
   }
   createQuery(components) {
     const query = new Query(this.archetypes, components);
@@ -733,7 +825,7 @@ var GameWorld = class {
     this.entityLocation.delete(entityId);
     this.entityPool.destroy(entityId);
   }
-  performAddComponent({ entityId, componentId }) {
+  performAddComponent({ entityId, componentId, data }) {
     const location = this.entityLocation.get(entityId);
     if (!location) {
       return;
@@ -744,10 +836,11 @@ var GameWorld = class {
       return;
     }
     const newArch = this.getOrCreateArchetype(newSignature);
-    this.moveEntity(entityId, location, oldArchetype, newArch);
+    const initialData = data !== void 0 ? { [componentId]: data } : void 0;
+    this.moveEntity(entityId, location, oldArchetype, newArch, initialData);
   }
-  moveEntity(entityId, location, from, to) {
-    to.addEntityFrom(entityId, location.index, to);
+  moveEntity(entityId, location, from, to, initialData) {
+    to.addEntityFrom(entityId, location.index, from, initialData);
     this.removeFromArchetype(location, from);
     this.entityLocation.set(entityId, { archetype: to, index: to.size - 1 });
   }
@@ -776,8 +869,8 @@ var GameWorld = class {
   }
 };
 
-// src/game-runtime/mutable-system-context.ts
-var MutableSystemContext = class {
+// src/game-runtime/mutable-system-update-context.ts
+var MutableSystemUpdateContext = class {
 };
 
 // src/engine/input/input-state.ts
@@ -936,14 +1029,6 @@ var InputState = class {
 
 // src/runtime/systems/system.ts
 var System = class {
-  initialize(context) {
-  }
-  start() {
-  }
-  stop() {
-  }
-  update(context) {
-  }
 };
 
 // src/game-runtime/runtime-systems/input.system.ts
@@ -1185,24 +1270,18 @@ var Game = class {
   constructor() {
     this.engine = new Engine();
     this.world = new GameWorld();
+    this.clock = new TimeTracker();
+    this.systemContext = new MutableSystemUpdateContext();
     this.inputSystem = new InputSystem();
     this.schedulerSystem = new SchedulerSystem();
-    this.clock = new TimeTracker();
-    this.systemContext = new MutableSystemContext();
     this.lastTime = 0;
     this.update = (timestamp) => {
       this.updateEngine(timestamp);
       this.timeout = requestAnimationFrame(this.update);
     };
-    this.systemContext.world = this.world;
     this.systemContext.time = this.clock.time;
     this.systemContext.input = this.inputSystem.state;
-    this.systemContext.events = {
-      send: this.engine.context.events.send.bind(this.engine)
-    };
-    this.systemContext.commands = {
-      register: this.engine.context.commands.register.bind(this.engine)
-    };
+    this.engine.initialize({ world: this.world });
   }
   start() {
     if (this.engine.isRunning()) {
@@ -1215,7 +1294,6 @@ var Game = class {
     this.update(0);
   }
   initializeEngine() {
-    this.engine.initialize({ world: this.world });
     this.registerSystem(this.inputSystem);
     this.registerSystem(this.schedulerSystem);
     this.engine.registerCommandDomain(this.world);

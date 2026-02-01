@@ -1,6 +1,6 @@
 import { ComponentFieldType, Game, System, createComponent } from './engine.js'
 
-const Position = createComponent({
+const Position = createComponent('Position', {
   x: ComponentFieldType.F32,
   y: ComponentFieldType.F32,
 })
@@ -11,15 +11,21 @@ class MySystem extends System {
     super()
 
     this.query = null
+    this.playerPrefab = null
   }
 
   initialize({ world }) {
     this.query = world.createQuery([Position.id])
+    this.playerPrefab = world.createPrefab()
+      .with(Position, { x: 10 })
+      .build()
+
+    this.playerPrefab.spawn({
+      Position: { y: 100 }
+    })
   }
 
   update({ time }) {
-    console.log(time.deltaTimeMilliseconds) // 16ms travado
-
     for (const archetype of this.query.matched) {
       const position = archetype.component(Position.id)
 
@@ -43,16 +49,6 @@ class MyGame extends Game {
     super.initializeEngine()
 
     this.engine.registerSystem(new MySystem())
-  }
-
-  initialize() {
-    let i = 0
-    while (i < 1_000_000) {
-      const playerId = this.world.instantiate()
-
-      this.world.addComponent(playerId, Position)
-      i++
-    }
   }
 }
 

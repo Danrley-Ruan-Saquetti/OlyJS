@@ -1,21 +1,3 @@
-type ComponentId = bigint;
-type ComponentSchema = Record<string, ComponentFieldType>;
-interface ComponentDescriptor<TSchema extends ComponentSchema = ComponentSchema> {
-    id: ComponentId;
-    schema: TSchema;
-}
-type ComponentDataSchema = Record<string, TypedArray>;
-interface IComponentData<TShape extends ComponentDataSchema = ComponentDataSchema> {
-    readonly size: number;
-    readonly isFull: boolean;
-    readonly data: Readonly<TShape>;
-    pushDefault(): void;
-    pop(): void;
-    swap(indexA: number, indexB: number): void;
-    copyFrom(other: IComponentData<TShape>, index: number): void;
-    field<Field extends keyof TShape>(field: Field): TypedArray;
-}
-
 type EntityId = number;
 
 declare enum ComponentFieldType {
@@ -33,10 +15,56 @@ interface IArchetype {
     readonly signature: Signature;
     readonly lastEntity: number;
     readonly size: number;
-    addEntity(entityId: EntityId): void;
+    addEntity(entityId: EntityId, initialData?: Record<number, any>): void;
     addEntityFrom(entityId: EntityId, entityIndex: number, from: IArchetype): void;
     removeEntity(index: number): void;
     component(componentId: ComponentId): IComponentData;
+}
+
+type ComponentId = bigint;
+type ComponentSchema = Record<string, ComponentFieldType>;
+type InferSchemaValues<T extends ComponentSchema> = {
+    [K in keyof T]: number;
+};
+interface ComponentDescriptor<TName extends string = string, TSchema extends ComponentSchema = ComponentSchema> {
+    id: ComponentId;
+    name: TName;
+    schema: TSchema;
+}
+type ComponentsToObject<T extends readonly ComponentDescriptor[] = []> = {
+    [C in T[number] as C['name']]: Partial<InferSchemaValues<C['schema']>>;
+};
+type ComponentDataSchema = Record<string, TypedArray>;
+interface IComponentData<TShape extends ComponentDataSchema = ComponentDataSchema> {
+    readonly size: number;
+    readonly isFull: boolean;
+    readonly data: Readonly<TShape>;
+    push(initialValues?: Partial<{
+        [K in keyof TShape]: number;
+    }>): void;
+    pop(): void;
+    swap(indexA: number, indexB: number): void;
+    copyFrom(other: IComponentData<TShape>, index: number): void;
+    field<Field extends keyof TShape>(field: Field): TypedArray;
+}
+
+declare class PrefabEntity<TComponents extends readonly ComponentDescriptor[] = []> {
+    private readonly world;
+    private readonly components;
+    constructor(world: IWorld, components?: {
+        component: ComponentDescriptor;
+        data?: unknown;
+    }[]);
+    spawn(overrides?: Partial<ComponentsToObject<TComponents>>): number;
+}
+
+declare class EntityBuilder<TComponents extends readonly ComponentDescriptor[] = []> {
+    private readonly world;
+    private readonly defaults;
+    private readonly components;
+    constructor(world: IWorld);
+    with<TComponent extends ComponentDescriptor>(component: TComponent, defaultValue?: InferSchemaValues<TComponent['schema']>): EntityBuilder<[...TComponents, TComponent]>;
+    build(): PrefabEntity<TComponents>;
 }
 
 declare class Query {
@@ -50,11 +78,19 @@ declare class Query {
 }
 
 interface IWorld {
-    instantiate(): EntityId;
+    instantiate(components?: {
+        component: ComponentDescriptor;
+        data?: unknown;
+    }[]): EntityId;
     destroy(entityId: EntityId): void;
-    addComponent(entityId: EntityId, componentId: ComponentId): void;
+    addComponent<TComponent extends ComponentDescriptor>(entityId: EntityId, component: TComponent, initialData?: ComponentsToObject<[TComponent]>): void;
     flush(): void;
+    createPrefab(): EntityBuilder;
     createQuery(components: ComponentId[]): Query;
+}
+
+interface EngineInitializeContext {
+    readonly world: IWorld;
 }
 
 type CommandListener<T = any> = (data: T) => void;
@@ -90,15 +126,6 @@ interface IEventPublisher extends IEventSender, IEventListenerRegistryPriority {
 }
 type IEventSink = IEventSender;
 type EventTuple = [string, unknown];
-
-interface EngineContext {
-    readonly world: IWorld;
-    readonly events: IEventPublisher;
-    readonly commands: ICommandDomainRegister;
-}
-interface EngineInitializeContext {
-    readonly world: IWorld;
-}
 
 interface Input {
     isKeyHeld(key: Keys): boolean;
@@ -256,19 +283,21 @@ type DeltaTime = {
     totalElapsedTimeMilliseconds: number;
 };
 
-interface SystemContext {
+interface SystemInitializeContext {
     readonly world: IWorld;
+    readonly events: IEventPublisher;
+    readonly commands: ICommandDomainRegister;
+}
+interface SystemUpdateContext {
     readonly time: DeltaTime;
     readonly input: Input;
-    readonly events: IEventSink;
-    readonly commands: ICommandDomainRegister;
 }
 
 interface ISystem {
-    initialize(context: EngineContext): void;
-    start(): void;
-    stop(): void;
-    update(context: SystemContext): void;
+    initialize?(context: SystemInitializeContext): void;
+    start?(): void;
+    stop?(): void;
+    update?(context: SystemUpdateContext): void;
 }
 
 interface IBuffer<T = any> {
@@ -295,7 +324,7 @@ declare class DoubleBufferingConsumer<T> extends BufferConsumer<T> {
 declare class CommandScheduler {
     private readonly domains;
     register(domain: ICommandDomain): void;
-    flushAll(): void;
+    flush(): void;
 }
 
 type PriorityBucket<T = unknown> = ListenerHandler<T>[][];
@@ -323,26 +352,27 @@ declare class EventDispatcher implements IDispatcher<EventTuple> {
 }
 
 declare class SystemScheduler {
-    protected readonly context: EngineContext;
-    protected readonly systems: ISystem[];
-    constructor(context: EngineContext);
+    protected readonly context: SystemInitializeContext;
+    private readonly systems;
+    private readonly startSystems;
+    private readonly stopSystems;
+    private readonly updateSystems;
+    private isStarted;
+    constructor(context: SystemInitializeContext);
     register(system: ISystem): void;
-    startAll(): void;
-    stopAll(): void;
-    tickAll(context: SystemContext): void;
+    start(): void;
+    stop(): void;
+    tick(context: SystemUpdateContext): void;
 }
 
-interface IEngineController {
+interface IEngine {
     initialize(context: EngineInitializeContext): void;
     start(): void;
     stop(): void;
-    tick(context: SystemContext): void;
+    tick(context: SystemUpdateContext): void;
     registerSystem(system: ISystem): void;
     registerCommandDomain(domain: ICommandDomain): void;
     isRunning(): boolean;
-}
-interface IEngine extends IEngineController {
-    readonly context: EngineContext;
 }
 
 declare class Engine implements IEngine {
@@ -351,14 +381,14 @@ declare class Engine implements IEngine {
     protected readonly eventBus: EventBusPriority;
     protected readonly eventDispatcher: EventDispatcher;
     protected readonly eventConsumer: DoubleBufferingConsumer<EventTuple>;
-    private _context;
+    private systemInitializeContext;
     private _isRunning;
-    get context(): EngineContext;
+    private isInitialized;
     constructor();
     initialize(context: EngineInitializeContext): void;
     start(): void;
     stop(): void;
-    tick(context: SystemContext): void;
+    tick(context: SystemUpdateContext): void;
     registerSystem(system: ISystem): void;
     registerCommandDomain(domain: ICommandDomain): void;
     isRunning(): boolean;
@@ -385,9 +415,13 @@ declare class GameWorld implements IWorld {
     private readonly queries;
     constructor();
     flush(): void;
-    instantiate(): number;
+    instantiate(components?: {
+        component: ComponentDescriptor;
+        data?: unknown;
+    }[]): number;
     destroy(entityId: EntityId): void;
-    addComponent(entityId: EntityId, componentId: ComponentId): void;
+    addComponent<TComponent extends ComponentDescriptor>(entityId: EntityId, component: TComponent, initialData?: ComponentsToObject<[TComponent]>): void;
+    createPrefab(): EntityBuilder<[]>;
     createQuery(components: ComponentId[]): Query;
     private performCreateEntity;
     private performDestroyEntity;
@@ -398,7 +432,7 @@ declare class GameWorld implements IWorld {
     private onArchetypeCreated;
 }
 
-declare class MutableSystemContext implements SystemContext {
+declare class MutableSystemUpdateContext implements SystemUpdateContext {
     world: IWorld;
     time: DeltaTime;
     input: Input;
@@ -407,10 +441,6 @@ declare class MutableSystemContext implements SystemContext {
 }
 
 declare abstract class System implements ISystem {
-    initialize(context: EngineContext): void;
-    start(): void;
-    stop(): void;
-    update(context: SystemContext): void;
 }
 
 declare class InputSystem extends System implements IInputSource {
@@ -432,7 +462,7 @@ type ScheduleCallback = () => void;
 declare class SchedulerSystem extends System {
     private scheduler;
     private elapsedTime;
-    update(context: SystemContext): void;
+    update(context: SystemUpdateContext): void;
     schedule(callback: ScheduleCallback, delay: number): void;
 }
 
@@ -447,12 +477,12 @@ interface ITimerTracker extends ITimeSource, ITimerTrackerController {
 }
 
 declare class Game {
-    protected engine: IEngine;
+    protected readonly engine: IEngine;
     protected readonly world: GameWorld;
+    protected readonly clock: ITimerTracker;
+    protected readonly systemContext: MutableSystemUpdateContext;
     protected readonly inputSystem: InputSystem;
     protected readonly schedulerSystem: SchedulerSystem;
-    protected readonly clock: ITimerTracker;
-    protected readonly systemContext: MutableSystemContext;
     private timeout;
     private lastTime;
     constructor();
@@ -480,12 +510,12 @@ declare class ComponentRegistry {
     private schemas;
     private signatureCache;
     private nextId;
-    register<TSchema extends ComponentSchema>(schema: TSchema): ComponentDescriptor<TSchema>;
+    register<TName extends string, TSchema extends ComponentSchema>(name: TName, schema: TSchema): ComponentDescriptor<TName, TSchema>;
     createComponent(id: ComponentId): IComponentData;
     idsFromSignature(sig: Signature): bigint[];
 }
 declare const GlobalComponentRegistry: ComponentRegistry;
-declare function createComponent<TSchema extends ComponentSchema>(schema: TSchema): ComponentDescriptor<TSchema>;
+declare function createComponent<TName extends string, TSchema extends ComponentSchema>(name: TName, schema: TSchema): ComponentDescriptor<TName, TSchema>;
 
 declare class Archetype implements IArchetype {
     readonly signature: Signature;
@@ -497,7 +527,7 @@ declare class Archetype implements IArchetype {
     get size(): number;
     constructor(signature: Signature, registry: ComponentRegistry);
     addEntity(entityId: EntityId): void;
-    addEntityFrom(entityId: EntityId, entityIndex: number, from: Archetype): void;
+    addEntityFrom(entityId: EntityId, entityIndex: number, from: Archetype, initialData?: Record<number, any>): void;
     removeEntity(index: number): void;
     component(componentId: ComponentId): IComponentData<ComponentDataSchema>;
 }
@@ -523,7 +553,9 @@ declare class ComponentData<S extends ComponentSchema = ComponentSchema, TShape 
     get isFull(): boolean;
     get data(): TShape;
     constructor(schema: ComponentSchema, initialCapacity?: number);
-    pushDefault(): void;
+    push(initialValues?: Partial<{
+        [K in keyof TShape]: number;
+    }>): void;
     pop(): void;
     swap(indexA: number, indexB: number): void;
     copyFrom(other: IComponentData<TShape>, index: number): void;
@@ -531,4 +563,4 @@ declare class ComponentData<S extends ComponentSchema = ComponentSchema, TShape 
     private grow;
 }
 
-export { Archetype, type CommandListener, ComponentData, type ComponentDataSchema, type ComponentDescriptor, ComponentFieldType, type ComponentId, type ComponentSchema, type DeltaTime, Engine, type EngineContext, type EngineInitializeContext as EngineStartContext, type EntityId, EventPriority, Game, GameWorld, GlobalComponentRegistry, type IArchetype, type ICommandDomain, type ICommandDomainRegister, type IComponentData, type IEventEmitter, type IEventListenerRegistryPriority, type IEventPublisher, type IEventSender, type IEventSink, type IEventSubscriptionPriority, type IEventUnsubscription, type IInputSource, type ISystem, type ITimeSource, type ITimerTracker, type ITimerTrackerController, type IWorld, type Input, Keys, type ListenerHandler, Query, type Signature, System, type SystemContext, TimeTracker, type TypedArray, createComponent };
+export { Archetype, type CommandListener, ComponentData, type ComponentDataSchema, type ComponentDescriptor, ComponentFieldType, type ComponentId, type ComponentSchema, type DeltaTime, Engine, type EngineInitializeContext, type EntityId, EventPriority, Game, GameWorld, GlobalComponentRegistry, type IArchetype, type ICommandDomain, type ICommandDomainRegister, type IComponentData, type IEventEmitter, type IEventListenerRegistryPriority, type IEventPublisher, type IEventSender, type IEventSink, type IEventSubscriptionPriority, type IEventUnsubscription, type IInputSource, type ISystem, type ITimeSource, type ITimerTracker, type ITimerTrackerController, type IWorld, type Input, Keys, type ListenerHandler, Query, type Signature, System, type SystemInitializeContext, type SystemUpdateContext, TimeTracker, type TypedArray, createComponent };
