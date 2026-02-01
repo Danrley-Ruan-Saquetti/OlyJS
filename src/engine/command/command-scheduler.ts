@@ -8,7 +8,7 @@ export class CommandScheduler {
     this.domains.push(domain)
   }
 
-  flushAll() {
+  flush() {
     let i = 0, length = this.domains.length
     while (i < length) {
       this.domains[i].flush()

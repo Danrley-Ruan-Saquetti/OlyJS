@@ -15,7 +15,7 @@ export class SystemScheduler {
     system.initialize(this.context)
   }
 
-  startAll() {
+  start() {
     let i = 0, length = this.systems.length
     while (i < length) {
       this.systems[i].start()
@@ -23,7 +23,7 @@ export class SystemScheduler {
     }
   }
 
-  stopAll() {
+  stop() {
     let i = 0, length = this.systems.length
     while (i < length) {
       this.systems[i].stop()
@@ -31,7 +31,7 @@ export class SystemScheduler {
     }
   }
 
-  tickAll(context: SystemUpdateContext) {
+  tick(context: SystemUpdateContext) {
     let i = 0, length = this.systems.length
     while (i < length) {
       this.systems[i].update(context)

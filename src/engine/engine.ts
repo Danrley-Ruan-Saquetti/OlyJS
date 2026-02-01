@@ -54,7 +54,7 @@ export class Engine implements IEngine {
     }
 
     this._isRunning = true
-    this.systemScheduler.startAll()
+    this.systemScheduler.start()
   }
 
   stop() {
@@ -63,7 +63,7 @@ export class Engine implements IEngine {
     }
 
     this._isRunning = false
-    this.systemScheduler.stopAll()
+    this.systemScheduler.stop()
   }
 
   tick(context: SystemUpdateContext) {
@@ -71,9 +71,9 @@ export class Engine implements IEngine {
       return
     }
 
-    this.systemScheduler.tickAll(context)
+    this.systemScheduler.tick(context)
     this.eventConsumer.execute()
-    this.commandScheduler.flushAll()
+    this.commandScheduler.flush()
   }
 
   registerSystem(system: ISystem) {
