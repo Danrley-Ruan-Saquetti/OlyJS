@@ -9,12 +9,12 @@ export class ComponentRegistry {
 
   private nextId: ComponentId = 1n
 
-  register<TSchema extends ComponentSchema>(schema: TSchema): ComponentDescriptor<TSchema> {
+  register<TName extends string, TSchema extends ComponentSchema>(name: TName, schema: TSchema): ComponentDescriptor<TName, TSchema> {
     const id = this.nextId++
 
     this.schemas.set(id, schema)
 
-    return { id, schema }
+    return { id, name, schema }
   }
 
   createComponent(id: ComponentId): IComponentData {
@@ -55,6 +55,6 @@ export class ComponentRegistry {
 
 export const GlobalComponentRegistry = new ComponentRegistry()
 
-export function createComponent<TSchema extends ComponentSchema>(schema: TSchema) {
-  return GlobalComponentRegistry.register(schema)
+export function createComponent<TName extends string, TSchema extends ComponentSchema>(name: TName, schema: TSchema) {
+  return GlobalComponentRegistry.register(name, schema)
 }

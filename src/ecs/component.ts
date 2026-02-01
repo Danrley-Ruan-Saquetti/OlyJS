@@ -4,11 +4,18 @@ export type ComponentId = bigint
 
 export type ComponentSchema = Record<string, ComponentFieldType>
 
-export type ComponentSchemaValueType<Schema extends ComponentSchema> = any
+export type InferSchemaValues<T extends ComponentSchema> = {
+  [K in keyof T]: number
+}
 
-export interface ComponentDescriptor<TSchema extends ComponentSchema = ComponentSchema> {
+export interface ComponentDescriptor<TName extends string = string, TSchema extends ComponentSchema = ComponentSchema> {
   id: ComponentId
+  name: TName
   schema: TSchema
+}
+
+export type ComponentsToObject<T extends readonly ComponentDescriptor[] = []> = {
+  [C in T[number]as C['name']]: Partial<InferSchemaValues<C['schema']>>
 }
 
 export type ComponentDataSchema = Record<string, TypedArray>
