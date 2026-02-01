@@ -1,3 +1,4 @@
+import { EntityLocation } from '../runtime/world/archetype/entity-location'
 import { EntityBuilder } from '../runtime/world/entity-builder'
 import { Query } from '../runtime/world/query'
 import { ComponentDescriptor, ComponentId, ComponentsToObject } from './component'
@@ -10,4 +11,5 @@ export interface IWorld {
   flush(): void
   createPrefab(): EntityBuilder
   createQuery(components: ComponentId[]): Query
+  getEntity(entityId: number): EntityLocation
 }

@@ -103,6 +103,10 @@ export class GameWorld implements IWorld {
     return query
   }
 
+  getEntity(entityId: EntityId) {
+    return this.entityLocation.get(entityId)!
+  }
+
   private performCreateEntity(entityId: EntityId) {
     const emptyArchetype = this.getOrCreateArchetype(0n)
 
