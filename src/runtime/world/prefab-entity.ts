@@ -27,4 +27,16 @@ export class PrefabEntity<TComponents extends readonly ComponentDescriptor[] = [
 
     return this.world.instantiate(components)
   }
+
+  createQuery() {
+    const ids = []
+
+    let i = 0, length = this.components.length
+    while (i < length) {
+      ids.push(this.components[i].component.id)
+      i++
+    }
+
+    return this.world.createQuery(ids)
+  }
 }
