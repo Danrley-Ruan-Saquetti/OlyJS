@@ -1,5 +1,5 @@
-import { IArchetype, Signature } from '../../../ecs/archetype'
-import { ComponentId, IComponentData } from '../../../ecs/component'
+import { IArchetype, Signature, TypedArray } from '../../../ecs/archetype'
+import { ComponentDescriptor, ComponentId, ComponentSchema, IComponentData } from '../../../ecs/component'
 import { EntityId } from '../../../ecs/entity'
 import { ComponentRegistry } from '../component-registry'
 
@@ -80,7 +80,7 @@ export class Archetype implements IArchetype {
     }
   }
 
-  component(componentId: ComponentId) {
-    return this.components[this.componentIndex.get(componentId)!]
+  component<TName extends string, TShape extends ComponentSchema>(component: ComponentDescriptor<TName, TShape>) {
+    return this.components[this.componentIndex.get(component.id)!] as IComponentData<{ [x in keyof TShape]: TypedArray }>
   }
 }

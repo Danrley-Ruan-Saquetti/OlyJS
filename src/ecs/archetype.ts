@@ -1,4 +1,4 @@
-import { ComponentId, IComponentData } from './component'
+import { ComponentDescriptor, ComponentSchema, IComponentData } from './component'
 import { EntityId } from './entity'
 
 export enum ComponentFieldType {
@@ -26,7 +26,7 @@ export interface IArchetype {
   readonly size: number
 
   addEntity(entityId: EntityId, initialData?: Record<number, any>): void
-  addEntityFrom(entityId: EntityId, entityIndex: number, from: IArchetype): void
+  addEntityFrom(entityId: EntityId, entityIndex: number, from: IArchetype, initialData?: Record<number, any>): void
   removeEntity(index: number): void
-  component(componentId: ComponentId): IComponentData
+  component<TName extends string, TShape extends ComponentSchema>(component: ComponentDescriptor<TName, TShape>): IComponentData<{ [x in keyof TShape]: TypedArray }>
 }
