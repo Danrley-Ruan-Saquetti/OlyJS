@@ -3,38 +3,55 @@ import { ISystem } from '../../ecs/system'
 
 export class SystemScheduler {
 
-  protected readonly systems: ISystem[] = []
+  private readonly systems: ISystem[] = []
+  private readonly startSystems: ISystem[] = []
+  private readonly stopSystems: ISystem[] = []
+  private readonly updateSystems: ISystem[] = []
+
+  private isStarted = false
 
   constructor(
     protected readonly context: SystemInitializeContext
   ) { }
 
   register(system: ISystem) {
+    system.initialize?.(this.context)
+
     this.systems.push(system)
 
-    system.initialize(this.context)
+    if (system.start) this.startSystems.push(system)
+    if (system.stop) this.stopSystems.push(system)
+    if (system.update) this.updateSystems.push(system)
+
+    if (this.isStarted && system.start) {
+      system.start()
+    }
   }
 
   start() {
-    let i = 0, length = this.systems.length
+    this.isStarted = true
+
+    let i = 0, length = this.startSystems.length
     while (i < length) {
-      this.systems[i].start()
+      this.startSystems[i].start!()
       i++
     }
   }
 
   stop() {
-    let i = 0, length = this.systems.length
+    this.isStarted = false
+
+    let i = 0, length = this.stopSystems.length
     while (i < length) {
-      this.systems[i].stop()
+      this.stopSystems[i].stop!()
       i++
     }
   }
 
   tick(context: SystemUpdateContext) {
-    let i = 0, length = this.systems.length
+    let i = 0, length = this.updateSystems.length
     while (i < length) {
-      this.systems[i].update(context)
+      this.updateSystems[i].update!(context)
       i++
     }
   }
