@@ -9,6 +9,7 @@
     "clean": "rm -rf dist",
     "build": "npm run clean && tsup",
     "build:dev": "npm run clean && tsup --watch",
+    "build:types": "tsc --watch --noEmit",
     "test": "vitest"
   },
   "exports": {
