@@ -1,11 +1,11 @@
 import { Query } from '../runtime/world/query'
-import { ComponentDescriptor, ComponentId, ComponentSchema } from './component'
+import { ComponentDescriptor, ComponentId, ComponentsToObject } from './component'
 import { EntityId } from './entity'
 
 export interface IWorld {
-  instantiate(): EntityId
+  instantiate(components?: { component: ComponentDescriptor, data?: unknown }[]): EntityId
   destroy(entityId: EntityId): void
-  addComponent<TSchema extends ComponentSchema = ComponentSchema>(entityId: EntityId, component: ComponentDescriptor<TSchema>, initialData?: Partial<{ [k in keyof TSchema]: number }>): void
+  addComponent<TComponent extends ComponentDescriptor>(entityId: EntityId, component: TComponent, initialData?: ComponentsToObject<[TComponent]>): void
   flush(): void
   createQuery(components: ComponentId[]): Query
 }

@@ -1,11 +1,12 @@
 import { IArchetype, Signature } from '../../ecs/archetype'
-import { ComponentDescriptor, ComponentId, ComponentSchema } from '../../ecs/component'
+import { ComponentDescriptor, ComponentId, ComponentsToObject } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { IWorld } from '../../ecs/world'
 import { CommandDomain } from '../../runtime/commands/command-domain'
 import { Archetype } from './archetype/archetype'
 import { EntityLocation } from './archetype/entity-location'
 import { GlobalComponentRegistry } from './component-registry'
+import { EntityBuilder } from './entity-builder'
 import { EntityPool } from './entity-pool'
 import { Query } from './query'
 
@@ -59,9 +60,24 @@ export class GameWorld implements IWorld {
     this.commandDomain.flush()
   }
 
-  instantiate() {
+  instantiate(components?: { component: ComponentDescriptor, data?: unknown }[]) {
     const id = this.entityPool.create()
     this.commandDomain.send(GameWorldCommand.CREATE_ENTITY, id)
+
+    if (!components) {
+      return id
+    }
+
+    let i = 0, length = components.length
+    while (i < length) {
+      this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, {
+        entityId: id,
+        componentId: components[i].component.id,
+        data: components[i].data
+      })
+
+      i++
+    }
 
     return id
   }
@@ -70,8 +86,12 @@ export class GameWorld implements IWorld {
     this.commandDomain.send(GameWorldCommand.DESTROY_ENTITY, entityId)
   }
 
-  addComponent<TSchema extends ComponentSchema = ComponentSchema>(entityId: EntityId, component: ComponentDescriptor<TSchema>, initialData?: Partial<{ [k in keyof TSchema]: number }>) {
+  addComponent<TComponent extends ComponentDescriptor>(entityId: EntityId, component: TComponent, initialData?: ComponentsToObject<[TComponent]>) {
     this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entityId, componentId: component.id, data: initialData })
+  }
+
+  createPrefab() {
+    return new EntityBuilder(this)
   }
 
   createQuery(components: ComponentId[]) {
