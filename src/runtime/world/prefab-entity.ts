@@ -1,7 +1,6 @@
-import { ComponentDescriptor, ComponentId, IWorld } from '../../ecs'
-import { ComponentsToObject } from '../../ecs/component'
-
-export type ComponentMap = ReadonlyMap<ComponentId, unknown>
+import { ComponentDescriptor, ComponentsToObject } from '../../ecs/component'
+import { IWorld } from '../../ecs/world'
+import { mergeComponentData } from './archetype/components/merge-component-data'
 
 export class PrefabEntity<TComponents extends readonly ComponentDescriptor[] = []> {
 
@@ -17,10 +16,12 @@ export class PrefabEntity<TComponents extends readonly ComponentDescriptor[] = [
     while (i < length) {
       const component = this.components[i]
 
-      components.push({
-        component: component.component,
-        data: overrides?.[component.component.name as keyof ComponentsToObject<TComponents>] ?? component.data
-      })
+      const data = overrides
+        ? mergeComponentData(component.data, overrides[component.component.name as keyof ComponentsToObject<TComponents>])
+        : component.data
+
+      components.push({ component: component.component, data })
+
       i++
     }
 
