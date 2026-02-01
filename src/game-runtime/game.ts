@@ -1,4 +1,5 @@
 import { ISystem } from '../ecs/system'
+import { IWorld } from '../ecs/world'
 import { Engine } from '../engine/engine'
 import { IEngine } from '../engine/types'
 import { GameWorld } from '../runtime/world/game.world'
@@ -11,7 +12,7 @@ import { ITimerTracker } from './time/types'
 export class Game {
 
   protected readonly engine: IEngine = new Engine()
-  protected readonly world = new GameWorld()
+  protected readonly world: IWorld = new GameWorld()
   protected readonly clock: ITimerTracker = new TimeTracker()
 
   protected readonly systemContext = new MutableSystemUpdateContext()
