@@ -1,4 +1,4 @@
-import { SystemContext, SystemInitializeContext } from '../../contracts/context/system.context'
+import { SystemInitializeContext, SystemUpdateContext } from '../../contracts/context/system.context'
 import { ISystem } from '../../ecs/system'
 
 export class SystemScheduler {
@@ -31,7 +31,7 @@ export class SystemScheduler {
     }
   }
 
-  tickAll(context: SystemContext) {
+  tickAll(context: SystemUpdateContext) {
     let i = 0, length = this.systems.length
     while (i < length) {
       this.systems[i].update(context)

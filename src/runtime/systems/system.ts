@@ -1,4 +1,4 @@
-import { SystemContext, SystemInitializeContext } from '../../contracts/context/system.context'
+import { SystemInitializeContext, SystemUpdateContext } from '../../contracts/context/system.context'
 import { ISystem } from '../../ecs/system'
 
 export abstract class System implements ISystem {
@@ -9,5 +9,5 @@ export abstract class System implements ISystem {
 
   stop() { }
 
-  update(context: SystemContext) { }
+  update(context: SystemUpdateContext) { }
 }

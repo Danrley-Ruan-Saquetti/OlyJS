@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { SystemContext, SystemInitializeContext } from '../../../../src/contracts/context/system.context'
+import { SystemInitializeContext, SystemUpdateContext } from '../../../../src/contracts/context/system.context'
 import { SystemScheduler } from '../../../../src/engine/system/system-scheduler'
 
 describe('Engine: SystemScheduler', () => {
@@ -14,7 +14,7 @@ describe('Engine: SystemScheduler', () => {
   it('não lança quando não há sistemas e start/stop/tick são chamados', () => {
     expect(() => scheduler.startAll()).not.toThrow()
     expect(() => scheduler.stopAll()).not.toThrow()
-    expect(() => scheduler.tickAll({} as SystemContext)).not.toThrow()
+    expect(() => scheduler.tickAll({} as SystemUpdateContext)).not.toThrow()
   })
 
   it('register chama initialize com o SystemInitializeContext', () => {
@@ -56,8 +56,8 @@ describe('Engine: SystemScheduler', () => {
     expect(calls).toEqual([1, 2])
   })
 
-  it('tickAll chama update com o SystemContext fornecido', () => {
-    const ctx = { frame: 1 } as unknown as SystemContext
+  it('tickAll chama update com o SystemUpdateContext fornecido', () => {
+    const ctx = { frame: 1 } as unknown as SystemUpdateContext
 
     const s1 = { initialize: vi.fn(), start: vi.fn(), stop: vi.fn(), update: vi.fn((c: any) => expect(c).toBe(ctx)) }
     const s2 = { initialize: vi.fn(), start: vi.fn(), stop: vi.fn(), update: vi.fn((c: any) => expect(c).toBe(ctx)) }

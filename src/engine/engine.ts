@@ -1,5 +1,5 @@
 import { EngineInitializeContext } from '../contracts/context/engine.context'
-import { SystemContext, SystemInitializeContext } from '../contracts/context/system.context'
+import { SystemUpdateContext } from '../contracts/context/system.context'
 import { ICommandDomain } from '../contracts/engine/command'
 import { EventTuple } from '../contracts/engine/event'
 import { ISystem } from '../ecs/system'
@@ -23,7 +23,7 @@ export class Engine implements IEngine {
   private _isRunning = false
   private isInitialized = false
 
-  private _context = {
+  private systemInitializeContext = {
     world: null! as IWorld,
     events: {
       on: this.eventDispatcher.on.bind(this.eventDispatcher),
@@ -36,12 +36,8 @@ export class Engine implements IEngine {
     },
   }
 
-  get context(): SystemInitializeContext {
-    return this._context
-  }
-
   constructor() {
-    this.systemScheduler = new SystemScheduler(this._context)
+    this.systemScheduler = new SystemScheduler(this.systemInitializeContext)
   }
 
   initialize(context: EngineInitializeContext) {
@@ -49,7 +45,7 @@ export class Engine implements IEngine {
       throw new Error('It is not possible to initialize an engine that has already been initialized')
     }
 
-    this._context.world = context.world
+    this.systemInitializeContext.world = context.world
     this.isInitialized = true
   }
 
@@ -71,7 +67,7 @@ export class Engine implements IEngine {
     this.systemScheduler.stopAll()
   }
 
-  tick(context: SystemContext) {
+  tick(context: SystemUpdateContext) {
     if (!this._isRunning) {
       return
     }

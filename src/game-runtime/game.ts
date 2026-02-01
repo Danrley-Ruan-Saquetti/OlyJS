@@ -2,7 +2,7 @@ import { ISystem } from '../ecs/system'
 import { Engine } from '../engine/engine'
 import { IEngine } from '../engine/types'
 import { GameWorld } from '../runtime/world/game.world'
-import { MutableSystemContext } from './mutable-system-context'
+import { MutableSystemUpdateContext } from './mutable-system-update-context'
 import { InputSystem } from './runtime-systems/input.system'
 import { SchedulerSystem } from './runtime-systems/scheduler.system'
 import { TimeTracker } from './time/time-tracker'
@@ -19,21 +19,14 @@ export class Game {
 
   protected readonly clock: ITimerTracker = new TimeTracker()
 
-  protected readonly systemContext = new MutableSystemContext()
+  protected readonly systemContext = new MutableSystemUpdateContext()
 
   private timeout: number
   private lastTime = 0
 
   constructor() {
-    this.systemContext.world = this.world
     this.systemContext.time = this.clock.time
     this.systemContext.input = this.inputSystem.state
-    this.systemContext.events = {
-      send: this.engine.context.events.send.bind(this.engine),
-    }
-    this.systemContext.commands = {
-      register: this.engine.context.commands.register.bind(this.engine),
-    }
   }
 
   start() {

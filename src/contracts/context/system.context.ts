@@ -10,7 +10,7 @@ export interface SystemInitializeContext {
   readonly commands: ICommandDomainRegister
 }
 
-export interface SystemContext {
+export interface SystemUpdateContext {
   readonly time: DeltaTime
   readonly input: Input
 }
