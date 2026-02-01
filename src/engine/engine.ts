@@ -3,11 +3,11 @@ import { SystemUpdateContext } from '../contracts/context/system.context'
 import { ICommandDomain } from '../contracts/engine/command'
 import { EventTuple } from '../contracts/engine/event'
 import { ISystem } from '../ecs/system'
-import { IWorld } from '../ecs/world'
 import { DoubleBufferingConsumer } from '../runtime/buffer/double-buffering-consumer'
 import { CommandScheduler } from './command/command-scheduler'
 import { EventBusPriority } from './events/event-bus-priority'
 import { EventDispatcher } from './events/event-dispatcher'
+import { MutableSystemInitializeContext } from './mutable-system-initialize-context'
 import { SystemScheduler } from './system/system-scheduler'
 import { IEngine } from './types'
 
@@ -20,24 +20,23 @@ export class Engine implements IEngine {
   protected readonly eventDispatcher = new EventDispatcher(this.eventBus)
   protected readonly eventConsumer = new DoubleBufferingConsumer<EventTuple>(this.eventDispatcher)
 
+  private systemInitializeContext = new MutableSystemInitializeContext()
+
   private _isRunning = false
   private isInitialized = false
 
-  private systemInitializeContext = {
-    world: null! as IWorld,
-    events: {
+  constructor() {
+    this.systemScheduler = new SystemScheduler(this.systemInitializeContext)
+
+    this.systemInitializeContext.events = {
       on: this.eventDispatcher.on.bind(this.eventDispatcher),
       send: (event: string, data: unknown) => this.eventConsumer.send([event, data]),
       off: this.eventDispatcher.off.bind(this.eventDispatcher),
       clear: this.eventDispatcher.clear.bind(this.eventDispatcher),
-    },
-    commands: {
+    }
+    this.systemInitializeContext.commands = {
       register: this.commandScheduler.register.bind(this.commandScheduler),
-    },
-  }
-
-  constructor() {
-    this.systemScheduler = new SystemScheduler(this.systemInitializeContext)
+    }
   }
 
   initialize(context: EngineInitializeContext) {
