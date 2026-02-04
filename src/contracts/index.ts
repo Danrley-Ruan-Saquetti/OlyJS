@@ -9,5 +9,5 @@ export type {
 } from './engine/event'
 export { Keys } from './engine/input'
 export type { IInputSource, Input } from './engine/input'
+export type { IScheduler } from './engine/scheduler'
 export type { DeltaTime } from './engine/time'
-

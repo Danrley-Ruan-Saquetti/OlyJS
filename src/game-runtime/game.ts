@@ -27,7 +27,12 @@ export class Game {
     this.systemContext.time = this.clock.time
     this.systemContext.input = this.inputSystem.state
 
-    this.engine.initialize({ world: this.world })
+    this.engine.initialize({
+      world: this.world,
+      scheduler: {
+        schedule: this.schedulerSystem.schedule.bind(this.schedulerSystem)
+      }
+    })
   }
 
   start() {

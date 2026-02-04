@@ -45,6 +45,7 @@ export class Engine implements IEngine {
     }
 
     this.systemInitializeContext.world = context.world
+    this.systemInitializeContext.scheduler = context.scheduler
     this.isInitialized = true
   }
 
