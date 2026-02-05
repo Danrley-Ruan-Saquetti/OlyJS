@@ -4,6 +4,7 @@ export type ScheduleCallback = () => void
 
 export interface TimerTask {
   executeAt: number
+  interval?: number
   seq: number
   callback: ScheduleCallback
 }
@@ -20,9 +21,18 @@ export class TimerScheduler {
     private readonly windowSize = 1
   ) { }
 
-  schedule(callback: ScheduleCallback, delay: number, now: number) {
+  scheduleOnce(callback: ScheduleCallback, delay: number, now: number) {
     this.heap.insert({
       executeAt: now + delay,
+      seq: this.seq++,
+      callback
+    })
+  }
+
+  scheduleRepeat(callback: ScheduleCallback, interval: number, now: number) {
+    this.heap.insert({
+      executeAt: now + interval,
+      interval,
       seq: this.seq++,
       callback
     })
@@ -50,7 +60,18 @@ export class TimerScheduler {
 
       this.active.shift()
       task.callback()
+
+      if (task.interval) {
+        this.reschedule(task)
+      }
     }
+  }
+
+  private reschedule(task: TimerTask) {
+    task.executeAt += task.interval!
+    task.seq = this.seq++
+
+    this.heap.insert(task)
   }
 
   private insertActive(task: TimerTask) {

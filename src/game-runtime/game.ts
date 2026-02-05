@@ -30,7 +30,8 @@ export class Game {
     this.engine.initialize({
       world: this.world,
       scheduler: {
-        schedule: this.schedulerSystem.schedule.bind(this.schedulerSystem)
+        scheduleOnce: this.schedulerSystem.scheduleOnce.bind(this.schedulerSystem),
+        scheduleRepeat: this.schedulerSystem.scheduleRepeat.bind(this.schedulerSystem),
       }
     })
   }

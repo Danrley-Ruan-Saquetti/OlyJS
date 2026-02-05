@@ -13,7 +13,11 @@ export class SchedulerSystem extends System {
     this.scheduler.update(context.time.totalElapsedTimeMilliseconds)
   }
 
-  schedule(callback: ScheduleCallback, delay: number) {
-    this.scheduler.schedule(callback, delay, this.elapsedTime)
+  scheduleOnce(callback: ScheduleCallback, delay: number) {
+    this.scheduler.scheduleOnce(callback, delay, this.elapsedTime)
+  }
+
+  scheduleRepeat(callback: ScheduleCallback, interval: number) {
+    this.scheduler.scheduleRepeat(callback, interval, this.elapsedTime)
   }
 }
