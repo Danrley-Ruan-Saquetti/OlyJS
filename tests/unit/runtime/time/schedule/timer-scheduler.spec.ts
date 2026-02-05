@@ -24,9 +24,9 @@ describe('Runtime: TimerScheduler', () => {
 
     const scheduler = new TimerScheduler(1)
 
-    scheduler.schedule(callable1, 0, now)
-    scheduler.schedule(callable2, 1, now)
-    scheduler.schedule(callable3, 2, now)
+    scheduler.scheduleOnce(callable1, 0, now)
+    scheduler.scheduleOnce(callable2, 1, now)
+    scheduler.scheduleOnce(callable3, 2, now)
 
     scheduler.update(now)
 
@@ -50,7 +50,7 @@ describe('Runtime: TimerScheduler', () => {
 
     const scheduler = new TimerScheduler(0)
 
-    scheduler.schedule(callable, 1, now)
+    scheduler.scheduleOnce(callable, 1, now)
 
     scheduler.update(now)
 
@@ -68,7 +68,7 @@ describe('Runtime: TimerScheduler', () => {
 
     const scheduler = new TimerScheduler(5)
 
-    scheduler.schedule(callable, 1, now)
+    scheduler.scheduleOnce(callable, 1, now)
 
     scheduler.update(now)
 
@@ -89,9 +89,9 @@ describe('Runtime: TimerScheduler', () => {
     const callableB = vi.fn(() => order.push(2))
     const callableC = vi.fn(() => order.push(3))
 
-    scheduler.schedule(callableA, 5, now)
-    scheduler.schedule(callableB, 5, now)
-    scheduler.schedule(callableC, 5, now)
+    scheduler.scheduleOnce(callableA, 5, now)
+    scheduler.scheduleOnce(callableB, 5, now)
+    scheduler.scheduleOnce(callableC, 5, now)
 
     scheduler.update(now)
 
@@ -113,8 +113,8 @@ describe('Runtime: TimerScheduler', () => {
     const callableNeg = vi.fn(() => calls.push(-1))
     const callableZero = vi.fn(() => calls.push(0))
 
-    scheduler.schedule(callableNeg, -10, now)
-    scheduler.schedule(callableZero, 0, now)
+    scheduler.scheduleOnce(callableNeg, -10, now)
+    scheduler.scheduleOnce(callableZero, 0, now)
 
     scheduler.update(now)
 
@@ -131,8 +131,8 @@ describe('Runtime: TimerScheduler', () => {
     const callable1 = vi.fn(() => calls.push(1))
     const callable2 = vi.fn(() => calls.push(2))
 
-    scheduler.schedule(callable1, 10, now)
-    scheduler.schedule(callable2, 1, now)
+    scheduler.scheduleOnce(callable1, 10, now)
+    scheduler.scheduleOnce(callable2, 1, now)
 
     scheduler.update(now)
 
@@ -155,20 +155,20 @@ describe('Runtime: TimerScheduler', () => {
     const callable3 = vi.fn(() => calls.push(3))
     const callable4 = vi.fn(() => calls.push(4))
 
-    scheduler.schedule(callable2, 15, now)
-    scheduler.schedule(callable4, 2, now)
+    scheduler.scheduleOnce(callable2, 15, now)
+    scheduler.scheduleOnce(callable4, 2, now)
 
     scheduler.update(now)
 
     expect(calls).toEqual([])
 
-    scheduler.schedule(callable1, 5, now)
+    scheduler.scheduleOnce(callable1, 5, now)
 
     scheduler.update(now + 2)
 
     expect(calls).toEqual([4])
 
-    scheduler.schedule(callable3, 10, now)
+    scheduler.scheduleOnce(callable3, 10, now)
 
     scheduler.update(now + 10)
 

@@ -19,7 +19,7 @@ describe('Engine', () => {
 
       engine.initialize({ world } as any)
 
-      expect(engine.context.world).toBe(world)
+      expect(engine.systemContext.world).toBe(world)
     })
 
     it('deve lançar erro quando chamado duas vezes', () => {
@@ -38,8 +38,8 @@ describe('Engine', () => {
       engine.initialize({ world: {} } as any)
     })
 
-    it('deve chamar startAll e marcar isRunning como true', () => {
-      const startSpy = vi.spyOn(SystemScheduler.prototype, 'startAll')
+    it('deve chamar start e marcar isRunning como true', () => {
+      const startSpy = vi.spyOn(SystemScheduler.prototype, 'start')
 
       engine.start()
 
@@ -63,8 +63,8 @@ describe('Engine', () => {
       }).toThrow('Engine already stopped')
     })
 
-    it('deve chamar stopAll e marcar isRunning como false', () => {
-      const stopSpy = vi.spyOn(SystemScheduler.prototype, 'stopAll')
+    it('deve chamar stop e marcar isRunning como false', () => {
+      const stopSpy = vi.spyOn(SystemScheduler.prototype, 'stop')
 
       engine.initialize({ world: {} } as any)
       engine.start()
@@ -77,9 +77,9 @@ describe('Engine', () => {
 
   describe('tick', () => {
     it('não faz nada quando não está rodando', () => {
-      const tickSpy = vi.spyOn(SystemScheduler.prototype, 'tickAll')
+      const tickSpy = vi.spyOn(SystemScheduler.prototype, 'tick')
       const execSpy = vi.spyOn(DoubleBufferingConsumer.prototype, 'execute')
-      const flushSpy = vi.spyOn(CommandScheduler.prototype, 'flushAll')
+      const flushSpy = vi.spyOn(CommandScheduler.prototype, 'flush')
 
       engine.tick({} as any)
 
@@ -88,12 +88,12 @@ describe('Engine', () => {
       expect(flushSpy).toHaveBeenCalledTimes(0)
     })
 
-    it('chama tickAll, execute e flushAll na ordem correta quando rodando', () => {
+    it('chama tick, execute e flush na ordem correta quando rodando', () => {
       const order: string[] = []
 
-      vi.spyOn(SystemScheduler.prototype, 'tickAll').mockImplementation(() => order.push('tick'))
+      vi.spyOn(SystemScheduler.prototype, 'tick').mockImplementation(() => order.push('tick'))
       vi.spyOn(DoubleBufferingConsumer.prototype, 'execute').mockImplementation(() => order.push('execute'))
-      vi.spyOn(CommandScheduler.prototype, 'flushAll').mockImplementation(() => order.push('flush'))
+      vi.spyOn(CommandScheduler.prototype, 'flush').mockImplementation(() => order.push('flush'))
 
       engine.initialize({ world: {} } as any)
       engine.start()
@@ -110,7 +110,7 @@ describe('Engine', () => {
       engine.registerSystem(sys)
 
       expect(sys.initialize).toHaveBeenCalledTimes(1)
-      expect(sys.initialize).toHaveBeenCalledWith(engine.context)
+      expect(sys.initialize).toHaveBeenCalledWith(engine.systemContext)
     })
   })
 
@@ -130,7 +130,7 @@ describe('Engine', () => {
     it('send usa DoubleBufferingConsumer.send', () => {
       const sendSpy = vi.spyOn(DoubleBufferingConsumer.prototype, 'send')
 
-      engine.context.events.send('event.test', { ok: true })
+      engine.systemContext.events.send('event.test', { ok: true })
 
       expect(sendSpy).toHaveBeenCalledTimes(1)
       expect(sendSpy).toHaveBeenCalledWith(['event.test', { ok: true }])

@@ -9,8 +9,8 @@ describe('Engine: CommandScheduler', () => {
     scheduler = new CommandScheduler()
   })
 
-  it('flushAll não lança erro quando não há domínios registrados', () => {
-    expect(() => scheduler.flushAll()).not.toThrow()
+  it('flush não lança erro quando não há domínios registrados', () => {
+    expect(() => scheduler.flush()).not.toThrow()
   })
 
   it('chama flush em um único domínio', () => {
@@ -18,7 +18,7 @@ describe('Engine: CommandScheduler', () => {
 
     scheduler.register(domain)
 
-    scheduler.flushAll()
+    scheduler.flush()
 
     expect(domain.flush).toHaveBeenCalledTimes(1)
   })
@@ -34,7 +34,7 @@ describe('Engine: CommandScheduler', () => {
     scheduler.register(d2)
     scheduler.register(d3)
 
-    scheduler.flushAll()
+    scheduler.flush()
 
     expect(calls).toEqual([1, 2, 3])
     expect(d1.flush).toHaveBeenCalledTimes(1)
@@ -64,14 +64,14 @@ describe('Engine: CommandScheduler', () => {
     scheduler.register(addingDomain)
     scheduler.register(lastDomain)
 
-    scheduler.flushAll()
+    scheduler.flush()
 
     expect(calls).toEqual(['adding', 'last'])
     expect(addingDomain.flush).toHaveBeenCalledTimes(1)
     expect(lastDomain.flush).toHaveBeenCalledTimes(1)
     expect(newDomain.flush).toHaveBeenCalledTimes(0)
 
-    scheduler.flushAll()
+    scheduler.flush()
 
     expect(newDomain.flush).toHaveBeenCalledTimes(1)
     expect(calls).toEqual(['adding', 'last', 'adding', 'last', 'new'])
@@ -86,7 +86,7 @@ describe('Engine: CommandScheduler', () => {
     scheduler.register(bad)
     scheduler.register(after)
 
-    expect(() => scheduler.flushAll()).toThrow('boom')
+    expect(() => scheduler.flush()).toThrow('boom')
 
     expect(good.flush).toHaveBeenCalledTimes(1)
     expect(bad.flush).toHaveBeenCalledTimes(1)
@@ -99,7 +99,7 @@ describe('Engine: CommandScheduler', () => {
     scheduler.register(domain)
     scheduler.register(domain)
 
-    scheduler.flushAll()
+    scheduler.flush()
 
     expect(domain.flush).toHaveBeenCalledTimes(2)
   })

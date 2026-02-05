@@ -12,9 +12,9 @@ describe('Engine: SystemScheduler', () => {
   })
 
   it('não lança quando não há sistemas e start/stop/tick são chamados', () => {
-    expect(() => scheduler.startAll()).not.toThrow()
-    expect(() => scheduler.stopAll()).not.toThrow()
-    expect(() => scheduler.tickAll({} as SystemUpdateContext)).not.toThrow()
+    expect(() => scheduler.start()).not.toThrow()
+    expect(() => scheduler.stop()).not.toThrow()
+    expect(() => scheduler.tick({} as SystemUpdateContext)).not.toThrow()
   })
 
   it('register chama initialize com o SystemInitializeContext', () => {
@@ -26,7 +26,7 @@ describe('Engine: SystemScheduler', () => {
     expect(system.initialize).toHaveBeenCalledWith(ctx)
   })
 
-  it('startAll chama start em todos na ordem de registro', () => {
+  it('start chama start em todos na ordem de registro', () => {
     const calls: number[] = []
 
     const s1 = { initialize: vi.fn(), start: vi.fn(() => calls.push(1)), stop: vi.fn(), update: vi.fn() }
@@ -37,12 +37,12 @@ describe('Engine: SystemScheduler', () => {
     scheduler.register(s2 as any)
     scheduler.register(s3 as any)
 
-    scheduler.startAll()
+    scheduler.start()
 
     expect(calls).toEqual([1, 2, 3])
   })
 
-  it('stopAll chama stop em todos na ordem de registro', () => {
+  it('stop chama stop em todos na ordem de registro', () => {
     const calls: number[] = []
 
     const s1 = { initialize: vi.fn(), start: vi.fn(), stop: vi.fn(() => calls.push(1)), update: vi.fn() }
@@ -51,12 +51,12 @@ describe('Engine: SystemScheduler', () => {
     scheduler.register(s1 as any)
     scheduler.register(s2 as any)
 
-    scheduler.stopAll()
+    scheduler.stop()
 
     expect(calls).toEqual([1, 2])
   })
 
-  it('tickAll chama update com o SystemUpdateContext fornecido', () => {
+  it('tick chama update com o SystemUpdateContext fornecido', () => {
     const ctx = { frame: 1 } as unknown as SystemUpdateContext
 
     const s1 = { initialize: vi.fn(), start: vi.fn(), stop: vi.fn(), update: vi.fn((c: any) => expect(c).toBe(ctx)) }
@@ -65,7 +65,7 @@ describe('Engine: SystemScheduler', () => {
     scheduler.register(s1 as any)
     scheduler.register(s2 as any)
 
-    scheduler.tickAll(ctx)
+    scheduler.tick(ctx)
 
     expect(s1.update).toHaveBeenCalledTimes(1)
     expect(s2.update).toHaveBeenCalledTimes(1)
@@ -80,17 +80,22 @@ describe('Engine: SystemScheduler', () => {
     scheduler.register(bad as any)
     scheduler.register(after as any)
 
-    expect(() => scheduler.startAll()).toThrow('boom')
+    expect(() => scheduler.start()).toThrow('boom')
 
     expect(good.start).toHaveBeenCalledTimes(1)
     expect(bad.start).toHaveBeenCalledTimes(1)
     expect(after.start).toHaveBeenCalledTimes(0)
   })
 
-  it('sistemas adicionados durante startAll não são iniciados na mesma chamada (snapshot behavior)', () => {
+  it('sistemas adicionados durante start não são iniciados na mesma chamada (snapshot behavior)', () => {
     const calls: string[] = []
 
-    const newSystem = { initialize: vi.fn(), start: vi.fn(() => calls.push('new')), stop: vi.fn(), update: vi.fn() }
+    const newSystem = {
+      initialize: vi.fn(),
+      start: vi.fn(() => calls.push('new')),
+      stop: vi.fn(),
+      update: vi.fn()
+    }
 
     const addingSystem = {
       initialize: vi.fn(),
@@ -102,17 +107,22 @@ describe('Engine: SystemScheduler', () => {
       update: vi.fn()
     }
 
-    const lastSystem = { initialize: vi.fn(), start: vi.fn(() => calls.push('last')), stop: vi.fn(), update: vi.fn() }
+    const lastSystem = {
+      initialize: vi.fn(),
+      start: vi.fn(() => calls.push('last')),
+      stop: vi.fn(),
+      update: vi.fn()
+    }
 
     scheduler.register(addingSystem as any)
     scheduler.register(lastSystem as any)
 
-    scheduler.startAll()
+    scheduler.start()
 
     expect(calls).toEqual(['adding', 'last'])
     expect(newSystem.start).toHaveBeenCalledTimes(0)
 
-    scheduler.startAll()
+    scheduler.start()
 
     expect(newSystem.start).toHaveBeenCalledTimes(1)
     expect(calls).toEqual(['adding', 'last', 'adding', 'last', 'new'])
@@ -126,7 +136,7 @@ describe('Engine: SystemScheduler', () => {
 
     expect(system.initialize).toHaveBeenCalledTimes(2)
 
-    scheduler.startAll()
+    scheduler.start()
 
     expect(system.start).toHaveBeenCalledTimes(2)
   })
