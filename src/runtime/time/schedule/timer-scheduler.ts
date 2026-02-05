@@ -7,6 +7,7 @@ export interface TimerTask {
   interval?: number
   seq: number
   callback: ScheduleCallback
+  cancelled?: boolean
 }
 
 export class TimerScheduler {
@@ -22,20 +23,32 @@ export class TimerScheduler {
   ) { }
 
   scheduleOnce(callback: ScheduleCallback, delay: number, now: number) {
-    this.heap.insert({
+    const task: TimerTask = {
       executeAt: now + delay,
       seq: this.seq++,
       callback
-    })
+    }
+
+    this.heap.insert(task)
+
+    return task
   }
 
   scheduleRepeat(callback: ScheduleCallback, interval: number, now: number) {
-    this.heap.insert({
+    const task: TimerTask = {
       executeAt: now + interval,
       interval,
       seq: this.seq++,
       callback
-    })
+    }
+
+    this.heap.insert(task)
+
+    return task
+  }
+
+  cancel(task: TimerTask) {
+    task.cancelled = true
   }
 
   update(now: number) {
@@ -59,6 +72,11 @@ export class TimerScheduler {
       }
 
       this.active.shift()
+
+      if (task.cancelled) {
+        continue
+      }
+
       task.callback()
 
       if (task.interval) {

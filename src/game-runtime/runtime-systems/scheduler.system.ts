@@ -1,6 +1,6 @@
 import { SystemUpdateContext } from '../../contracts/context/system.context'
 import { System } from '../../runtime/systems/system'
-import { ScheduleCallback, TimerScheduler } from '../../runtime/time/schedule/timer-scheduler'
+import { ScheduleCallback, TimerScheduler, TimerTask } from '../../runtime/time/schedule/timer-scheduler'
 
 export class SchedulerSystem extends System {
 
@@ -14,10 +14,14 @@ export class SchedulerSystem extends System {
   }
 
   scheduleOnce(callback: ScheduleCallback, delay: number) {
-    this.scheduler.scheduleOnce(callback, delay, this.elapsedTime)
+    return this.scheduler.scheduleOnce(callback, delay, this.elapsedTime)
   }
 
   scheduleRepeat(callback: ScheduleCallback, interval: number) {
-    this.scheduler.scheduleRepeat(callback, interval, this.elapsedTime)
+    return this.scheduler.scheduleRepeat(callback, interval, this.elapsedTime)
+  }
+
+  cancel(task: TimerTask) {
+    return this.scheduler.cancel(task)
   }
 }

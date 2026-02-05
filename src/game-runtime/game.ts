@@ -32,6 +32,7 @@ export class Game {
       scheduler: {
         scheduleOnce: this.schedulerSystem.scheduleOnce.bind(this.schedulerSystem),
         scheduleRepeat: this.schedulerSystem.scheduleRepeat.bind(this.schedulerSystem),
+        cancel: this.schedulerSystem.cancel.bind(this.schedulerSystem),
       }
     })
   }
