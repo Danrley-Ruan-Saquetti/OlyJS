@@ -87,7 +87,7 @@ describe('Engine: SystemScheduler', () => {
     expect(after.start).toHaveBeenCalledTimes(0)
   })
 
-  it('sistemas adicionados durante start não são iniciados na mesma chamada (snapshot behavior)', () => {
+  it('sistemas adicionados durante start são iniciados imediatamente na mesma chamada', () => {
     const calls: string[] = []
 
     const newSystem = {
@@ -98,11 +98,8 @@ describe('Engine: SystemScheduler', () => {
     }
 
     const addingSystem = {
-      initialize: vi.fn(),
-      start: vi.fn(() => {
-        calls.push('adding')
-        scheduler.register(newSystem as any)
-      }),
+      initialize: vi.fn(() => scheduler.register(newSystem as any)),
+      start: vi.fn(() => calls.push('adding')),
       stop: vi.fn(),
       update: vi.fn()
     }
@@ -114,18 +111,19 @@ describe('Engine: SystemScheduler', () => {
       update: vi.fn()
     }
 
-    scheduler.register(addingSystem as any)
     scheduler.register(lastSystem as any)
 
     scheduler.start()
 
-    expect(calls).toEqual(['adding', 'last'])
-    expect(newSystem.start).toHaveBeenCalledTimes(0)
+    scheduler.register(addingSystem as any)
+
+    expect(calls).toEqual(['last', 'new', 'adding'])
+    expect(newSystem.start).toHaveBeenCalledTimes(1)
 
     scheduler.start()
 
-    expect(newSystem.start).toHaveBeenCalledTimes(1)
-    expect(calls).toEqual(['adding', 'last', 'adding', 'last', 'new'])
+    expect(newSystem.start).toHaveBeenCalledTimes(2)
+    expect(calls).toEqual(['last', 'new', 'adding', 'last', 'new', 'adding'])
   })
 
   it('permitir registrar o mesmo sistema múltiplas vezes e inicializar cada ocorrência', () => {
