@@ -1,5 +1,5 @@
 import { EngineInitializeContext } from '../contracts/context/engine.context'
-import { SystemUpdateContext } from '../contracts/context/system.context'
+import { SystemInitializeContext, SystemUpdateContext } from '../contracts/context/system.context'
 import { ICommandDomain } from '../contracts/engine/command'
 import { EventTuple } from '../contracts/engine/event'
 import { ISystem } from '../ecs/system'
@@ -24,6 +24,10 @@ export class Engine implements IEngine {
 
   private _isRunning = false
   private isInitialized = false
+
+  get systemContext(): SystemInitializeContext {
+    return this.systemInitializeContext
+  }
 
   constructor() {
     this.systemScheduler = new SystemScheduler(this.systemInitializeContext)
