@@ -5,19 +5,15 @@ import { ComponentRegistry } from '../component-registry'
 
 export class Archetype implements IArchetype {
 
-  private readonly entities: EntityId[] = []
+  private readonly _entities: EntityId[] = []
 
   private readonly components: IComponentData[] = []
   private readonly componentIds: ComponentId[] = []
   private readonly componentIndex = new Map<ComponentId, number>()
 
-  get lastEntity() {
-    return this.entities[this.entities.length - 1]
-  }
-
-  get size() {
-    return this.entities.length
-  }
+  get entities() { return this._entities }
+  get lastEntity() { return this._entities[this._entities.length - 1] }
+  get size() { return this._entities.length }
 
   constructor(
     readonly signature: Signature,
@@ -36,7 +32,7 @@ export class Archetype implements IArchetype {
   }
 
   addEntity(entityId: EntityId) {
-    this.entities.push(entityId)
+    this._entities.push(entityId)
 
     let i = 0, length = this.components.length
     while (i < length) {
@@ -46,7 +42,7 @@ export class Archetype implements IArchetype {
   }
 
   addEntityFrom(entityId: EntityId, entityIndex: number, from: Archetype, initialData?: Record<number, any>) {
-    this.entities.push(entityId)
+    this._entities.push(entityId)
 
     let i = 0, length = this.components.length
     while (i < length) {
@@ -65,11 +61,11 @@ export class Archetype implements IArchetype {
   }
 
   removeEntity(index: number) {
-    const lastIndex = this.entities.length - 1
-    const lastEntity = this.entities[lastIndex]
+    const lastIndex = this._entities.length - 1
+    const lastEntity = this._entities[lastIndex]
 
-    this.entities[index] = lastEntity
-    this.entities.pop()
+    this._entities[index] = lastEntity
+    this._entities.pop()
 
     let i = 0, length = this.components.length
     while (i < length) {

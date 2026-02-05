@@ -24,6 +24,7 @@ export interface IArchetype {
   readonly signature: Signature
   readonly lastEntity: number
   readonly size: number
+  readonly entities: EntityId[]
 
   addEntity(entityId: EntityId, initialData?: Record<number, any>): void
   addEntityFrom(entityId: EntityId, entityIndex: number, from: IArchetype, initialData?: Record<number, any>): void
