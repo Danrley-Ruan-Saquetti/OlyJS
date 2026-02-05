@@ -6,23 +6,33 @@ type SchemaToData<Shape extends ComponentSchema = ComponentSchema> = {
 }
 
 const FieldArrayConstructor: Record<ComponentFieldType, new (initialCapacity?: number) => TypedArray> = {
-  [ComponentFieldType.F32]: Float32Array,
-  [ComponentFieldType.F64]: Float64Array,
-  [ComponentFieldType.I32]: Int32Array,
-  [ComponentFieldType.U32]: Uint32Array,
-  [ComponentFieldType.I16]: Int16Array,
-  [ComponentFieldType.U8]: Uint8Array,
-  [ComponentFieldType.BOOL]: Uint8Array
+  [ComponentFieldType.Int8]: Int8Array,
+  [ComponentFieldType.Uint8]: Uint8Array,
+  [ComponentFieldType.Uint8Clamped]: Uint8ClampedArray,
+  [ComponentFieldType.Int16]: Int16Array,
+  [ComponentFieldType.Uint16]: Uint16Array,
+  [ComponentFieldType.Int32]: Int32Array,
+  [ComponentFieldType.Uint32]: Uint32Array,
+  [ComponentFieldType.Float16]: Float16Array,
+  [ComponentFieldType.Float32]: Float32Array,
+  [ComponentFieldType.Float64]: Float64Array,
+  [ComponentFieldType.BigInt64]: BigInt64Array,
+  [ComponentFieldType.BigUint64]: BigUint64Array,
 } as const
 
 type FieldTypeToArray = {
-  [ComponentFieldType.F32]: Float32Array
-  [ComponentFieldType.F64]: Float64Array
-  [ComponentFieldType.I32]: Int32Array
-  [ComponentFieldType.U32]: Uint32Array
-  [ComponentFieldType.I16]: Int16Array
-  [ComponentFieldType.U8]: Uint8Array
-  [ComponentFieldType.BOOL]: Uint8Array
+  [ComponentFieldType.Int8]: Int8Array,
+  [ComponentFieldType.Uint8]: Uint8Array,
+  [ComponentFieldType.Uint8Clamped]: Uint8ClampedArray,
+  [ComponentFieldType.Int16]: Int16Array,
+  [ComponentFieldType.Uint16]: Uint16Array,
+  [ComponentFieldType.Int32]: Int32Array,
+  [ComponentFieldType.Uint32]: Uint32Array,
+  [ComponentFieldType.Float16]: Float16Array,
+  [ComponentFieldType.Float32]: Float32Array,
+  [ComponentFieldType.Float64]: Float64Array,
+  [ComponentFieldType.BigInt64]: BigInt64Array,
+  [ComponentFieldType.BigUint64]: BigUint64Array,
 }
 
 export class ComponentData<S extends ComponentSchema = ComponentSchema, TShape extends ComponentDataSchema = SchemaToData<S>> implements IComponentData<TShape> {
@@ -108,7 +118,7 @@ export class ComponentData<S extends ComponentSchema = ComponentSchema, TShape e
       const ArrayConstructor = FieldArrayConstructor[type]
 
       const newArray = new ArrayConstructor(newCapacity)
-      newArray.set(oldArray)
+      newArray.set(oldArray as any)
 
       this.fields[field] = newArray as any
     }

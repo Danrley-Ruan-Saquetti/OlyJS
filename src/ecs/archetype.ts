@@ -2,21 +2,32 @@ import { ComponentDescriptor, ComponentSchema, IComponentData } from './componen
 import { EntityId } from './entity'
 
 export enum ComponentFieldType {
-  F32,
-  F64,
-  I32,
-  U32,
-  I16,
-  U8,
-  BOOL
+  Int8,
+  Uint8,
+  Uint8Clamped,
+  Int16,
+  Uint16,
+  Int32,
+  Uint32,
+  Float16,
+  Float32,
+  Float64,
+  BigInt64,
+  BigUint64,
 }
 export type TypedArray =
-  | Float32Array
-  | Float64Array
+  | Int8Array
+  | Uint8Array
+  | Uint8ClampedArray
+  | Int16Array
+  | Uint16Array
   | Int32Array
   | Uint32Array
-  | Int16Array
-  | Uint8Array
+  | Float16Array
+  | Float32Array
+  | Float64Array
+  | BigInt64Array
+  | BigUint64Array
 
 export type Signature = bigint
 

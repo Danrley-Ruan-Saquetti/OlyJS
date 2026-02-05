@@ -9,8 +9,8 @@ describe('Runtime: ComponentData', () => {
 
     beforeEach(() => {
       const schema = {
-        position: ComponentFieldType.F32,
-        velocity: ComponentFieldType.F32,
+        position: ComponentFieldType.Float32,
+        velocity: ComponentFieldType.Float32,
       }
 
       componentData = new ComponentData(schema)
@@ -70,7 +70,7 @@ describe('Runtime: ComponentData', () => {
 
   describe('Inicialização com Capacidade Customizada', () => {
     it('deve criar com capacidade inicial customizada', () => {
-      const schema = { x: ComponentFieldType.I32 }
+      const schema = { x: ComponentFieldType.Int32 }
       const componentData = new ComponentData(schema, 128)
 
       for (let i = 0; i < 128; i++) {
@@ -82,7 +82,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve usar capacidade padrão de 64 se não especificada', () => {
-      const schema = { x: ComponentFieldType.F64 }
+      const schema = { x: ComponentFieldType.Float64 }
       const componentData = new ComponentData(schema)
 
       for (let i = 0; i < 64; i++) {
@@ -95,8 +95,8 @@ describe('Runtime: ComponentData', () => {
   })
 
   describe('Tipos de Campo', () => {
-    it('deve suportar F32 (Float32Array)', () => {
-      const schema = { value: ComponentFieldType.F32 }
+    it('deve suportar Float32 (Float32Array)', () => {
+      const schema = { value: ComponentFieldType.Float32 }
       const componentData = new ComponentData(schema)
 
       componentData.push()
@@ -106,8 +106,8 @@ describe('Runtime: ComponentData', () => {
       expect(field).toBeInstanceOf(Float32Array)
     })
 
-    it('deve suportar F64 (Float64Array)', () => {
-      const schema = { value: ComponentFieldType.F64 }
+    it('deve suportar Float64 (Float64Array)', () => {
+      const schema = { value: ComponentFieldType.Float64 }
       const componentData = new ComponentData(schema)
 
       componentData.push()
@@ -117,8 +117,8 @@ describe('Runtime: ComponentData', () => {
       expect(field).toBeInstanceOf(Float64Array)
     })
 
-    it('deve suportar I32 (Int32Array)', () => {
-      const schema = { value: ComponentFieldType.I32 }
+    it('deve suportar Int32 (Int32Array)', () => {
+      const schema = { value: ComponentFieldType.Int32 }
       const componentData = new ComponentData(schema)
 
       componentData.push()
@@ -128,8 +128,8 @@ describe('Runtime: ComponentData', () => {
       expect(field).toBeInstanceOf(Int32Array)
     })
 
-    it('deve suportar U32 (Uint32Array)', () => {
-      const schema = { value: ComponentFieldType.U32 }
+    it('deve suportar Uint32 (Uint32Array)', () => {
+      const schema = { value: ComponentFieldType.Uint32 }
       const componentData = new ComponentData(schema)
 
       componentData.push()
@@ -139,8 +139,8 @@ describe('Runtime: ComponentData', () => {
       expect(field).toBeInstanceOf(Uint32Array)
     })
 
-    it('deve suportar I16 (Int16Array)', () => {
-      const schema = { value: ComponentFieldType.I16 }
+    it('deve suportar Int16 (Int16Array)', () => {
+      const schema = { value: ComponentFieldType.Int16 }
       const componentData = new ComponentData(schema)
 
       componentData.push()
@@ -150,8 +150,8 @@ describe('Runtime: ComponentData', () => {
       expect(field).toBeInstanceOf(Int16Array)
     })
 
-    it('deve suportar U8 (Uint8Array)', () => {
-      const schema = { value: ComponentFieldType.U8 }
+    it('deve suportar Uint8 (Uint8Array)', () => {
+      const schema = { value: ComponentFieldType.Uint8 }
       const componentData = new ComponentData(schema)
 
       componentData.push()
@@ -161,39 +161,98 @@ describe('Runtime: ComponentData', () => {
       expect(field).toBeInstanceOf(Uint8Array)
     })
 
-    it('deve suportar BOOL (Uint8Array)', () => {
-      const schema = { active: ComponentFieldType.BOOL }
+    it('deve suportar Int8 (Int8Array)', () => {
+      const schema = { value: ComponentFieldType.Int8 }
       const componentData = new ComponentData(schema)
 
       componentData.push()
 
-      const field = componentData.field('active')
+      const field = componentData.field('value')
 
-      expect(field).toBeInstanceOf(Uint8Array)
+      expect(field).toBeInstanceOf(Int8Array)
+    })
+
+    it('deve suportar Uint8Clamped (Uint8ClampedArray)', () => {
+      const schema = { value: ComponentFieldType.Uint8Clamped }
+      const componentData = new ComponentData(schema)
+
+      componentData.push()
+
+      const field = componentData.field('value')
+
+      expect(field).toBeInstanceOf(Uint8ClampedArray)
+    })
+
+    it('deve suportar Uint16 (Uint16Array)', () => {
+      const schema = { value: ComponentFieldType.Uint16 }
+      const componentData = new ComponentData(schema)
+
+      componentData.push()
+
+      const field = componentData.field('value')
+
+      expect(field).toBeInstanceOf(Uint16Array)
+    })
+
+    it('deve suportar Float16 (Float16Array)', () => {
+      const schema = { value: ComponentFieldType.Float16 }
+      const componentData = new ComponentData(schema)
+
+      componentData.push()
+
+      const field = componentData.field('value')
+
+      expect(field).toBeInstanceOf(Float16Array)
+    })
+
+    it('deve suportar BigInt64 (BigInt64Array)', () => {
+      const schema = { value: ComponentFieldType.BigInt64 }
+      const componentData = new ComponentData(schema)
+
+      const field = componentData.field('value')
+
+      expect(field).toBeInstanceOf(BigInt64Array)
+      expect(field.length).toBeGreaterThan(0)
+    })
+
+    it('deve suportar BigUint64 (BigUint64Array)', () => {
+      const schema = { value: ComponentFieldType.BigUint64 }
+      const componentData = new ComponentData(schema)
+
+      const field = componentData.field('value')
+
+      expect(field).toBeInstanceOf(BigUint64Array)
+      expect(field.length).toBeGreaterThan(0)
     })
 
     it('deve suportar múltiplos tipos de campo simultaneamente', () => {
       const schema = {
-        float32Val: ComponentFieldType.F32,
-        float64Val: ComponentFieldType.F64,
-        int32Val: ComponentFieldType.I32,
-        uint32Val: ComponentFieldType.U32,
-        int16Val: ComponentFieldType.I16,
-        uint8Val: ComponentFieldType.U8,
-        boolVal: ComponentFieldType.BOOL,
+        int8Val: ComponentFieldType.Int8,
+        uint8Val: ComponentFieldType.Uint8,
+        uint8ClampedVal: ComponentFieldType.Uint8Clamped,
+        int16Val: ComponentFieldType.Int16,
+        uint16Val: ComponentFieldType.Uint16,
+        int32Val: ComponentFieldType.Int32,
+        uint32Val: ComponentFieldType.Uint32,
+        float16Val: ComponentFieldType.Float16,
+        float32Val: ComponentFieldType.Float32,
+        float64Val: ComponentFieldType.Float64,
       }
 
       const componentData = new ComponentData(schema)
 
       componentData.push()
 
-      expect(componentData.field('float32Val')).toBeInstanceOf(Float32Array)
-      expect(componentData.field('float64Val')).toBeInstanceOf(Float64Array)
+      expect(componentData.field('int8Val')).toBeInstanceOf(Int8Array)
+      expect(componentData.field('uint8Val')).toBeInstanceOf(Uint8Array)
+      expect(componentData.field('uint8ClampedVal')).toBeInstanceOf(Uint8ClampedArray)
+      expect(componentData.field('int16Val')).toBeInstanceOf(Int16Array)
+      expect(componentData.field('uint16Val')).toBeInstanceOf(Uint16Array)
       expect(componentData.field('int32Val')).toBeInstanceOf(Int32Array)
       expect(componentData.field('uint32Val')).toBeInstanceOf(Uint32Array)
-      expect(componentData.field('int16Val')).toBeInstanceOf(Int16Array)
-      expect(componentData.field('uint8Val')).toBeInstanceOf(Uint8Array)
-      expect(componentData.field('boolVal')).toBeInstanceOf(Uint8Array)
+      expect(componentData.field('float16Val')).toBeInstanceOf(Float16Array)
+      expect(componentData.field('float32Val')).toBeInstanceOf(Float32Array)
+      expect(componentData.field('float64Val')).toBeInstanceOf(Float64Array)
     })
   })
 
@@ -201,7 +260,7 @@ describe('Runtime: ComponentData', () => {
     let componentData: ComponentData
 
     beforeEach(() => {
-      const schema = { value: ComponentFieldType.I32 }
+      const schema = { value: ComponentFieldType.Int32 }
       componentData = new ComponentData(schema, 10)
     })
 
@@ -220,7 +279,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve fazer swap de elementos com múltiplos campos', () => {
-      const schema = { x: ComponentFieldType.F32, y: ComponentFieldType.F32 }
+      const schema = { x: ComponentFieldType.Float32, y: ComponentFieldType.Float32 }
       const data = new ComponentData(schema, 10)
 
       data.push()
@@ -273,7 +332,7 @@ describe('Runtime: ComponentData', () => {
     let componentData: ComponentData
 
     beforeEach(() => {
-      const schema = { id: ComponentFieldType.U32 }
+      const schema = { id: ComponentFieldType.Uint32 }
       componentData = new ComponentData(schema, 10)
     })
 
@@ -291,7 +350,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve multiplicar a capacidade por 3 após crescimento', () => {
-      const schema = { value: ComponentFieldType.I32 }
+      const schema = { value: ComponentFieldType.Int32 }
       const data = new ComponentData(schema, 10)
 
       for (let i = 0; i < 10; i++) {
@@ -309,7 +368,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve preservar dados após crescimento', () => {
-      const schema = { value: ComponentFieldType.I32 }
+      const schema = { value: ComponentFieldType.Int32 }
       const data = new ComponentData(schema, 5)
 
       for (let i = 0; i < 5; i++) {
@@ -329,7 +388,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve crescer múltiplas vezes sucessivamente', () => {
-      const schema = { num: ComponentFieldType.U32 }
+      const schema = { num: ComponentFieldType.Uint32 }
       const data = new ComponentData(schema, 2)
 
       data.push()
@@ -352,7 +411,7 @@ describe('Runtime: ComponentData', () => {
     let target: ComponentData
 
     beforeEach(() => {
-      const schema = { value: ComponentFieldType.F32 }
+      const schema = { value: ComponentFieldType.Float32 }
 
       source = new ComponentData(schema, 10)
       target = new ComponentData(schema, 10)
@@ -406,7 +465,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve copiar com múltiplos campos', () => {
-      const schema = { x: ComponentFieldType.F32, y: ComponentFieldType.F32 }
+      const schema = { x: ComponentFieldType.Float32, y: ComponentFieldType.Float32 }
       const source = new ComponentData(schema, 10)
       const target = new ComponentData(schema, 10)
 
@@ -433,7 +492,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve copiar e crescer se necessário', () => {
-      const schema = { id: ComponentFieldType.U32 }
+      const schema = { id: ComponentFieldType.Uint32 }
       const source = new ComponentData(schema, 10)
       const target = new ComponentData(schema, 2)
 
@@ -451,7 +510,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve copiar após crescimento do alvo', () => {
-      const schema = { val: ComponentFieldType.I32 }
+      const schema = { val: ComponentFieldType.Int32 }
       const source = new ComponentData(schema, 10)
       const target = new ComponentData(schema, 3)
 
@@ -474,7 +533,7 @@ describe('Runtime: ComponentData', () => {
     let componentData: ComponentData
 
     beforeEach(() => {
-      const schema = { x: ComponentFieldType.F32 }
+      const schema = { x: ComponentFieldType.Float32 }
       componentData = new ComponentData(schema)
     })
 
@@ -498,7 +557,7 @@ describe('Runtime: ComponentData', () => {
     let componentData: ComponentData
 
     beforeEach(() => {
-      const schema = { value: ComponentFieldType.I32 }
+      const schema = { value: ComponentFieldType.Int32 }
       componentData = new ComponentData(schema)
     })
 
@@ -533,7 +592,7 @@ describe('Runtime: ComponentData', () => {
       const field = componentData.field('value')
       field[0] = 123
 
-      const target = new ComponentData({ value: ComponentFieldType.I32 })
+      const target = new ComponentData({ value: ComponentFieldType.Int32 })
       target.copyFrom(componentData, 0)
 
       expect(target.size).toBe(1)
@@ -545,7 +604,7 @@ describe('Runtime: ComponentData', () => {
     let componentData: ComponentData
 
     beforeEach(() => {
-      const schema = { id: ComponentFieldType.U32 }
+      const schema = { id: ComponentFieldType.Uint32 }
       componentData = new ComponentData(schema, 5)
     })
 
@@ -575,7 +634,7 @@ describe('Runtime: ComponentData', () => {
     let componentData: ComponentData
 
     beforeEach(() => {
-      const schema = { value: ComponentFieldType.F64 }
+      const schema = { value: ComponentFieldType.Float64 }
       componentData = new ComponentData(schema, 10)
     })
 
@@ -588,7 +647,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve preservar dados ao inserir muitos elementos', () => {
-      const schema = { id: ComponentFieldType.I32 }
+      const schema = { id: ComponentFieldType.Int32 }
       const data = new ComponentData(schema, 5)
 
       for (let i = 0; i < 50; i++) {
@@ -620,7 +679,7 @@ describe('Runtime: ComponentData', () => {
     })
 
     it('deve fazer operações sequenciais com 1000 elementos', () => {
-      const schema = { x: ComponentFieldType.U32, y: ComponentFieldType.U32 }
+      const schema = { x: ComponentFieldType.Uint32, y: ComponentFieldType.Uint32 }
       const data = new ComponentData(schema, 16)
 
       for (let i = 0; i < 1000; i++) {
@@ -671,7 +730,7 @@ describe('Runtime: ComponentData', () => {
     let componentData: ComponentData
 
     beforeEach(() => {
-      const schema = { value: ComponentFieldType.F32 }
+      const schema = { value: ComponentFieldType.Float32 }
       componentData = new ComponentData(schema)
     })
 
@@ -695,6 +754,173 @@ describe('Runtime: ComponentData', () => {
 
       expect(size1).toBe(size2)
       expect(data1).toBe(data2)
+    })
+  })
+
+  describe('Novos Tipos de Campo - Cobertura Completa', () => {
+    it('deve suportar Float16 em operações copyFrom', () => {
+      const schema = { value: ComponentFieldType.Float16 }
+      const source = new ComponentData(schema, 10)
+      const target = new ComponentData(schema, 10)
+
+      source.push()
+      const sourceField = source.field('value')
+      sourceField[0] = 1.5
+
+      target.copyFrom(source, 0)
+
+      expect(target.size).toBe(1)
+      expect(target.field('value')[0]).toBe(1.5)
+    })
+
+    it('deve suportar Uint8Clamped em operações de crescimento', () => {
+      const schema = { value: ComponentFieldType.Uint8Clamped }
+      const data = new ComponentData(schema, 5)
+
+      for (let i = 0; i < 10; i++) {
+        data.push()
+        data.field('value')[i] = Math.min(255, i * 30)
+      }
+
+      expect(data.size).toBe(10)
+      expect(data.field('value')[0]).toBe(0)
+      expect(data.field('value')[9]).toBe(255)
+    })
+
+    it('deve suportar Int8 com valores negativos', () => {
+      const schema = { value: ComponentFieldType.Int8 }
+      const data = new ComponentData(schema)
+
+      data.push()
+      const field = data.field('value')
+      field[0] = -128
+
+      expect(field[0]).toBe(-128)
+    })
+
+    it('deve suportar Uint16 em operações de cópia', () => {
+      const schema = { id: ComponentFieldType.Uint16 }
+      const source = new ComponentData(schema, 10)
+      const target = new ComponentData(schema, 10)
+
+      source.push()
+      source.push()
+
+      const sourceField = source.field('id')
+      sourceField[0] = 65535
+      sourceField[1] = 32768
+
+      target.copyFrom(source, 0)
+      target.copyFrom(source, 1)
+
+      const targetField = target.field('id')
+      expect(targetField[0]).toBe(65535)
+      expect(targetField[1]).toBe(32768)
+    })
+
+    it('deve criar BigInt64 e BigUint64 sem inicialização via push', () => {
+      const schema = {
+        bigInt64: ComponentFieldType.BigInt64,
+        bigUint64: ComponentFieldType.BigUint64,
+      }
+
+      const data = new ComponentData(schema, 10)
+
+      const bigInt64Field = data.field('bigInt64')
+      const bigUint64Field = data.field('bigUint64')
+
+      expect(bigInt64Field).toBeInstanceOf(BigInt64Array)
+      expect(bigUint64Field).toBeInstanceOf(BigUint64Array)
+
+      // Atribui valores diretamente sem usar push que não suporta BigInt inicialmente
+      bigInt64Field[0] = 100n
+      bigUint64Field[0] = 200n
+
+      expect(bigInt64Field[0]).toBe(100n)
+      expect(bigUint64Field[0]).toBe(200n)
+    })
+
+    it('deve fazer swap com BigInt64 e BigUint64 após atribuição manual', () => {
+      const schema = {
+        id: ComponentFieldType.BigInt64,
+        value: ComponentFieldType.BigUint64,
+      }
+
+      const data = new ComponentData(schema, 10)
+
+      const idField = data.field('id')
+      const valueField = data.field('value')
+
+      idField[0] = 100n
+      idField[1] = 200n
+      valueField[0] = 300n
+      valueField[1] = 400n
+
+      data.swap(0, 1)
+
+      expect(idField[0]).toBe(200n)
+      expect(idField[1]).toBe(100n)
+      expect(valueField[0]).toBe(400n)
+      expect(valueField[1]).toBe(300n)
+    })
+
+    it('deve suportar todos os tipos em um único schema com acesso direto', () => {
+      const schema = {
+        int8: ComponentFieldType.Int8,
+        uint8: ComponentFieldType.Uint8,
+        uint8Clamped: ComponentFieldType.Uint8Clamped,
+        int16: ComponentFieldType.Int16,
+        uint16: ComponentFieldType.Uint16,
+        int32: ComponentFieldType.Int32,
+        uint32: ComponentFieldType.Uint32,
+        float16: ComponentFieldType.Float16,
+        float32: ComponentFieldType.Float32,
+        float64: ComponentFieldType.Float64,
+        bigInt64: ComponentFieldType.BigInt64,
+        bigUint64: ComponentFieldType.BigUint64,
+      }
+
+      const data = new ComponentData(schema, 10)
+
+      const int8Field = data.field('int8')
+      const uint8Field = data.field('uint8')
+      const uint8ClampedField = data.field('uint8Clamped')
+      const int16Field = data.field('int16')
+      const uint16Field = data.field('uint16')
+      const int32Field = data.field('int32')
+      const uint32Field = data.field('uint32')
+      const float16Field = data.field('float16')
+      const float32Field = data.field('float32')
+      const float64Field = data.field('float64')
+      const bigInt64Field = data.field('bigInt64')
+      const bigUint64Field = data.field('bigUint64')
+
+      // Atribui valores diretamente
+      int8Field[0] = -100
+      uint8Field[0] = 200
+      uint8ClampedField[0] = 255
+      int16Field[0] = -30000
+      uint16Field[0] = 65535
+      int32Field[0] = -2000000000
+      uint32Field[0] = 4000000000
+      float16Field[0] = 1.5
+      float32Field[0] = 3.14
+      float64Field[0] = 3.141592653589793
+      bigInt64Field[0] = -BigInt('9223372036854775807')
+      bigUint64Field[0] = BigInt('18446744073709551615')
+
+      expect(int8Field[0]).toBe(-100)
+      expect(uint8Field[0]).toBe(200)
+      expect(uint8ClampedField[0]).toBe(255)
+      expect(int16Field[0]).toBe(-30000)
+      expect(uint16Field[0]).toBe(65535)
+      expect(int32Field[0]).toBe(-2000000000)
+      expect(uint32Field[0]).toBe(4000000000)
+      expect(float16Field[0]).toBe(1.5)
+      expect(float32Field[0]).toBeCloseTo(3.14, 2)
+      expect(float64Field[0]).toBe(3.141592653589793)
+      expect(bigInt64Field[0]).toBe(-BigInt('9223372036854775807'))
+      expect(bigUint64Field[0]).toBe(BigInt('18446744073709551615'))
     })
   })
 })
