@@ -1,6 +1,21 @@
-import { ComponentFieldType, TypedArray } from './archetype'
+import { TypedArray } from './archetype'
 
 export type ComponentId = bigint
+
+export enum ComponentFieldType {
+  Int8,
+  Uint8,
+  Uint8Clamped,
+  Int16,
+  Uint16,
+  Int32,
+  Uint32,
+  Float16,
+  Float32,
+  Float64,
+  BigInt64,
+  BigUint64,
+}
 
 export type ComponentSchema = Record<string, ComponentFieldType>
 

@@ -1,5 +1,5 @@
-import { ComponentFieldType, TypedArray } from '../../../../ecs/archetype'
-import { ComponentDataSchema, ComponentSchema, IComponentData } from '../../../../ecs/component'
+import { TypedArray } from '../../../../ecs/archetype'
+import { ComponentDataSchema, ComponentFieldType, ComponentSchema, IComponentData } from '../../../../ecs/component'
 
 type SchemaToData<Shape extends ComponentSchema = ComponentSchema> = {
   [K in keyof Shape]: FieldTypeToArray[Shape[K]]

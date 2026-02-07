@@ -1,20 +1,8 @@
 import { ComponentDescriptor, ComponentSchema, IComponentData } from './component'
 import { EntityId } from './entity'
 
-export enum ComponentFieldType {
-  Int8,
-  Uint8,
-  Uint8Clamped,
-  Int16,
-  Uint16,
-  Int32,
-  Uint32,
-  Float16,
-  Float32,
-  Float64,
-  BigInt64,
-  BigUint64,
-}
+export type Signature = bigint
+
 export type TypedArray =
   | Int8Array
   | Uint8Array
@@ -28,8 +16,6 @@ export type TypedArray =
   | Float64Array
   | BigInt64Array
   | BigUint64Array
-
-export type Signature = bigint
 
 export interface IArchetype {
   readonly signature: Signature

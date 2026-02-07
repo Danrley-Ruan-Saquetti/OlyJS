@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { ComponentFieldType } from '../../../../../src/ecs/archetype'
+import { ComponentFieldType } from '../../../../../src/ecs/component'
 import { ComponentData } from '../../../../../src/runtime/world/archetype/components/component-data'
 
 describe('Runtime: ComponentData', () => {
