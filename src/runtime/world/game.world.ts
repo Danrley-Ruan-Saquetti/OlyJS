@@ -72,7 +72,7 @@ export class GameWorld implements IWorld {
     this.commandDomain.flush()
   }
 
-  instantiate(components?: { component: ComponentDescriptor, data?: unknown }[]) {
+  spawn(components?: { component: ComponentDescriptor, data?: unknown }[]) {
     const id = this.entityPool.create()
 
     if (!components) {

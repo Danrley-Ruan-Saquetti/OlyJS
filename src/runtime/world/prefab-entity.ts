@@ -25,7 +25,7 @@ export class PrefabEntity<TComponents extends readonly ComponentDescriptor[] = [
       i++
     }
 
-    return this.world.instantiate(components)
+    return this.world.spawn(components)
   }
 
   createQuery() {
