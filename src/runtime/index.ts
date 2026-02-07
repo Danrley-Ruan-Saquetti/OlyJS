@@ -5,5 +5,6 @@ export { createComponent, GlobalComponentRegistry } from './world/component-regi
 export { EntityBuilder } from './world/entity-builder'
 export { GameWorld } from './world/game.world'
 export { PrefabEntity } from './world/prefab-entity'
+export type { PrefabEntityProperties } from './world/prefab-entity'
 export { Query } from './world/query'
 

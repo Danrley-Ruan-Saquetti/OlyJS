@@ -1,13 +1,14 @@
-import { IArchetype, Signature } from '../../ecs/archetype'
+import { ArchetypeProfile, IArchetype, Signature } from '../../ecs/archetype'
 import { ComponentDescriptor, ComponentId, ComponentsToObject } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
-import { IWorld } from '../../ecs/world'
+import { IWoldSpawnProperties, IWorld } from '../../ecs/world'
 import { CommandDomain } from '../../runtime/commands/command-domain'
 import { Archetype } from './archetype/archetype'
 import { EntityLocation } from './archetype/entity-location'
 import { GlobalComponentRegistry } from './component-registry'
 import { EntityBuilder } from './entity-builder'
 import { EntityPool } from './entity-pool'
+import { PrefabEntityProperties } from './prefab-entity'
 import { Query } from './query'
 
 export enum GameWorldCommand {
@@ -24,8 +25,14 @@ export enum GameWorldCommandPhase {
   ADD_COMPONENT
 }
 
+interface AddEntityPayload {
+  entityId: EntityId
+  profile?: ArchetypeProfile
+}
+
 interface AddEntityWithComponentsPayload {
   entityId: EntityId
+  profile?: ArchetypeProfile
   components: { componentId: ComponentId, data?: unknown }[]
 }
 
@@ -72,17 +79,18 @@ export class GameWorld implements IWorld {
     this.commandDomain.flush()
   }
 
-  spawn(components?: { component: ComponentDescriptor, data?: unknown }[]) {
+  spawn({ components, profile }: IWoldSpawnProperties) {
     const id = this.entityPool.create()
 
     if (!components) {
-      this.commandDomain.send(GameWorldCommand.CREATE_ENTITY, id)
+      this.commandDomain.send(GameWorldCommand.CREATE_ENTITY, { entityId: id, profile })
 
       return id
     }
 
     this.commandDomain.send(GameWorldCommand.CREATE_ENTITY_WITH_COMPONENTS, {
       entityId: id,
+      profile,
       components: components.map(component => ({
         componentId: component.component.id,
         data: component.data
@@ -100,8 +108,8 @@ export class GameWorld implements IWorld {
     this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, { entityId, componentId: component.id, data: initialData })
   }
 
-  createPrefab() {
-    return new EntityBuilder(this)
+  createPrefab(properties?: PrefabEntityProperties) {
+    return new EntityBuilder(this, properties)
   }
 
   createQuery(components: ComponentId[]) {
@@ -117,8 +125,8 @@ export class GameWorld implements IWorld {
     return this.entityLocation.get(entityId)!
   }
 
-  private performCreateEntity(entityId: EntityId) {
-    const emptyArchetype = this.getOrCreateArchetype(0n)
+  private performCreateEntity({ entityId, profile }: AddEntityPayload) {
+    const emptyArchetype = this.getOrCreateArchetype(0n, profile)
 
     emptyArchetype.addEntity(entityId)
 
@@ -128,7 +136,7 @@ export class GameWorld implements IWorld {
     })
   }
 
-  private performCreateEntityWithComponents({ entityId, components }: AddEntityWithComponentsPayload) {
+  private performCreateEntityWithComponents({ entityId, components, profile }: AddEntityWithComponentsPayload) {
     let signature = 0n
     let initialData: Record<number, any> = {}
 
@@ -143,7 +151,7 @@ export class GameWorld implements IWorld {
       i++
     }
 
-    const emptyArchetype = this.getOrCreateArchetype(signature)
+    const emptyArchetype = this.getOrCreateArchetype(signature, profile)
 
     emptyArchetype.addEntity(entityId, initialData)
 
@@ -206,12 +214,14 @@ export class GameWorld implements IWorld {
     this.entityLocation.get(lastEntity)!.index = index
   }
 
-  private getOrCreateArchetype(signature: Signature) {
+  private getOrCreateArchetype(signature: Signature, profile?: ArchetypeProfile) {
     const key = signature.toString()
     let archetype = this.archetypes.get(key)
 
     if (!archetype) {
       archetype = new Archetype(signature, GlobalComponentRegistry)
+
+      archetype.initialize(profile ?? ArchetypeProfile.COMMON)
 
       this.archetypes.set(key, archetype)
       this.onArchetypeCreated(archetype)

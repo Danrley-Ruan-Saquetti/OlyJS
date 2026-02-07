@@ -11,24 +11,34 @@ export class Archetype implements IArchetype {
   private readonly componentIds: ComponentId[] = []
   private readonly componentIndex = new Map<ComponentId, number>()
 
+  private initialized = false
+
   get entities() { return this._entities }
   get lastEntity() { return this._entities[this._entities.length - 1] }
   get size() { return this._entities.length }
 
   constructor(
     readonly signature: Signature,
-    registry: ComponentRegistry
-  ) {
-    const ids = registry.idsFromSignature(signature)
+    private readonly registry: ComponentRegistry
+  ) { }
+
+  initialize(initialCapacity?: number) {
+    if (this.initialized) {
+      return
+    }
+
+    const ids = this.registry.idsFromSignature(this.signature)
 
     let i = 0, length = ids.length
     while (i < length) {
       this.componentIds.push(ids[i])
-      this.components.push(registry.createComponent(ids[i]))
+      this.components.push(this.registry.createComponent(ids[i], initialCapacity))
       this.componentIndex.set(ids[i], this.components.length - 1)
 
       i++
     }
+
+    this.initialized = true
   }
 
   addEntity(entityId: EntityId, initialData?: Record<number, any>) {

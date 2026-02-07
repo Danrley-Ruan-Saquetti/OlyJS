@@ -17,14 +17,14 @@ export class ComponentRegistry {
     return { id, name, schema }
   }
 
-  createComponent(id: ComponentId): IComponentData {
+  createComponent(id: ComponentId, initialCapacity?: number): IComponentData {
     const schema = this.schemas.get(id)
 
     if (!schema) {
       throw new Error(`Component schema not found for id: ${id}`)
     }
 
-    return new ComponentData(schema)
+    return new ComponentData(schema, initialCapacity)
   }
 
   idsFromSignature(sig: Signature) {

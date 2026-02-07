@@ -17,12 +17,20 @@ export type TypedArray =
   | BigInt64Array
   | BigUint64Array
 
+export enum ArchetypeProfile {
+  UNIQUE = 1,
+  SMALL = 8,
+  COMMON = 64,
+  MASSIVE = 256
+}
+
 export interface IArchetype {
   readonly signature: Signature
   readonly lastEntity: number
   readonly size: number
   readonly entities: EntityId[]
 
+  initialize(initialCapacity?: number): void
   addEntity(entityId: EntityId, initialData?: Record<number, any>): void
   addEntityFrom(entityId: EntityId, entityIndex: number, from: IArchetype, initialData?: Record<number, any>): void
   removeEntity(index: number): void
