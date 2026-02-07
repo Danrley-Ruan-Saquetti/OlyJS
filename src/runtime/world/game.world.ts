@@ -12,14 +12,21 @@ import { Query } from './query'
 
 export enum GameWorldCommand {
   CREATE_ENTITY = 'entity:create',
+  CREATE_ENTITY_WITH_COMPONENTS = 'entity:create-with-components',
   DESTROY_ENTITY = 'entity:destroy',
   ADD_COMPONENT = 'component:add'
 }
 
 export enum GameWorldCommandPhase {
   CREATE_ENTITY,
+  CREATE_ENTITY_WITH_COMPONENTS,
   DESTROY_ENTITY,
   ADD_COMPONENT
+}
+
+interface AddEntityWithComponentsPayload {
+  entityId: EntityId
+  components: { componentId: ComponentId, data?: unknown }[]
 }
 
 interface AddComponentPayload {
@@ -45,6 +52,11 @@ export class GameWorld implements IWorld {
       GameWorldCommandPhase.CREATE_ENTITY
     )
     this.commandDomain.register(
+      GameWorldCommand.CREATE_ENTITY_WITH_COMPONENTS,
+      this.performCreateEntityWithComponents.bind(this),
+      GameWorldCommandPhase.CREATE_ENTITY_WITH_COMPONENTS
+    )
+    this.commandDomain.register(
       GameWorldCommand.DESTROY_ENTITY,
       this.performDestroyEntity.bind(this),
       GameWorldCommandPhase.DESTROY_ENTITY
@@ -62,22 +74,20 @@ export class GameWorld implements IWorld {
 
   instantiate(components?: { component: ComponentDescriptor, data?: unknown }[]) {
     const id = this.entityPool.create()
-    this.commandDomain.send(GameWorldCommand.CREATE_ENTITY, id)
 
     if (!components) {
+      this.commandDomain.send(GameWorldCommand.CREATE_ENTITY, id)
+
       return id
     }
 
-    let i = 0, length = components.length
-    while (i < length) {
-      this.commandDomain.send(GameWorldCommand.ADD_COMPONENT, {
-        entityId: id,
-        componentId: components[i].component.id,
-        data: components[i].data
-      })
-
-      i++
-    }
+    this.commandDomain.send(GameWorldCommand.CREATE_ENTITY_WITH_COMPONENTS, {
+      entityId: id,
+      components: components.map(component => ({
+        componentId: component.component.id,
+        data: component.data
+      }))
+    })
 
     return id
   }
@@ -111,6 +121,31 @@ export class GameWorld implements IWorld {
     const emptyArchetype = this.getOrCreateArchetype(0n)
 
     emptyArchetype.addEntity(entityId)
+
+    this.entityLocation.set(entityId, {
+      archetype: emptyArchetype,
+      index: emptyArchetype.size - 1
+    })
+  }
+
+  private performCreateEntityWithComponents({ entityId, components }: AddEntityWithComponentsPayload) {
+    let signature = 0n
+    let initialData: Record<number, any> = {}
+
+    let i = 0, length = components.length
+    while (i < length) {
+      signature |= 1n << components[i].componentId
+
+      if (components[i].data !== undefined) {
+        initialData[components[i].componentId as any] = components[i].data
+      }
+
+      i++
+    }
+
+    const emptyArchetype = this.getOrCreateArchetype(signature)
+
+    emptyArchetype.addEntity(entityId, initialData)
 
     this.entityLocation.set(entityId, {
       archetype: emptyArchetype,
