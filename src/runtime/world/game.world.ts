@@ -112,13 +112,48 @@ export class GameWorld implements IWorld {
     return new EntityBuilder(this, properties)
   }
 
-  createQuery(components: ComponentId[]) {
-    const query = new Query(this.archetypes, components)
+  createQuery(components: ComponentDescriptor[]) {
+    const query = new Query(this.archetypes, components.map(({ id }) => id))
     this.queries.push(query)
 
     query.build()
 
     return query
+  }
+
+  findFirst(components: ComponentDescriptor[]) {
+    const query = new Query(this.archetypes, components.map(({ id }) => id))
+    query.build()
+
+    const entitiesId = this.findFromQuery(query, 1)
+
+    return entitiesId[0]
+  }
+
+  findSingleton(components: ComponentDescriptor[]) {
+    const query = new Query(this.archetypes, components.map(({ id }) => id))
+    query.build()
+
+    const entitiesId = this.findFromQuery(query, 2)
+
+    return entitiesId.length == 1 ? entitiesId[0] : undefined
+  }
+
+  expectSingleton(components: ComponentDescriptor[]) {
+    const query = new Query(this.archetypes, components.map(({ id }) => id))
+    query.build()
+
+    const entitiesId = this.findFromQuery(query, 2)
+
+    if (!entitiesId.length) {
+      throw new Error(`Expect Singleton failed: no entity with components [${components.map(({ name }) => name).join(', ')}]`)
+    }
+
+    if (entitiesId.length > 1) {
+      throw new Error(`Expect Singleton failed: more than one entity found with components [${components.map(({ name }) => name).join(', ')}]`)
+    }
+
+    return entitiesId[0]
   }
 
   getEntity(entityId: EntityId) {
@@ -236,5 +271,30 @@ export class GameWorld implements IWorld {
       this.queries[i].onArchetypeAdded(archetype)
       i++
     }
+  }
+
+  private findFromQuery(query: Query, max: number): EntityId[] {
+    const entitiesId: EntityId[] = []
+    const archetypes = query.view()
+
+    let i = 0, length = archetypes.length
+    while (i < length) {
+      const entities = archetypes[i].entities
+
+      let j = 0, size = entities.length
+      while (j < size) {
+        entitiesId.push(entities[j])
+
+        if (entitiesId.length >= max) {
+          return entitiesId
+        }
+
+        j++
+      }
+
+      i++
+    }
+
+    return entitiesId
   }
 }

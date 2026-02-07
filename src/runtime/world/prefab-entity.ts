@@ -38,14 +38,14 @@ export class PrefabEntity<TComponents extends readonly ComponentDescriptor[] = [
   }
 
   createQuery() {
-    const ids = []
+    const components = []
 
     let i = 0, length = this.components.length
     while (i < length) {
-      ids.push(this.components[i].component.id)
+      components.push(this.components[i].component)
       i++
     }
 
-    return this.world.createQuery(ids)
+    return this.world.createQuery(components)
   }
 }

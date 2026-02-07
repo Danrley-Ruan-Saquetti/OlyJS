@@ -3,7 +3,7 @@ import { EntityLocation } from '../runtime/world/archetype/entity-location'
 import { EntityBuilder } from '../runtime/world/entity-builder'
 import { Query } from '../runtime/world/query'
 import { ArchetypeProfile } from './archetype'
-import { ComponentDescriptor, ComponentId, ComponentsToObject } from './component'
+import { ComponentDescriptor, ComponentsToObject } from './component'
 import { EntityId } from './entity'
 
 export type IWoldSpawnProperties = {
@@ -17,6 +17,9 @@ export interface IWorld {
   addComponent<TComponent extends ComponentDescriptor>(entityId: EntityId, component: TComponent, initialData?: ComponentsToObject<[TComponent]>): void
   flush(): void
   createPrefab(properties?: PrefabEntityProperties): EntityBuilder
-  createQuery(components: ComponentId[]): Query
+  createQuery(components: ComponentDescriptor[]): Query
+  findFirst(components: ComponentDescriptor[]): EntityId | undefined
+  findSingleton(components: ComponentDescriptor[]): EntityId | undefined
+  expectSingleton(components: ComponentDescriptor[]): EntityId
   getEntity(entityId: number): EntityLocation
 }
