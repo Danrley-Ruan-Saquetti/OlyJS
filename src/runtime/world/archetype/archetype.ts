@@ -31,13 +31,20 @@ export class Archetype implements IArchetype {
     }
   }
 
-  addEntity(entityId: EntityId) {
+  addEntity(entityId: EntityId, initialData?: Record<number, any>) {
     this._entities.push(entityId)
 
     let i = 0, length = this.components.length
-    while (i < length) {
-      this.components[i].push()
-      i++
+    if (initialData) {
+      while (i < length) {
+        this.components[i].push(initialData[this.componentIds[i] as any])
+        i++
+      }
+    } else {
+      while (i < length) {
+        this.components[i].push()
+        i++
+      }
     }
   }
 
