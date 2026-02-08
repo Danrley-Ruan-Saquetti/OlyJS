@@ -1,12 +1,11 @@
 import { ArchetypeProfile, IArchetype, Signature } from '../../ecs/archetype'
 import { ComponentDescriptor, ComponentId, ComponentIdentifier, ComponentsToObject } from '../../ecs/component'
-import { EntityId } from '../../ecs/entity'
+import { EntityId, EntityLocation } from '../../ecs/entity'
 import { IWoldSpawnProperties, IWorld } from '../../ecs/world'
 import { CommandDomain } from '../commands/command-domain'
 import { Archetype } from './archetype/archetype'
 import { GlobalComponentRegistry } from './archetype/components/component-registry'
 import { createSignature } from './archetype/create-signature'
-import { EntityLocation } from './archetype/entity-location'
 import { EntityBuilder } from './entity/entity-builder'
 import { EntityPool } from './entity/entity-pool'
 import { PrefabEntityProperties } from './entity/prefab-entity'
@@ -162,7 +161,7 @@ export class GameWorld implements IWorld {
     return !!this.entityLocation.get(entityId)
   }
 
-  getEntity(entityId: EntityId) {
+  getEntityLocation(entityId: EntityId) {
     return this.entityLocation.get(entityId)
   }
 

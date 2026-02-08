@@ -1,9 +1,8 @@
 import { PrefabEntityProperties } from '../runtime'
-import { EntityLocation } from '../runtime/world/archetype/entity-location'
 import { EntityBuilder } from '../runtime/world/entity/entity-builder'
 import { ArchetypeProfile, IArchetype } from './archetype'
 import { ComponentDescriptor, ComponentsToObject } from './component'
-import { EntityId } from './entity'
+import { EntityId, EntityLocation } from './entity'
 import { IQuery } from './query'
 
 export type IWoldSpawnProperties = {
@@ -28,7 +27,7 @@ export interface IWorld {
   count(components: ComponentDescriptor[]): number
   isEmpty(components: ComponentDescriptor[]): boolean
   exists(components: ComponentDescriptor[]): boolean
-  getEntity(entityId: number): EntityLocation | undefined
+  getEntityLocation(entityId: number): EntityLocation | undefined
   expectEntity(entityId: EntityId): EntityLocation
   hasEntity(entityId: number): boolean
   getArchetypes(): MapIterator<IArchetype>

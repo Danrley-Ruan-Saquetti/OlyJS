@@ -1,4 +1,5 @@
 export { System } from './systems/system'
+export type { TimerTask } from './time/schedule/timer-scheduler'
 export { Archetype } from './world/archetype/archetype'
 export { ComponentData } from './world/archetype/components/component-data'
 export { createComponent, GlobalComponentRegistry } from './world/archetype/components/component-registry'
@@ -8,4 +9,3 @@ export { PrefabEntity } from './world/entity/prefab-entity'
 export type { PrefabEntityProperties } from './world/entity/prefab-entity'
 export { GameWorld } from './world/game-world'
 export { Query } from './world/query/query'
-

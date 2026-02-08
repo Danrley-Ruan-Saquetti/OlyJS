@@ -1,6 +1,7 @@
 import { IArchetype, Signature } from '../../../ecs/archetype'
 import { ComponentIdentifier } from '../../../ecs/component'
 import { EntityId } from '../../../ecs/entity'
+import { IWorld } from '../../../ecs/world'
 import { createSignature } from '../archetype/create-signature'
 import { IQuery } from './../../../ecs/query'
 
@@ -11,6 +12,7 @@ export class Query implements IQuery {
   private readonly matched: IArchetype[] = []
 
   constructor(
+    private readonly world: IWorld,
     components: ComponentIdentifier[] = []
   ) {
     this.mask = createSignature(components)
@@ -24,10 +26,10 @@ export class Query implements IQuery {
     this.matched.push(archetype)
   }
 
-  build(archetypes: MapIterator<IArchetype>) {
+  build() {
     this.matched.length = 0
 
-    for (const archetype of archetypes) {
+    for (const archetype of this.world.getArchetypes()) {
       if ((archetype.signature & this.mask) !== this.mask) {
         continue
       }
@@ -46,6 +48,16 @@ export class Query implements IQuery {
     }
 
     return this.findAll()
+  }
+
+  findFirstLocation() {
+    const entityId = this.findFirst()
+
+    if (!entityId) {
+      return undefined
+    }
+
+    return this.world.getEntityLocation(entityId)
   }
 
   findFirst() {
@@ -84,6 +96,26 @@ export class Query implements IQuery {
     }
 
     return true
+  }
+
+  has(entityId: EntityId) {
+    let i = 0, length = this.matched.length
+    while (i < length) {
+      const entities = this.matched[i].entities
+
+      let j = 0, size = this.matched[i].size
+      while (j < size) {
+        if (entities[j] === entityId) {
+          return true
+        }
+
+        j++
+      }
+
+      i++
+    }
+
+    return false
   }
 
   private findAll() {
