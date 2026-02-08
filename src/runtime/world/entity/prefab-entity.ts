@@ -37,7 +37,7 @@ export class PrefabEntity<TComponents extends readonly ComponentDescriptor[] = [
     })
   }
 
-  createQuery() {
+  getQuery() {
     const components = []
 
     let i = 0, length = this.components.length
@@ -46,6 +46,6 @@ export class PrefabEntity<TComponents extends readonly ComponentDescriptor[] = [
       i++
     }
 
-    return this.world.createQuery(components)
+    return this.world.getQuery(components)
   }
 }

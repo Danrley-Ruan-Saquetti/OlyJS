@@ -10,7 +10,7 @@ import { EntityLocation } from './archetype/entity-location'
 import { EntityBuilder } from './entity/entity-builder'
 import { EntityPool } from './entity/entity-pool'
 import { PrefabEntityProperties } from './entity/prefab-entity'
-import { Query } from './query/query'
+import { QueryManager } from './query/query-manager'
 
 export enum GameWorldCommand {
   CREATE_ENTITY = 'entity:create',
@@ -46,14 +46,15 @@ interface AddComponentPayload {
 export class GameWorld implements IWorld {
 
   protected readonly commandDomain = new CommandDomain(Object.keys(GameWorldCommandPhase).length)
+  protected readonly queryManager: QueryManager
 
   private readonly archetypes = new Map<string, IArchetype>()
   private readonly entityLocation = new Map<EntityId, EntityLocation>()
   private readonly entityPool = new EntityPool()
 
-  private readonly queries: Query[] = []
-
   constructor() {
+    this.queryManager = new QueryManager(this)
+
     this.commandDomain.register(
       GameWorldCommand.CREATE_ENTITY,
       this.performCreateEntity.bind(this),
@@ -83,7 +84,7 @@ export class GameWorld implements IWorld {
   spawn({ components, profile }: IWoldSpawnProperties) {
     const id = this.entityPool.create()
 
-    if (!components) {
+    if (!components || !components.length) {
       this.commandDomain.send(GameWorldCommand.CREATE_ENTITY, { entityId: id, profile })
 
       return id
@@ -113,38 +114,22 @@ export class GameWorld implements IWorld {
     return new EntityBuilder(this, properties)
   }
 
-  createQuery(components: ComponentDescriptor[]) {
-    const query = new Query(this.archetypes, components)
-    this.queries.push(query)
-
-    query.build()
-
-    return query
+  getQuery(components: ComponentDescriptor[]) {
+    return this.queryManager.getOrCreateQuery(components)
   }
 
   findFirst(components: ComponentDescriptor[]) {
-    const query = new Query(this.archetypes, components)
-    query.build()
-
-    const entitiesId = this.findFromQuery(query, 1)
-
-    return entitiesId[0]
+    return this.queryManager.getOrCreateQuery(components).findFirst()
   }
 
   findSingleton(components: ComponentDescriptor[]) {
-    const query = new Query(this.archetypes, components)
-    query.build()
-
-    const entitiesId = this.findFromQuery(query, 2)
+    const entitiesId = this.queryManager.getOrCreateQuery(components).find(2)
 
     return entitiesId.length == 1 ? entitiesId[0] : undefined
   }
 
   expectSingleton(components: ComponentDescriptor[]) {
-    const query = new Query(this.archetypes, components)
-    query.build()
-
-    const entitiesId = this.findFromQuery(query, 2)
+    const entitiesId = this.queryManager.getOrCreateQuery(components).find(2)
 
     if (!entitiesId.length) {
       throw new Error(`Expect Singleton failed: no entity with components [${components.map(({ name }) => name).join(', ')}]`)
@@ -157,8 +142,42 @@ export class GameWorld implements IWorld {
     return entitiesId[0]
   }
 
+  find(components: ComponentDescriptor[]) {
+    return this.queryManager.getOrCreateQuery(components).find()
+  }
+
+  count(components: ComponentDescriptor[]) {
+    return this.queryManager.getOrCreateQuery(components).count()
+  }
+
+  isEmpty(components: ComponentDescriptor[]) {
+    return this.queryManager.getOrCreateQuery(components).isEmpty()
+  }
+
+  exists(components: ComponentDescriptor[]) {
+    return !this.queryManager.getOrCreateQuery(components).isEmpty()
+  }
+
+  hasEntity(entityId: EntityId) {
+    return !!this.entityLocation.get(entityId)
+  }
+
   getEntity(entityId: EntityId) {
-    return this.entityLocation.get(entityId)!
+    return this.entityLocation.get(entityId)
+  }
+
+  expectEntity(entityId: EntityId) {
+    const entity = this.entityLocation.get(entityId)
+
+    if (!entity) {
+      throw new Error(`Expect Entity failed: entity "${entityId}" found`)
+    }
+
+    return entity
+  }
+
+  getArchetypes() {
+    return this.archetypes.values()
   }
 
   private performCreateEntity({ entityId, profile }: AddEntityPayload) {
@@ -258,42 +277,9 @@ export class GameWorld implements IWorld {
       archetype.initialize(profile ?? ArchetypeProfile.COMMON)
 
       this.archetypes.set(key, archetype)
-      this.onArchetypeCreated(archetype)
+      this.queryManager.onArchetypeCreated(archetype)
     }
 
     return archetype
-  }
-
-  private onArchetypeCreated(archetype: IArchetype) {
-    let i = 0, length = this.queries.length
-    while (i < length) {
-      this.queries[i].onArchetypeAdded(archetype)
-      i++
-    }
-  }
-
-  private findFromQuery(query: Query, max: number): EntityId[] {
-    const entitiesId: EntityId[] = []
-    const archetypes = query.view()
-
-    let i = 0, length = archetypes.length
-    while (i < length) {
-      const entities = archetypes[i].entities
-
-      let j = 0, size = entities.length
-      while (j < size) {
-        entitiesId.push(entities[j])
-
-        if (entitiesId.length >= max) {
-          return entitiesId
-        }
-
-        j++
-      }
-
-      i++
-    }
-
-    return entitiesId
   }
 }

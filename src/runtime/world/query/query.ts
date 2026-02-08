@@ -6,7 +6,7 @@ import { IQuery } from './../../../ecs/query'
 
 export class Query implements IQuery {
 
-  readonly mask: Signature = 0n
+  readonly mask: Signature
 
   private readonly matched: IArchetype[] = []
 

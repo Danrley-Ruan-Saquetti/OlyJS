@@ -23,8 +23,10 @@ export class QueryManager {
       return query
     }
 
-    query = new Query()
+    query = new Query(components)
     query.build(this.world.getArchetypes())
+
+    this.queries.set(key, query)
 
     return query
   }
