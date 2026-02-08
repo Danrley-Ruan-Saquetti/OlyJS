@@ -4,13 +4,13 @@ import { EntityId } from '../../ecs/entity'
 import { IWoldSpawnProperties, IWorld } from '../../ecs/world'
 import { CommandDomain } from '../commands/command-domain'
 import { Archetype } from './archetype/archetype'
+import { GlobalComponentRegistry } from './archetype/components/component-registry'
 import { createSignature } from './archetype/create-signature'
 import { EntityLocation } from './archetype/entity-location'
-import { GlobalComponentRegistry } from './component-registry'
-import { EntityBuilder } from './entity-builder'
-import { EntityPool } from './entity-pool'
-import { PrefabEntityProperties } from './prefab-entity'
-import { Query } from './query'
+import { EntityBuilder } from './entity/entity-builder'
+import { EntityPool } from './entity/entity-pool'
+import { PrefabEntityProperties } from './entity/prefab-entity'
+import { Query } from './query/query'
 
 export enum GameWorldCommand {
   CREATE_ENTITY = 'entity:create',

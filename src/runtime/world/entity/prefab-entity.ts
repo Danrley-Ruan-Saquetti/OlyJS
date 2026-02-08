@@ -1,7 +1,7 @@
-import { ArchetypeProfile } from '../../ecs'
-import { ComponentDescriptor, ComponentsToObject } from '../../ecs/component'
-import { IWorld } from '../../ecs/world'
-import { mergeComponentData } from './archetype/components/merge-component-data'
+import { ArchetypeProfile } from '../../../ecs'
+import { ComponentDescriptor, ComponentsToObject } from '../../../ecs/component'
+import { IWorld } from '../../../ecs/world'
+import { mergeComponentData } from '../archetype/components/merge-component-data'
 
 export type PrefabEntityProperties = {
   profile?: ArchetypeProfile

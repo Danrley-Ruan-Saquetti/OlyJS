@@ -1,6 +1,6 @@
-import { ComponentDescriptor, ComponentsToObject, InferSchemaValues } from '../../ecs/component'
-import { IWorld } from '../../ecs/world'
-import { PrefabEntity, PrefabEntityProperties } from './prefab-entity'
+import { ComponentDescriptor, ComponentsToObject, InferSchemaValues } from '../../../ecs/component'
+import { IWorld } from '../../../ecs/world'
+import { PrefabEntity, PrefabEntityProperties } from '../entity/prefab-entity'
 
 export class EntityBuilder<TComponents extends readonly ComponentDescriptor[] = []> {
 

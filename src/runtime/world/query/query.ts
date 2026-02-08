@@ -1,6 +1,6 @@
-import { IArchetype, Signature } from '../../ecs/archetype'
-import { ComponentIdentifier } from '../../ecs/component'
-import { createSignature } from './archetype/create-signature'
+import { IArchetype, Signature } from '../../../ecs/archetype'
+import { ComponentIdentifier } from '../../../ecs/component'
+import { createSignature } from '../archetype/create-signature'
 
 export class Query {
 

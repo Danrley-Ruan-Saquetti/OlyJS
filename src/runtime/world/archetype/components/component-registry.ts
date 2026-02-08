@@ -1,6 +1,6 @@
-import { Signature } from '../../ecs/archetype'
-import { ComponentDescriptor, ComponentId, ComponentSchema, IComponentData } from '../../ecs/component'
-import { ComponentData } from './archetype/components/component-data'
+import { Signature } from '../../../../ecs/archetype'
+import { ComponentDescriptor, ComponentId, ComponentSchema, IComponentData } from '../../../../ecs/component'
+import { ComponentData } from './component-data'
 
 export class ComponentRegistry {
 

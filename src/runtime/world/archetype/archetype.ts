@@ -1,7 +1,7 @@
 import { IArchetype, Signature, TypedArray } from '../../../ecs/archetype'
 import { ComponentDescriptor, ComponentId, ComponentSchema, IComponentData } from '../../../ecs/component'
 import { EntityId } from '../../../ecs/entity'
-import { ComponentRegistry } from '../component-registry'
+import { ComponentRegistry } from './components/component-registry'
 
 export class Archetype implements IArchetype {
 

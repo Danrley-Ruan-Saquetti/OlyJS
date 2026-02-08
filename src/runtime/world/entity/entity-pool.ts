@@ -1,4 +1,4 @@
-import { EntityId } from './../../ecs/entity'
+import { EntityId } from '../../../ecs/entity'
 
 export class EntityPool {
 
