@@ -1,10 +1,10 @@
 import { PrefabEntityProperties } from '../runtime'
 import { EntityLocation } from '../runtime/world/archetype/entity-location'
 import { EntityBuilder } from '../runtime/world/entity/entity-builder'
-import { Query } from '../runtime/world/query/query'
-import { ArchetypeProfile } from './archetype'
+import { ArchetypeProfile, IArchetype } from './archetype'
 import { ComponentDescriptor, ComponentsToObject } from './component'
 import { EntityId } from './entity'
+import { IQuery } from './query'
 
 export type IWoldSpawnProperties = {
   components?: { component: ComponentDescriptor, data?: unknown }[]
@@ -12,14 +12,24 @@ export type IWoldSpawnProperties = {
 }
 
 export interface IWorld {
+  flush(): void
+
   spawn(props: IWoldSpawnProperties): EntityId
   destroy(entityId: EntityId): void
   addComponent<TComponent extends ComponentDescriptor>(entityId: EntityId, component: TComponent, initialData?: ComponentsToObject<[TComponent]>): void
-  flush(): void
+
   createPrefab(properties?: PrefabEntityProperties): EntityBuilder
-  createQuery(components: ComponentDescriptor[]): Query
+  getQuery(components: ComponentDescriptor[]): IQuery
+
   findFirst(components: ComponentDescriptor[]): EntityId | undefined
   findSingleton(components: ComponentDescriptor[]): EntityId | undefined
   expectSingleton(components: ComponentDescriptor[]): EntityId
-  getEntity(entityId: number): EntityLocation
+  find(components: ComponentDescriptor[]): EntityId[]
+  count(components: ComponentDescriptor[]): number
+  isEmpty(components: ComponentDescriptor[]): boolean
+  exists(components: ComponentDescriptor[]): boolean
+  getEntity(entityId: number): EntityLocation | undefined
+  expectEntity(entityId: EntityId): EntityLocation
+  hasEntity(entityId: number): boolean
+  getArchetypes(): MapIterator<IArchetype>
 }
