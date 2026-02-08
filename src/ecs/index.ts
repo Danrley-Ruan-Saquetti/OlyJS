@@ -9,7 +9,7 @@ export type {
   ComponentSchema,
   IComponentData
 } from './component'
-export type { EntityId } from './entity'
+export type { EntityId, EntityLocation } from './entity'
 export type { IQuery } from './query'
 export type { ISystem } from './system'
 export type { IWoldSpawnProperties, IWorld } from './world'
