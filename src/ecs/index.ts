@@ -5,6 +5,7 @@ export type {
   ComponentDataSchema,
   ComponentDescriptor,
   ComponentId,
+  ComponentIdentifier,
   ComponentSchema,
   IComponentData
 } from './component'

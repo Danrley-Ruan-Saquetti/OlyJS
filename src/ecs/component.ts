@@ -2,6 +2,10 @@ import { TypedArray } from './archetype'
 
 export type ComponentId = bigint
 
+export interface ComponentIdentifier {
+  id: ComponentId
+}
+
 export enum ComponentFieldType {
   Int8,
   Uint8,
@@ -23,8 +27,7 @@ export type InferSchemaValues<T extends ComponentSchema> = {
   [K in keyof T]: number
 }
 
-export interface ComponentDescriptor<TName extends string = string, TSchema extends ComponentSchema = ComponentSchema> {
-  id: ComponentId
+export interface ComponentDescriptor<TName extends string = string, TSchema extends ComponentSchema = ComponentSchema> extends ComponentIdentifier {
   name: TName
   schema: TSchema
 }

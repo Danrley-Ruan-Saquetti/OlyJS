@@ -1,9 +1,10 @@
 import { ArchetypeProfile, IArchetype, Signature } from '../../ecs/archetype'
-import { ComponentDescriptor, ComponentId, ComponentsToObject } from '../../ecs/component'
+import { ComponentDescriptor, ComponentId, ComponentIdentifier, ComponentsToObject } from '../../ecs/component'
 import { EntityId } from '../../ecs/entity'
 import { IWoldSpawnProperties, IWorld } from '../../ecs/world'
 import { CommandDomain } from '../../runtime/commands/command-domain'
 import { Archetype } from './archetype/archetype'
+import { createSignature } from './archetype/create-signature'
 import { EntityLocation } from './archetype/entity-location'
 import { GlobalComponentRegistry } from './component-registry'
 import { EntityBuilder } from './entity-builder'
@@ -33,7 +34,7 @@ interface AddEntityPayload {
 interface AddEntityWithComponentsPayload {
   entityId: EntityId
   profile?: ArchetypeProfile
-  components: { componentId: ComponentId, data?: unknown }[]
+  components: (ComponentIdentifier & { data?: unknown })[]
 }
 
 interface AddComponentPayload {
@@ -92,7 +93,7 @@ export class GameWorld implements IWorld {
       entityId: id,
       profile,
       components: components.map(component => ({
-        componentId: component.component.id,
+        id: component.component.id,
         data: component.data
       }))
     })
@@ -113,7 +114,7 @@ export class GameWorld implements IWorld {
   }
 
   createQuery(components: ComponentDescriptor[]) {
-    const query = new Query(this.archetypes, components.map(({ id }) => id))
+    const query = new Query(this.archetypes, components)
     this.queries.push(query)
 
     query.build()
@@ -122,7 +123,7 @@ export class GameWorld implements IWorld {
   }
 
   findFirst(components: ComponentDescriptor[]) {
-    const query = new Query(this.archetypes, components.map(({ id }) => id))
+    const query = new Query(this.archetypes, components)
     query.build()
 
     const entitiesId = this.findFromQuery(query, 1)
@@ -131,7 +132,7 @@ export class GameWorld implements IWorld {
   }
 
   findSingleton(components: ComponentDescriptor[]) {
-    const query = new Query(this.archetypes, components.map(({ id }) => id))
+    const query = new Query(this.archetypes, components)
     query.build()
 
     const entitiesId = this.findFromQuery(query, 2)
@@ -140,7 +141,7 @@ export class GameWorld implements IWorld {
   }
 
   expectSingleton(components: ComponentDescriptor[]) {
-    const query = new Query(this.archetypes, components.map(({ id }) => id))
+    const query = new Query(this.archetypes, components)
     query.build()
 
     const entitiesId = this.findFromQuery(query, 2)
@@ -172,15 +173,13 @@ export class GameWorld implements IWorld {
   }
 
   private performCreateEntityWithComponents({ entityId, components, profile }: AddEntityWithComponentsPayload) {
-    let signature = 0n
+    const signature = createSignature(components)
     let initialData: Record<number, any> = {}
 
     let i = 0, length = components.length
     while (i < length) {
-      signature |= 1n << components[i].componentId
-
       if (components[i].data !== undefined) {
-        initialData[components[i].componentId as any] = components[i].data
+        initialData[components[i].id as any] = components[i].data
       }
 
       i++

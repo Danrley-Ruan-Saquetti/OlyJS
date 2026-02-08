@@ -1,21 +1,18 @@
 import { IArchetype, Signature } from '../../ecs/archetype'
-import { ComponentId } from '../../ecs/component'
+import { ComponentIdentifier } from '../../ecs/component'
+import { createSignature } from './archetype/create-signature'
 
 export class Query {
 
-  private mask: Signature = 0n
+  private readonly mask: Signature = 0n
 
   private readonly matched: IArchetype[] = []
 
   constructor(
     private readonly archetypes: Map<string, IArchetype>,
-    components: ComponentId[] = []
+    components: ComponentIdentifier[] = []
   ) {
-    let i = 0, length = components.length
-    while (i < length) {
-      this.mask |= 1n << components[i]
-      i++
-    }
+    this.mask = createSignature(components)
   }
 
   onArchetypeAdded(archetype: IArchetype) {
