@@ -60,6 +60,7 @@ export class Engine implements IEngine {
 
     this._isRunning = true
     this.systemScheduler.start()
+    this.commandScheduler.flush()
   }
 
   stop() {
