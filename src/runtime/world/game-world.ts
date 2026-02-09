@@ -110,7 +110,7 @@ export class GameWorld implements IWorld {
   }
 
   createPrefab(properties?: PrefabEntityProperties) {
-    return new EntityBuilder(this, properties)
+    return new EntityBuilder(properties)
   }
 
   getQuery(components: ComponentDescriptor[]) {

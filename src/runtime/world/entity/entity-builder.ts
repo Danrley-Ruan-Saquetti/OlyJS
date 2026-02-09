@@ -1,6 +1,6 @@
 import { ComponentDescriptor, ComponentsToObject, InferSchemaValues } from '../../../ecs/component'
-import { IWorld } from '../../../ecs/world'
-import { PrefabEntity, PrefabEntityProperties } from '../entity/prefab-entity'
+import { PrefabEntityProperties } from '../entity/prefab-entity'
+import { PrefabDefinition } from './prefab-definition'
 
 export class EntityBuilder<TComponents extends readonly ComponentDescriptor[] = []> {
 
@@ -8,7 +8,6 @@ export class EntityBuilder<TComponents extends readonly ComponentDescriptor[] = 
   private readonly components: { component: ComponentDescriptor, data?: unknown }[] = []
 
   constructor(
-    private readonly world: IWorld,
     private readonly properties: PrefabEntityProperties = {}
   ) { }
 
@@ -21,6 +20,6 @@ export class EntityBuilder<TComponents extends readonly ComponentDescriptor[] = 
   }
 
   build() {
-    return new PrefabEntity<TComponents>(this.world, this.components, this.properties)
+    return new PrefabDefinition<TComponents>(this.components, this.properties)
   }
 }
